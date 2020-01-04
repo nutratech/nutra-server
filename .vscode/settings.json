@@ -1,0 +1,14 @@
+{
+    "files.exclude": {
+        "**/__pycache__/**": true,
+        "**/__init__.py": true,
+    },
+    "search.exclude": {
+        "**/__pycache__/**": true,
+    },
+    "files.watcherExclude": {
+        "**/__pycache__/**": true,
+        "db/**": true,
+    },
+    "restructuredtext.confPath": "",
+}
