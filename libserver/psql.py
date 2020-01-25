@@ -9,9 +9,9 @@ con = psycopg2.connect(
     user=PSQL_USER,
     password=PSQL_PASSWORD,
     host=PSQL_HOST,
-    port='5432',
+    port="5432",
 )
 
 print(
-    f'[Connected to Postgre DB]    postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}'
+    f"[Connected to Postgre DB]    postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}"
 )

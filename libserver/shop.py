@@ -13,7 +13,7 @@ def GET_stripe_products(request):
     _products = stripe.Product
     products = []
     for p in _products.auto_paging_iter():
-        if p['active']:
+        if p["active"]:
             products.append(p)
 
     return Response(data=products)
@@ -23,14 +23,14 @@ def GET_stripe_skus(request):
     _skus = stripe.SKU
     skus = []
     for s in _skus.auto_paging_iter():
-        if s['active']:
+        if s["active"]:
             skus.append(s)
 
     return Response(data=skus)
 
 
 def GET_products__product_id__reviews(request):
-    product_id = request.view_args['id']
+    product_id = request.view_args["id"]
     return Response()
 
 

@@ -9,13 +9,13 @@ load_dotenv(verbose=True)
 
 
 # PostgreSQL
-PSQL_DATABASE = 'nutra'
+PSQL_DATABASE = "nutra"
 
-PSQL_USER = os.getenv('PSQL_USER', getpass.getuser())
-PSQL_PASSWORD = os.getenv('PSQL_PASSWORD', 'password')
+PSQL_USER = os.getenv("PSQL_USER", getpass.getuser())
+PSQL_PASSWORD = os.getenv("PSQL_PASSWORD", "password")
 
-PSQL_HOST = os.getenv('PSQL_HOST', 'localhost')
+PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 
 
 # Stripe API Key
-STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
