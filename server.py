@@ -21,9 +21,9 @@ from libserver.shop import (
     POST_products_reviews,
     GET_products_avg_ratings,
 )
-from libserver.utils.caffeine import caffeinate
+from libserver.accounts import POST_register, POST_login
 from libserver.libserver import Request, Response, get_self_route_rules
-from libserver.psql import con
+from libserver.utils.caffeine import caffeinate
 
 # Export the Flask server for gunicorn
 app = Flask(__name__)
@@ -59,14 +59,12 @@ Account functions
 
 @app.route("/register", methods=["POST"])
 def post_register():
-    # return Request(POST_register, request)
-    return Response(code=500, data={"error": "Not implemented"})
+    return Request(POST_register, request)
 
 
 @app.route("/login", methods=["POST"])
 def post_login():
-    # return Request(POST_login, request)
-    return Response(code=500, data={"error": "Not implemented"})
+    return Request(POST_login, request)
 
 
 """
