@@ -12,12 +12,13 @@ Initialize Server
 Initialize with:
 
 .. code-block:: bash
+
     git submodule update --init --recursive
     pip3 install -r requirements.txt
     cd db
     pip3 install -r requirements.txt
     cd ..
-    ./local.cmd    
+    ./local.cmd
 
 Initialize Database
 ===================
