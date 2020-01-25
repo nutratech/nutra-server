@@ -30,3 +30,31 @@ def Response(data={}, code=200, status='OK'):
 
 def Text(text=None):
     return text
+
+
+"""
+------------------------
+Helper functions
+------------------------
+"""
+
+
+def get_self_route_rules(app):
+    """ Gets human friendly url_map """
+
+    rules = []
+
+    for r in app.url_map._rules:
+        methods = set(r.methods)
+        # Remove unsightly ones
+        for method in ["HEAD", "OPTIONS"]:
+            try:
+                methods.remove(method)
+            except:
+                pass
+        # More filtering
+        if str(r) != "/static/<path:filename>":
+            rules.append(f"{str(methods).ljust(10)} {r}")
+
+    # Return string
+    return "\n".join(rules)

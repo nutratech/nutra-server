@@ -15,7 +15,7 @@ from flask_cors import CORS
 
 from libserver.shop import GET_stripe_products, GET_stripe_skus, GET_products__product_id__reviews, POST_products_reviews, GET_products_avg_ratings
 from libserver.utils.caffeine import caffeinate
-from libserver.libserver import Request, Response
+from libserver.libserver import Request, Response, get_self_route_rules
 from libserver.psql import con
 
 # Export the Flask server for gunicorn
@@ -24,19 +24,17 @@ CORS(app)
 caffeinate()
 
 
-#
-# Routes
-#
+'''
+-------------------------
+Routes
+-------------------------
+'''
 
-@app.route('/')
-def home_page():
-    try:
-        ORIG_HEAD = open(f'.git/refs/heads/master').read().rstrip()
-    except:
-        ORIG_HEAD = 'N/A'
-    return f'''<pre>Welcome to nutra-server (git-hash: {ORIG_HEAD})\n
-Endpoints:\n\n
-{app.url_map}'''
+
+@app.route("/")
+def get_home_page():
+    url_map = get_self_route_rules(app)
+    return f"<pre>Welcome to the customer file parser.\n\nEndpoints:\n\n{url_map}<pre>"
 
 
 @app.route('/logs')
@@ -45,9 +43,12 @@ def get_logs():
     return f'<pre>{LOGS}</pre>'
 
 
-#
-# Account functions
-#
+'''
+-------------------------
+Account functions
+-------------------------
+'''
+
 
 @app.route('/register', methods=['POST'])
 def post_register():
@@ -61,9 +62,12 @@ def post_login():
     return Response(code=500, data={'error': 'Not implemented'})
 
 
-#
-# Stripe functions
-#
+'''
+-------------------------
+Stripe functions
+-------------------------
+'''
+
 
 @app.route('/stripe/products')
 def get_stripe_products():
@@ -76,7 +80,7 @@ def get_stripe_skus():
 
 
 @app.route('/products/<id>/reviews')
-def get_products__product_id__reviews():
+def get_products__product_id__reviews(id):
     return Request(GET_products__product_id__reviews, request)
 
 
