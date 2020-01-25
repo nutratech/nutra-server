@@ -51,6 +51,7 @@ Run (Remote DB)
 Running the server is simple:
 
 .. code-block:: bash
+
     ./server.py
 
 Run (Local DB)
