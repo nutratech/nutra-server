@@ -6,10 +6,8 @@
 *.swp
 
 # Our files
-/input/
-errors/
-logs/
 .vscode/
+
 ####################
 ## Python Ignores ##
 ####################

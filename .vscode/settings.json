@@ -1,14 +1,18 @@
 {
     "files.exclude": {
         "**/__pycache__/**": true,
+        "**/.pytest_cache/**": true,
         "**/__init__.py": true,
+        "**/.vscode/**": true,
+        "runtime.txt": true,
+        "Procfile": true,
     },
     "search.exclude": {
         "**/__pycache__/**": true,
+        "**/.pytest_cache/**": true,
     },
     "files.watcherExclude": {
         "**/__pycache__/**": true,
-        "db/**": true,
+        "**/.pytest_cache/**": true,
     },
-    "restructuredtext.confPath": "",
 }
