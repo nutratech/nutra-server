@@ -1,6 +1,6 @@
 import re
 
-from .psql import con
+from .postgres import con
 from .libserver import Response
 
 

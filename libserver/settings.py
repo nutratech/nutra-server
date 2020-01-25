@@ -10,6 +10,7 @@ load_dotenv(verbose=True)
 
 # PostgreSQL
 PSQL_DATABASE = "nutra"
+PSQL_SCHEMA = "nt"
 
 PSQL_USER = os.getenv("PSQL_USER", getpass.getuser())
 PSQL_PASSWORD = os.getenv("PSQL_PASSWORD", "password")
