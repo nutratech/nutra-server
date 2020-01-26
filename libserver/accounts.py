@@ -116,12 +116,12 @@ def POST_login(request):
 
     #
     # Compare password
-    passwd = pg_result.row['passwd']
+    passwd = pg_result.row["passwd"]
     result = bcrypt.checkpw(password.encode(), passwd.encode())
 
     # Invalid password
     if not result:
-        return Response(data={"error": f"Invalid password for: {username}"}, code=400)
+        return Response(data={"error": "Invalid password"}, code=400)
 
     #
     # Create token
@@ -138,5 +138,6 @@ def POST_login(request):
         JWT_SECRET,
         algorithm="HS256",
     )
+    print(token)
 
     return Response(data={"token": token})
