@@ -104,6 +104,8 @@ def POST_login(request):
     except:
         username = request.json["username"]
         password = request.json["password"]
+    print(type(username))
+    print(username)
     # Get hash (if username exists)
     pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
 
