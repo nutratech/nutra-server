@@ -63,7 +63,7 @@ def POST_products_reviews(request):
 def GET_products_avg_ratings(request):
 
     pg_result = psql(
-        "SELECT stripe_product_id, avg(rating) avg_rating FROM reviews GROUP BY stripe_product_id"
+        "SELECT stripe_product_id, CAST(avg(rating) AS float) avg_rating FROM reviews GROUP BY stripe_product_id"
     )
 
     return Response(data=pg_result.rows)
