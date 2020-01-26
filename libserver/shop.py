@@ -1,8 +1,10 @@
+import jwt
 import stripe
 
 from .libserver import Response
 from .postgres import psql
-from .settings import STRIPE_API_KEY
+from .settings import JWT_SECRET, STRIPE_API_KEY
+from .utils.account import user_id_from_username
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -48,11 +50,16 @@ def POST_products_reviews(request):
     review_text = body["review_text"]
     stripe_product_id = body["stripe_product_id"]
 
+    token = jwt.decode(request.headers["authorization"].split()[1], JWT_SECRET)
+
+    # Get user_id
+    user_id = user_id_from_username(token["username"])
+
     #
     # Post review
     pg_result = psql(
-        "INSERT INTO reviews (rating, review_text, stripe_product_id) VALUES (%s, %s, %s)",
-        [rating, review_text, stripe_product_id],
+        "INSERT INTO reviews (user_id, rating, review_text, stripe_product_id) VALUES (%s, %s, %s, %s) RETURNING id",
+        [user_id, rating, review_text, stripe_product_id],
     )
 
     #
