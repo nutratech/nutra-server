@@ -30,28 +30,35 @@ def psql(query, params=None):
         query = cur.mogrify(query, params).decode("utf-8")
     print(f"[psql] {query}")
 
-    #
     # init result object
     result = PgResult(query)
 
+    #
+    # Attempt query
     try:
-        # Attempt query
         cur.execute(query)
+        result.rows = cur.fetchall()
+        result.row = result.rows[0]
         con.commit()
         cur.close()
+
     except psycopg2.Error as err:
+        #
         # Log error
         # https://kb.objectrocket.com/postgresql/python-error-handling-with-the-psycopg2-postgresql-adapter-645
         print(f"[psql] {err.pgerror}")
-        cur.close()
+
+        # Roll back
         con.rollback()
+        cur.close()
 
         # Set err_msg
         result.err_msg = err.pgerror
+
         return result
 
+    #
     # Set return message
-    # TODO: set more?
     result.msg = cur.statusmessage
     print(f"[psql] {result.msg}")
 
@@ -59,14 +66,18 @@ def psql(query, params=None):
 
 
 class PgResult:
-    def __init__(self, query, result=None, err_msg=None):
+    def __init__(self, query, rows=None, msg=None, err_msg=None):
         """ Defines a convenient result from `psql()` """
 
         self.query = query
-        self.result = result
+
+        self.rows = rows
+        self.msg = msg
+
         self.err_msg = err_msg
 
     @property
     def Response(self):
-        return _Response(data={"error": self.err_msg}, code=400)
+        """ Used ONLY for ERRORS """
 
+        return _Response(data={"error": self.err_msg}, code=400)

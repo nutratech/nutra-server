@@ -20,6 +20,8 @@ def POST_register(request):
     password = body["password"]
     password_confirm = body["password-confirm"]
 
+    # TODO: break up below block into "service-level" function
+
     """
     -------------------------------------
     Registration validation checks
@@ -83,7 +85,7 @@ def POST_register(request):
         [username, passwd, email, stripe_id],
     )
 
-    # Return ERROR if failed
+    # ERRORs
     if pg_result.err_msg:
         return pg_result.Response
 
@@ -91,4 +93,27 @@ def POST_register(request):
 
 
 def POST_login(request):
-    pass
+
+    # Parse incoming request
+    body = request.json
+    username = body["username"]
+    password = body["password"]
+
+    # Get hash (if username exists)
+    pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
+
+    # ERROR: No such user
+    if pg_result.err_msg:
+        return pg_result.Response
+
+    # Compare password
+    passwd = pg_result.row[0]
+    result = bcrypt.checkpw(password.encode(), passwd.encode())
+
+    # Invalid password
+    if not result:
+        return Response(data={"error": f"Invalid password for: {username}"}, code=400)
+
+    # TODO: create token, return
+    token = None
+    return Response(data={"token": token})
