@@ -7,7 +7,7 @@ import stripe
 
 from .libserver import Response
 from .postgres import psql
-from .settings import STRIPE_API_KEY, JWT_SECRET, TOKEN_EXPIRY, AUTH_LEVEL_BASIC
+from .settings import AUTH_LEVEL_BASIC, JWT_SECRET, STRIPE_API_KEY, TOKEN_EXPIRY
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY

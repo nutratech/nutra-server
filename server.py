@@ -14,17 +14,17 @@ import gunicorn
 from flask import Flask, request
 from flask_cors import CORS
 
-from libserver.accounts import POST_login, POST_register
-from libserver.libserver import Request, Response, get_self_route_rules
-from libserver.usda import GET_fdgrp
-from libserver.shop import (
+from ntserv.accounts import POST_login, POST_register
+from ntserv.libserver import Request, Response, get_self_route_rules
+from ntserv.usda import GET_fdgrp
+from ntserv.shop import (
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
     GET_stripe_products,
     GET_stripe_skus,
     POST_products_reviews,
 )
-from libserver.utils.caffeine import caffeinate
+from ntserv.utils.caffeine import caffeinate
 
 # Export the Flask server for gunicorn
 app = Flask(__name__)

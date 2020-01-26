@@ -2,6 +2,10 @@ import time
 import traceback
 from datetime import datetime
 
+import requests
+
+from .settings import SLACK_TOKEN
+
 
 def Request(func, req):
     """ Makes a request and handles global exceptions, always returning a `Response()` """
@@ -63,3 +67,28 @@ def get_self_route_rules(app):
 
     # Return string
     return "\n".join(rules)
+
+
+def slack_msg(msg):
+    """ Sends a slack alert message to simteam-extras channel """
+
+    # Print
+    print(msg)
+
+    # Prep body && headers
+    body = {
+        "channel": "CSBL81C4F",
+        "username": "ntserv",
+        "text": f"```{msg}```",
+        "icon_url": "https://www.nutritionix.com/nix_assets/images/nix_apple.png",
+    }
+
+    headers = {
+        "content-type": "application/json",
+        "authorization": f"Bearer {SLACK_TOKEN}",
+    }
+
+    # Make post
+    requests.post(
+        "https://slack.com/api/chat.postMessage", headers=headers, json=body,
+    )
