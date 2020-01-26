@@ -98,9 +98,12 @@ def POST_register(request):
 def POST_login(request):
 
     # Parse incoming request
-    username = request.headers["username"]
-    password = request.headers["password"]
-
+    try:
+        username = request.headers["username"]
+        password = request.headers["password"]
+    except:
+        username = request.json["username"]
+        password = request.json["password"]
     # Get hash (if username exists)
     pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
 
@@ -122,7 +125,7 @@ def POST_login(request):
     # Create token
     # TODO: make auth_level dynamic
     auth_level = AUTH_LEVEL_BASIC
-    
+
     expires_at = datetime.now() + TOKEN_EXPIRY
     token = jwt.encode(
         {
