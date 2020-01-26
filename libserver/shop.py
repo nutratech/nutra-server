@@ -41,7 +41,26 @@ def GET_products__product_id__reviews(request):
 
 
 def POST_products_reviews(request):
-    return Response()
+
+    # Parse incoming request
+    body = request.json
+    rating = body["rating"]
+    review_text = body["review_text"]
+    stripe_product_id = body["stripe_product_id"]
+
+    #
+    # Post review
+    pg_result = psql(
+        "INSERT INTO reviews (rating, review_text, stripe_product_id) VALUES (%s, %s, %s)",
+        [rating, review_text, stripe_product_id],
+    )
+
+    #
+    # ERRORs
+    if pg_result.err_msg:
+        return pg_result.Response
+
+    return Response(data=pg_result.rows)
 
 
 def GET_products_avg_ratings(request):
