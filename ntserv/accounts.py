@@ -101,12 +101,9 @@ def POST_register(request):
 def POST_login(request):
 
     # Parse incoming request
-    try:
-        username = request.headers["username"]
-        password = request.headers["password"]
-    except:
-        username = request.json["username"]
-        password = request.json["password"]
+    username = request.json["username"]
+    password = request.json["password"]
+
     # Get hash (if username exists)
     pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
 
