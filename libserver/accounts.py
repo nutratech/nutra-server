@@ -104,8 +104,6 @@ def POST_login(request):
     except:
         username = request.json["username"]
         password = request.json["password"]
-    print(type(username))
-    print(username)
     # Get hash (if username exists)
     pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
 
@@ -121,7 +119,7 @@ def POST_login(request):
 
     # Invalid password
     if not result:
-        return Response(data={"error": "Invalid password"}, code=400)
+        return Response(data={"error": f"Invalid password for: {username}"}, code=400)
 
     #
     # Create token
@@ -137,7 +135,6 @@ def POST_login(request):
         },
         JWT_SECRET,
         algorithm="HS256",
-    )
-    print(token)
+    ).decode()
 
     return Response(data={"token": token})
