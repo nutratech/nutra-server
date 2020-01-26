@@ -21,7 +21,7 @@ print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
 
 def psql(query, params=None):
 
-    cur = con.cursor()
+    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     # Print query
     if params:
