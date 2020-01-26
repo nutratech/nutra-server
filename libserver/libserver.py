@@ -1,6 +1,6 @@
 import time
-import datetime
 import traceback
+from datetime import datetime
 
 
 def Request(func, req):
@@ -23,7 +23,7 @@ def Response(data={}, code=200, status="OK"):
             "program": "nutra-server",
             "version": "0.0.1",
             "release": 1,
-            "datetime": datetime.datetime.fromtimestamp(time.time()).strftime("%c"),
+            "datetime": datetime.now().strftime("%c").strip(),
             "timestamp": int(time.time() * 1000),
             "status": status if code < 400 else "Failure",
             "code": code,

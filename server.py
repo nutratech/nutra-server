@@ -7,23 +7,23 @@ Created on Sat Jan  4 18:20:27 2020
 """
 
 import os
-import threading
 import subprocess
+import threading
 
 import gunicorn
 from flask import Flask, request
 from flask_cors import CORS
 
+from libserver.accounts import POST_login, POST_register
+from libserver.libserver import Request, Response, get_self_route_rules
 from libserver.shop import (
+    GET_products__product_id__reviews,
+    GET_products_avg_ratings,
     GET_stripe_products,
     GET_stripe_skus,
-    GET_products__product_id__reviews,
     POST_products_reviews,
-    GET_products_avg_ratings,
 )
 from libserver.utils.caffeine import caffeinate
-from libserver.libserver import Request, Response, get_self_route_rules
-from libserver.psql import con
 
 # Export the Flask server for gunicorn
 app = Flask(__name__)
@@ -59,14 +59,12 @@ Account functions
 
 @app.route("/register", methods=["POST"])
 def post_register():
-    # return Request(POST_register, request)
-    return Response(code=500, data={"error": "Not implemented"})
+    return Request(POST_register, request)
 
 
 @app.route("/login", methods=["POST"])
 def post_login():
-    # return Request(POST_login, request)
-    return Response(code=500, data={"error": "Not implemented"})
+    return Request(POST_login, request)
 
 
 """
