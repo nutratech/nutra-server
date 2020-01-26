@@ -20,7 +20,10 @@ def POST_register(request):
     username = body["username"]
     email = body["email"]
     password = body["password"]
-    password_confirm = body["password-confirm"]
+    try:
+        password_confirm = body["password-confirm"]
+    except:
+        password_confirm = body["confirm_password"]
 
     # TODO: break up below block into "service-level" function
 

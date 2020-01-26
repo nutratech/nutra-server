@@ -1,3 +1,4 @@
+import json
 import time
 import traceback
 from datetime import datetime
@@ -12,8 +13,12 @@ def Request(func, req):
     try:
         return func(request=req)
     except Exception as e:
-        # Return error message
-        stack_msg = f"{repr(e)}\n\n{traceback.format_tb(e.__traceback__)}"
+        # Prepare error messages
+        trace = "\n".join(traceback.format_tb(e.__traceback__))
+        stack_msg = f"{repr(e)}\n\n{trace}"
+        request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
+        # Slack msg
+        slack_msg(f"Application Error\n\n{request}\n\n{stack_msg}")
         return Response(
             data={"error": "General server error", "stack": stack_msg}, code=500
         )
