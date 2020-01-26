@@ -114,7 +114,7 @@ def POST_login(request):
 
     #
     # Compare password
-    passwd = pg_result.row[0]
+    passwd = pg_result.row['passwd']
     result = bcrypt.checkpw(password.encode(), passwd.encode())
 
     # Invalid password

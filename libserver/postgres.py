@@ -85,8 +85,7 @@ class PgResult:
         self.rows = []
 
         if len(fetchall):
-            self.row = fetchall[0]
-            rdict = {v: k for k, v in self.row._index.items()}
+            rdict = {v: k for k, v in fetchall[0]._index.items()}
 
             # Put list --> dict format
             for _row in fetchall:
@@ -95,3 +94,5 @@ class PgResult:
                 for i, el in enumerate(_row):
                     row[rdict[i]] = el
                 self.rows.append(row)
+
+            self.row = self.rows[0]
