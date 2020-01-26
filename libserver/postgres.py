@@ -36,9 +36,6 @@ def psql(query, params=None):
     try:
         cur.execute(query)
         result.set_rows(cur.fetchall())
-        # result.rows = cur.fetchall()
-        # if len(result.rows):
-        #     result.row = result.rows[0]
         con.commit()
         cur.close()
 
@@ -83,7 +80,18 @@ class PgResult:
         return _Response(data={"error": self.err_msg}, code=400)
 
     def set_rows(self, fetchall):
+        """ Sets the DictCursor rows based on cur.fetchall() """
 
-        self.rows = list(map(lambda x: x._index, fetchall))
-        if len(self.rows):
-            self.row = self.rows[0]
+        self.rows = []
+
+        if len(fetchall):
+            self.row = fetchall[0]
+            rdict = {v: k for k, v in self.row._index.items()}
+
+            # Put list --> dict format
+            for _row in fetchall:
+                row = {}
+                # Add each value with a dict key
+                for i, el in enumerate(_row):
+                    row[rdict[i]] = el
+                self.rows.append(row)

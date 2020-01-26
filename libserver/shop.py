@@ -32,16 +32,6 @@ def GET_stripe_skus(request):
     return Response(data=skus)
 
 
-def GET_products__product_id__reviews(request):
-
-    product_id = request.view_args["id"]
-    # product = stripe.Product.retrieve(product_id)
-
-    pg_result = psql("SELECT * FROM reviews WHERE stripe_product_id=%s", [product_id])
-
-    return Response(data=pg_result.rows)
-
-
 def POST_products_reviews(request):
 
     # Parse incoming request
@@ -75,5 +65,15 @@ def GET_products_avg_ratings(request):
     pg_result = psql(
         "SELECT stripe_product_id, avg(rating) avg_rating FROM reviews GROUP BY stripe_product_id"
     )
+
+    return Response(data=pg_result.rows)
+
+
+def GET_products__product_id__reviews(request):
+
+    # TODO: attach whole `pg_result` object, in case of generic errors. e.g. missing function?
+
+    product_id = request.view_args["id"]
+    pg_result = psql("SELECT * FROM get_product_reviews(%s)", [product_id])
 
     return Response(data=pg_result.rows)
