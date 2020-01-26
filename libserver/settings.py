@@ -12,7 +12,7 @@ load_dotenv(verbose=True)
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 # PostgreSQL
-PSQL_DATABASE = "nutra"
+PSQL_DATABASE = os.getenv("PSQL_DB_NAME", "nutra")
 PSQL_SCHEMA = "nt"
 
 PSQL_USER = os.getenv("PSQL_USER", getpass.getuser())
