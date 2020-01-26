@@ -1,5 +1,3 @@
-import sys
-
 import psycopg2
 
 from .libserver import Response as _Response
@@ -38,7 +36,8 @@ def psql(query, params=None):
     try:
         cur.execute(query)
         result.rows = cur.fetchall()
-        result.row = result.rows[0]
+        if len(result.rows):
+            result.row = result.rows[0]
         con.commit()
         cur.close()
 

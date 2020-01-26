@@ -1,7 +1,8 @@
 import stripe
 
-from libserver.libserver import Response
-from libserver.settings import STRIPE_API_KEY
+from .libserver import Response
+from .postgres import psql
+from .settings import STRIPE_API_KEY
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -30,8 +31,13 @@ def GET_stripe_skus(request):
 
 
 def GET_products__product_id__reviews(request):
+
     product_id = request.view_args["id"]
-    return Response()
+    # product = stripe.Product.retrieve(product_id)
+
+    pg_result = psql("SELECT * FROM reviews WHERE stripe_product_id=%s", [product_id])
+
+    return Response(data=pg_result.rows)
 
 
 def POST_products_reviews(request):
