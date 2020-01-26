@@ -55,7 +55,7 @@ TODO: this
 Run (Local DB)
 ==============
 
-The ``local.cmd`` script unsets environment variables telling the server to point to the remote database:
+You can also debug from VS Code.
 
 .. code-block:: bash
 

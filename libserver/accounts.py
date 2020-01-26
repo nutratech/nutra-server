@@ -34,7 +34,7 @@ def POST_register(request):
     # Username
     if (
         len(username) < 6
-        or len(username) > 218
+        or len(username) > 18
         or not re.match("^[0-9a-z_]+$", username)
     ):
         return Response(
@@ -76,17 +76,18 @@ def POST_register(request):
     """
 
     # TODO: transactional `block()`
-    try:
-        stripe_id = stripe.Customer.create(email=email).id
-        passwd = bcrypt.hashpw(password, bcrypt.gensalt(12))
-        result = psql(
-            "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s )",
-            [username, passwd, email, stripe_id],
-        )
-        print(result)
-        
-    except Exception as e:
-        return Response(data={"error": f"Register Failed\n{e.__repr__}"}, code=400)
+    stripe_id = stripe.Customer.create(email=email).id
+    passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    pg_result = psql(
+        "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s )",
+        [username, passwd, email, stripe_id],
+    )
+
+    # Return ERROR if failed
+    if pg_result.err_msg:
+        return pg_result.Response
+
+    return Response(data={"message": "Successfully registered"})
 
 
 def POST_login(request):

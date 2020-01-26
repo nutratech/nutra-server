@@ -2,6 +2,7 @@ import sys
 
 import psycopg2
 
+from .libserver import Response as _Response
 from .settings import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
 
 # Initialize connection
@@ -20,27 +21,52 @@ print(
 print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
 
 
-def psql(cmd, params=None):
+def psql(query, params=None):
 
     cur = con.cursor()
 
-    # Print cmd
+    # Print query
     if params:
-        cmd = cur.mogrify(cmd, params).decode("utf-8")
-    print(f"[psql] {cmd}")
+        query = cur.mogrify(query, params).decode("utf-8")
+    print(f"[psql] {query}")
+
+    #
+    # init result object
+    result = PgResult(query)
 
     try:
-        cur.execute(cmd)
+        # Attempt query
+        cur.execute(query)
         con.commit()
         cur.close()
     except psycopg2.Error as err:
+        # Log error
         # https://kb.objectrocket.com/postgresql/python-error-handling-with-the-psycopg2-postgresql-adapter-645
         print(f"[psql] {err.pgerror}")
         cur.close()
         con.rollback()
-        return None
 
-    result = cur.statusmessage
-    print(f"[psql] {result}")
+        # Set err_msg
+        result.err_msg = err.pgerror
+        return result
+
+    # Set return message
+    # TODO: set more?
+    result.msg = cur.statusmessage
+    print(f"[psql] {result.msg}")
 
     return result
+
+
+class PgResult:
+    def __init__(self, query, result=None, err_msg=None):
+        """ Defines a convenient result from `psql()` """
+
+        self.query = query
+        self.result = result
+        self.err_msg = err_msg
+
+    @property
+    def Response(self):
+        return _Response(data={"error": self.err_msg}, code=400)
+
