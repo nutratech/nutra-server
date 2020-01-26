@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2, psycopg2.extras
 
 from .libserver import Response as _Response
 from .settings import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
@@ -35,9 +35,10 @@ def psql(query, params=None):
     # Attempt query
     try:
         cur.execute(query)
-        result.rows = cur.fetchall()
-        if len(result.rows):
-            result.row = result.rows[0]
+        result.set_rows(cur.fetchall())
+        # result.rows = cur.fetchall()
+        # if len(result.rows):
+        #     result.row = result.rows[0]
         con.commit()
         cur.close()
 
@@ -80,3 +81,9 @@ class PgResult:
         """ Used ONLY for ERRORS """
 
         return _Response(data={"error": self.err_msg}, code=400)
+
+    def set_rows(self, fetchall):
+
+        self.rows = list(map(lambda x: x._index, fetchall))
+        if len(self.rows):
+            self.row = self.rows[0]

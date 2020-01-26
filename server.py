@@ -16,6 +16,7 @@ from flask_cors import CORS
 
 from libserver.accounts import POST_login, POST_register
 from libserver.libserver import Request, Response, get_self_route_rules
+from libserver.usda import GET_fdgrp
 from libserver.shop import (
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
@@ -65,6 +66,18 @@ def post_register():
 @app.route("/login", methods=["POST"])
 def post_login():
     return Request(POST_login, request)
+
+
+"""
+-------------------------
+Basic DB functions
+-------------------------
+"""
+
+
+@app.route("/fdgrp")
+def get_fdgrp():
+    return Request(GET_fdgrp, request)
 
 
 """
