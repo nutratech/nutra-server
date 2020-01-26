@@ -1,11 +1,13 @@
 import re
+from datetime import datetime
 
 import bcrypt
+import jwt
 import stripe
 
 from .libserver import Response
 from .postgres import psql
-from .settings import STRIPE_API_KEY
+from .settings import STRIPE_API_KEY, JWT_SECRET, TOKEN_EXPIRY, AUTH_LEVEL_BASIC
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -85,6 +87,7 @@ def POST_register(request):
         [username, passwd, email, stripe_id],
     )
 
+    #
     # ERRORs
     if pg_result.err_msg:
         return pg_result.Response
@@ -95,17 +98,18 @@ def POST_register(request):
 def POST_login(request):
 
     # Parse incoming request
-    body = request.json
-    username = body["username"]
-    password = body["password"]
+    username = request.headers["username"]
+    password = request.headers["password"]
 
     # Get hash (if username exists)
     pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
 
+    #
     # ERROR: No such user
     if pg_result.err_msg:
         return pg_result.Response
 
+    #
     # Compare password
     passwd = pg_result.row[0]
     result = bcrypt.checkpw(password.encode(), passwd.encode())
@@ -114,6 +118,20 @@ def POST_login(request):
     if not result:
         return Response(data={"error": f"Invalid password for: {username}"}, code=400)
 
-    # TODO: create token, return
-    token = None
+    #
+    # Create token
+    # TODO: make auth_level dynamic
+    auth_level = AUTH_LEVEL_BASIC
+    
+    expires_at = datetime.now() + TOKEN_EXPIRY
+    token = jwt.encode(
+        {
+            "username": username,
+            "auth-level": auth_level,
+            "expires": int(expires_at.timestamp()),
+        },
+        JWT_SECRET,
+        algorithm="HS256",
+    )
+
     return Response(data={"token": token})
