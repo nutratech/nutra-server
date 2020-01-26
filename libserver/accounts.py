@@ -1,7 +1,14 @@
 import re
 
-from .postgres import con
+import bcrypt
+import stripe
+
 from .libserver import Response
+from .postgres import psql
+from .settings import STRIPE_API_KEY
+
+# Set Stripe API key
+stripe.api_key = STRIPE_API_KEY
 
 
 def POST_register(request):
@@ -27,7 +34,7 @@ def POST_register(request):
     # Username
     if (
         len(username) < 6
-        or len(username) > 18
+        or len(username) > 218
         or not re.match("^[0-9a-z_]+$", username)
     ):
         return Response(
@@ -68,8 +75,16 @@ def POST_register(request):
     -------------------------------------
     """
 
+    # TODO: transactional `block()`
     try:
-        pass
+        stripe_id = stripe.Customer.create(email=email).id
+        passwd = bcrypt.hashpw(password, bcrypt.gensalt(12))
+        result = psql(
+            "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s )",
+            [username, passwd, email, stripe_id],
+        )
+        print(result)
+        
     except Exception as e:
         return Response(data={"error": f"Register Failed\n{e.__repr__}"}, code=400)
 

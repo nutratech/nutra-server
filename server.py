@@ -7,22 +7,22 @@ Created on Sat Jan  4 18:20:27 2020
 """
 
 import os
-import threading
 import subprocess
+import threading
 
 import gunicorn
 from flask import Flask, request
 from flask_cors import CORS
 
+from libserver.accounts import POST_login, POST_register
+from libserver.libserver import Request, Response, get_self_route_rules
 from libserver.shop import (
+    GET_products__product_id__reviews,
+    GET_products_avg_ratings,
     GET_stripe_products,
     GET_stripe_skus,
-    GET_products__product_id__reviews,
     POST_products_reviews,
-    GET_products_avg_ratings,
 )
-from libserver.accounts import POST_register, POST_login
-from libserver.libserver import Request, Response, get_self_route_rules
 from libserver.utils.caffeine import caffeinate
 
 # Export the Flask server for gunicorn

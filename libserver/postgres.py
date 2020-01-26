@@ -1,13 +1,8 @@
+import sys
+
 import psycopg2
 
-from .settings import (
-    PSQL_DATABASE,
-    PSQL_SCHEMA,
-    PSQL_USER,
-    PSQL_PASSWORD,
-    PSQL_HOST,
-)
-
+from .settings import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
 
 # Initialize connection
 con = psycopg2.connect(
@@ -31,23 +26,21 @@ def psql(cmd, params=None):
 
     # Print cmd
     if params:
-        cmd = cur.mogrify(cmd, params)
+        cmd = cur.mogrify(cmd, params).decode("utf-8")
     print(f"[psql] {cmd}")
 
     try:
-        cur.execute(cmd, params)
+        cur.execute(cmd)
         con.commit()
-    except:
+        cur.close()
+    except psycopg2.Error as err:
+        # https://kb.objectrocket.com/postgresql/python-error-handling-with-the-psycopg2-postgresql-adapter-645
+        print(f"[psql] {err.pgerror}")
+        cur.close()
         con.rollback()
+        return None
 
-    print(f"     {cur.statusmessage}")
-    result = None
-    try:
-        result = cur.fetchall()
-    except:
-        query = cur.query.decode()
-        result = cur.statusmessage
-        print(f"WARN: no result: {query}")
+    result = cur.statusmessage
+    print(f"[psql] {result}")
 
-    cur.close()
     return result
