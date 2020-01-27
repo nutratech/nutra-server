@@ -23,7 +23,7 @@ from ntserv.shop import (
     GET_stripe_skus,
     POST_products_reviews,
 )
-from ntserv.usda import GET_fdgrp, GET_nutrients
+from ntserv.usda import GET_exercises, GET_fdgrp, GET_nutrients
 from ntserv.utils.caffeine import caffeinate
 
 # Export the Flask server for gunicorn
@@ -95,11 +95,6 @@ def get_exercises():
 Private DB functions
 -------------------------
 """
-
-
-@app.route("/nutrients")
-def get_nutrients():
-    return Request(GET_nutrients, request)
 
 
 """
