@@ -16,7 +16,6 @@ from flask_cors import CORS
 
 from ntserv.accounts import POST_login, POST_register
 from ntserv.libserver import Request, Response, get_self_route_rules
-from ntserv.usda import GET_fdgrp
 from ntserv.shop import (
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
@@ -24,6 +23,7 @@ from ntserv.shop import (
     GET_stripe_skus,
     POST_products_reviews,
 )
+from ntserv.usda import GET_fdgrp, GET_nutrients
 from ntserv.utils.caffeine import caffeinate
 
 # Export the Flask server for gunicorn
@@ -78,6 +78,11 @@ Basic DB functions
 @app.route("/fdgrp")
 def get_fdgrp():
     return Request(GET_fdgrp, request)
+
+
+@app.route("/nutrients")
+def get_nutrients():
+    return Request(GET_nutrients, request)
 
 
 """
