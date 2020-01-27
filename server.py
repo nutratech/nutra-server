@@ -24,6 +24,7 @@ from ntserv.shop import (
     POST_products_reviews,
 )
 from ntserv.usda import (
+    GET_analyze,
     GET_biometrics,
     GET_exercises,
     GET_fdgrp,
@@ -105,6 +106,11 @@ def get_biometrics():
 @app.route("/search")
 def get_search():
     return Request(GET_search, request)
+
+
+@app.route("/analyze")
+def get_analyze():
+    return Request(GET_analyze, request)
 
 
 """

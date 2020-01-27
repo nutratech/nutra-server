@@ -40,3 +40,14 @@ def GET_search(request):
     )
 
     return Response(data=pg_result.rows)
+
+
+def GET_analyze(request):
+
+    # TODO - handle recipe_ids also, see `db.js` old-code
+    food_ids = request.args["food_ids"].split(",")
+    food_ids = list(map(lambda x: int(x), food_ids))
+
+    pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [food_ids])
+
+    return Response(data=pg_result.rows)
