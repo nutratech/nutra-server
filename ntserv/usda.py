@@ -8,6 +8,14 @@ def GET_fdgrp(request):
     return Response(data=pg_result.rows)
 
 
+def GET_serving_sizes(request):
+
+    food_id = request.args["food_id"]
+    pg_result = psql("SELECT * FROM get_food_servings(%s)", [food_id])
+
+    return Response(data=pg_result.rows)
+
+
 def GET_nutrients(request):
     pg_result = psql("SELECT * FROM nutr_def")
 

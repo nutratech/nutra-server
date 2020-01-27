@@ -30,6 +30,7 @@ from ntserv.usda import (
     GET_fdgrp,
     GET_nutrients,
     GET_search,
+    GET_serving_sizes,
 )
 from ntserv.utils.caffeine import caffeinate
 
@@ -86,6 +87,11 @@ Basic DB functions
 @app.route("/fdgrp")
 def get_fdgrp():
     return Request(GET_fdgrp, request)
+
+
+@app.route("/serving_sizes")
+def get_serving_sizes():
+    return Request(GET_serving_sizes, request)
 
 
 @app.route("/nutrients")
