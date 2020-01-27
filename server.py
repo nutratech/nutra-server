@@ -85,6 +85,23 @@ def get_nutrients():
     return Request(GET_nutrients, request)
 
 
+@app.route("/exercises")
+def get_exercises():
+    return Request(GET_exercises, request)
+
+
+"""
+-------------------------
+Private DB functions
+-------------------------
+"""
+
+
+@app.route("/nutrients")
+def get_nutrients():
+    return Request(GET_nutrients, request)
+
+
 """
 -------------------------
 Stripe functions
