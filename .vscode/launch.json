@@ -2,11 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python (server) [local]",
+            "name": "Python (flask-server) [local]",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/server.py",
-            "console": "integratedTerminal"
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "server.py",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "0"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload",
+                "--port=20000"
+            ],
+            // "console": "integratedTerminal",
         },
         {
             "name": "Python: Current File",

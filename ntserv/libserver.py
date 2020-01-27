@@ -53,27 +53,6 @@ Helper functions
 """
 
 
-def get_self_route_rules(app):
-    """ Gets human friendly url_map """
-
-    rules = []
-
-    for r in app.url_map._rules:
-        methods = set(r.methods)
-        # Remove unsightly ones
-        for method in ["HEAD", "OPTIONS"]:
-            try:
-                methods.remove(method)
-            except:
-                pass
-        # More filtering
-        if str(r) != "/static/<path:filename>":
-            rules.append(f"{str(methods).ljust(10)} {r}")
-
-    # Return string
-    return "\n".join(rules)
-
-
 def slack_msg(msg):
     """ Sends a slack alert message to simteam-extras channel """
 
@@ -97,3 +76,59 @@ def slack_msg(msg):
     requests.post(
         "https://slack.com/api/chat.postMessage", headers=headers, json=body,
     )
+
+
+def home_page_text(url_map):
+    """ Renders <pre></pre> compatible HTML home-page text """
+
+    return f"""
+Welcome to nutra-server, a open-sourced health and fitness app from Nutra, LLC.
+
+Track obscure nutrients and stay healthy with Python and PostgreSQL!
+
+
+Licensed under the GNU Public License, Version 3 (the "License");
+you may not use this application except in accordance with the License.
+
+    nutra-server, a server for nutratracker clients
+    Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] <nutratracker@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+Auto generated URL map:
+
+{url_map}
+"""
+
+
+def self_route_rules(app):
+    """ Gets human friendly url_map """
+
+    rules = []
+
+    for r in app.url_map._rules:
+        methods = set(r.methods)
+        # Remove unsightly ones
+        for method in ["HEAD", "OPTIONS"]:
+            try:
+                methods.remove(method)
+            except:
+                pass
+        # More filtering
+        if str(r) != "/static/<path:filename>":
+            rules.append(f"{str(methods).ljust(10)} {r}")
+
+    # Return string
+    return "\n".join(rules)

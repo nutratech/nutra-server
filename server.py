@@ -15,7 +15,7 @@ from flask import Flask, request
 from flask_cors import CORS
 
 from ntserv.accounts import POST_login, POST_register
-from ntserv.libserver import Request, Response, get_self_route_rules
+from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
@@ -41,8 +41,9 @@ Routes
 
 @app.route("/")
 def get_home_page():
-    url_map = get_self_route_rules(app)
-    return f"<pre>Welcome to the customer file parser.\n\nEndpoints:\n\n{url_map}<pre>"
+    url_map = self_route_rules(app)
+    home_page = home_page_text(url_map)
+    return f"<pre>{home_page}</pre>"
 
 
 @app.route("/logs")
@@ -141,7 +142,5 @@ if __name__ == "__main__":
     print("[__main__] bypassing gunicorn...")
     port = int(os.getenv("PORT", 20000))
     app.run(
-        host="127.0.0.1",
-        port=port,
-        # debug=True,
+        host="127.0.0.1", port=port, debug=True,
     )
