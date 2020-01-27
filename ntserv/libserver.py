@@ -7,6 +7,9 @@ import requests
 
 from .settings import SLACK_TOKEN
 
+__version__ = "0.0.1"
+__release__ = 1
+
 
 def Request(func, req):
     """ Makes a request and handles global exceptions, always returning a `Response()` """
@@ -30,8 +33,8 @@ def Response(data={}, code=200, status="OK"):
     return (
         {
             "program": "nutra-server",
-            "version": "0.0.1",
-            "release": 1,
+            "version": __version__,
+            "release": __release__,
             "datetime": datetime.now().strftime("%c").strip(),
             "timestamp": int(time.time() * 1000),
             "status": status if code < 400 else "Failure",
@@ -82,13 +85,14 @@ def home_page_text(url_map):
     """ Renders <pre></pre> compatible HTML home-page text """
 
     return f"""
-Welcome to nutra-server, a open-sourced health and fitness app from Nutra, LLC.
+Welcome to nutra-server (v{__version__})
+================================
 
+https://github.com/gamesguru/nutra-server
+
+An open-sourced health and fitness app from Nutra, LLC.
 Track obscure nutrients and stay healthy with Python and PostgreSQL!
-
-
-Licensed under the GNU Public License, Version 3 (the "License");
-you may not use this application except in accordance with the License.
+--------------------------------------------------------------------
 
     nutra-server, a server for nutratracker clients
     Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] <nutratracker@gmail.com>
@@ -104,10 +108,11 @@ you may not use this application except in accordance with the License.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program.  If not, see https://www.gnu.org/licenses
 
 
-Auto generated URL map:
+URL map (auto-generated)
+========================
 
 {url_map}
 """
