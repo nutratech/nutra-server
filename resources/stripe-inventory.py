@@ -16,7 +16,12 @@ stripe.api_key = STRIPE_API_KEY
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+# Used in other functions
+products = {}
+
+
 def main(args):
+    global products
 
     # Decide input args
     if len(args):
@@ -24,21 +29,28 @@ def main(args):
     else:
         skus = None
 
+    # Add each product
+    for product in stripe.Product.auto_paging_iter():
+        products[product.id] = product
+
     # Loop over SKUs
     for sku in stripe.SKU.auto_paging_iter():
+        if not products[sku.product].active:
+            continue
         if skus:
             # Iterate selected
             if id in skus:
                 sku_shell(sku)
         else:
-            sku_shell(sku)
             # Iterate all
+            sku_shell(sku)
 
 
 def sku_shell(sku):
     """ Modify the inventory for a particular SKU """
 
     print(f"\n{sku.attributes.name} ${sku.price / 100}")
+    print(f"inventory: {sku.inventory}")
 
     while True:
         _input = input("inventory dict: ")
