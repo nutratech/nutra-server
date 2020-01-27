@@ -23,7 +23,13 @@ from ntserv.shop import (
     GET_stripe_skus,
     POST_products_reviews,
 )
-from ntserv.usda import GET_biometrics, GET_exercises, GET_fdgrp, GET_nutrients
+from ntserv.usda import (
+    GET_biometrics,
+    GET_exercises,
+    GET_fdgrp,
+    GET_nutrients,
+    GET_search,
+)
 from ntserv.utils.caffeine import caffeinate
 
 # Export the Flask server for gunicorn
@@ -94,6 +100,11 @@ def get_exercises():
 @app.route("/biometrics")
 def get_biometrics():
     return Request(GET_biometrics, request)
+
+
+@app.route("/search")
+def get_search():
+    return Request(GET_search, request)
 
 
 """

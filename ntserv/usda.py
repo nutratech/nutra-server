@@ -26,3 +26,17 @@ def GET_biometrics(request):
     )
 
     return Response(data=pg_result.rows)
+
+
+def GET_search(request):
+
+    terms = request.args["terms"].split(",")
+
+    search_query = " | ".join(terms)
+    vector_query = "%" + "%,%".join(terms) + "%"
+
+    pg_result = psql(
+        "SELECT * FROM search_foods_by_name(%s, %s)", [search_query, vector_query]
+    )
+
+    return Response(data=pg_result.rows)
