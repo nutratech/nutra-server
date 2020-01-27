@@ -84,18 +84,24 @@ def slack_msg(msg):
 def home_page_text(url_map):
     """ Renders <pre></pre> compatible HTML home-page text """
 
+    email_link = f'<a href="mailto:nutratracker@gmail.com" target="_blank" rel="noopener">nutratracker@gmail.com</a>'
+    licsn_link = f'<a href="https://www.gnu.org/licenses" target="_blank" >https://www.gnu.org/licenses</a>'
     return f"""
 Welcome to nutra-server (v{__version__})
 ================================
 
-https://github.com/gamesguru/nutra-server
-
 An open-sourced health and fitness app from Nutra, LLC.
 Track obscure nutrients and stay healthy with Python and PostgreSQL!
+
+Source code:    &lt<a href=https://github.com/gamesguru/nutra-server target="blank">https://github.com/gamesguru/nutra-server</a>&gt
+Production app: &lt<a href=https://nutra-web.herokuapp.com target="blank">https://nutra-web.herokuapp.com</a>&gt
+
+--------------------------------------------------------------------
+LICENSE & COPYING NOTICE
 --------------------------------------------------------------------
 
     nutra-server, a server for nutratracker clients
-    Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] <nutratracker@gmail.com>
+    Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] &lt{email_link}&gt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -108,7 +114,9 @@ Track obscure nutrients and stay healthy with Python and PostgreSQL!
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see https://www.gnu.org/licenses
+    along with this program.  If not, see &lt{licsn_link}&gt
+
+--------------------------------------------------------------------
 
 
 URL map (auto-generated)
@@ -133,7 +141,8 @@ def self_route_rules(app):
                 pass
         # More filtering
         if str(r) != "/static/<path:filename>":
-            rules.append(f"{str(methods).ljust(10)} {r}")
+            rule = r.rule.replace("<", "&lt").replace(">", "&gt")
+            rules.append(f"{str(methods).ljust(10)} {rule}")
 
     # Return string
     return "\n".join(rules)
