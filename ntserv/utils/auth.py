@@ -17,17 +17,13 @@ AUTH_LEVEL_TRAINER = 40
 # -----------------------------
 
 
-def auth_level(username, password):
+def issue_token(user_id, password):
+    """ Returns tuple: (token, auth_level, error) """
 
     # TODO - report/handle:   jwt.exceptions.InvalidSignatureError
 
-    # Get hash (if username exists)
-    pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
-
-    #
-    # ERROR: No such user
-    if pg_result.err_msg:
-        return pg_result.Response
+    # Get hash
+    pg_result = psql("SELECT passwd FROM users WHERE user_id=%s", [user_id])
 
     #
     # Compare password
@@ -36,29 +32,35 @@ def auth_level(username, password):
 
     # Invalid password
     if not result:
-        return None, AUTH_LEVEL_READ_ONLY, f"Invalid password for: {username}"
-        # return Response(data={"error": f"Invalid password for: {username}"}, code=400)
+        return None, AUTH_LEVEL_READ_ONLY, "Invalid password/username combination"
 
     #
     # Create token
     try:
         token = jwt.decode(token, secret)
-        print(token)
+        return auth_level(user_id)
     except Exception as e:
         return None, AUTH_LEVEL_READ_ONLY, repr(e)
 
-    # return {'id': user_id, 'auth-level': auth_level}
 
+def auth_level(user_id):
+    """ Returns same tuple: (token, auth_level, error) """
 
-def issue_token():
+    #
+    # Check if email activated
+    pg_result = psql("SELECT email FROM users WHERE user_id=%s", [user_id])
+    email = pg_result.row["email"]
+    if not email:
+        return jwt_token(user_id, auth_level), auth_level, None
 
+    # TODO: wut
     # TODO: make auth_level dynamic
     auth_level = AUTH_LEVEL_BASIC
 
     expires_at = datetime.now() + TOKEN_EXPIRY
     token = jwt.encode(
         {
-            "username": username,
+            "id": user_id,
             "auth-level": auth_level,
             "expires": int(expires_at.timestamp()),
         },
@@ -66,4 +68,4 @@ def issue_token():
         algorithm="HS256",
     ).decode()
 
-    return turn
+    # return {'id': user_id, 'auth-level': auth_level}

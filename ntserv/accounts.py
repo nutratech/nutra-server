@@ -8,7 +8,8 @@ import stripe
 from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY, TOKEN_EXPIRY
-from .utils.auth import AUTH_LEVEL_BASIC, auth_level as al
+from .utils.account import user_id_from_username
+from .utils.auth import AUTH_LEVEL_READ_ONLY, issue_token
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -102,8 +103,21 @@ def POST_login(request):
     username = request.json["username"]
     password = request.json["password"]
 
-    token, auth_level, error = al(username, password)
+    #
+    # See if user exists
+    user_id = user_id_from_username(username)
+    if not user_id:
+        return Response(
+            data={
+                "error": f"No user found: {username}",
+                "auth-level": AUTH_LEVEL_READ_ONLY,
+            },
+            code=400,
+        )
 
+    #
+    # Get auth level and return JWT (token)
+    token, auth_level, error = issue_token(username, password)
     if token:
         return Response(data={"token": token, "auth-level": auth_level})
     else:
