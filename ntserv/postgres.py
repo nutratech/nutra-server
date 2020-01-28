@@ -36,7 +36,6 @@ def psql(query, params=None):
     # Attempt query
     try:
         cur.execute(query)
-        result.set_rows(cur.fetchall())
         con.commit()
         cur.close()
 
@@ -54,6 +53,13 @@ def psql(query, params=None):
         result.err_msg = err.pgerror
 
         return result
+
+    #
+    # Extract result
+    try:
+        result.set_rows(cur.fetchall())
+    except:
+        pass
 
     #
     # Set return message
