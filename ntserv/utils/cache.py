@@ -26,7 +26,7 @@ def reload():
     global food_des, fdgrp
 
     pg_result = psql("SELECT * FROM food_des")
-    food_des = list(pg_result.rows)
+    food_des = {f["id"]: f for f in pg_result.rows}
 
     pg_result = psql("SELECT * FROM fdgrp")
-    fdgrp = list(pg_result.rows)
+    fdgrp = {g["id"]: g for g in pg_result.rows}

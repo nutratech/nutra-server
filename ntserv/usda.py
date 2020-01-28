@@ -45,12 +45,27 @@ def POST_search(request):
     terms = request.json["terms"].split(",")
     query = " ".join(terms)
 
-    scores = {f["id"]: fuzz.ratio(query, f["shrt_desc"]) for f in cache.food_des}
+    scores = {
+        f["id"]: fuzz.ratio(query, f["long_desc"]) for f in cache.food_des.values()
+    }
     scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:SEARCH_LIMIT]
 
     results = []
     for score in scores:
-        pass
+        # Tally each score
+        id = score[0]
+        score = score[1]
+        item = cache.food_des[id]
+        fdgrp_id = item["fdgrp_id"]
+        result = {
+            "food_id": id,
+            "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
+            "long_desc": item["long_desc"],
+            "score": score,
+        }
+        # Add result to list
+        results.append(result)
+
     return Response(data=results)
 
 
