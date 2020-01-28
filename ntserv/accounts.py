@@ -157,6 +157,16 @@ def GET_favorites(request):
     return Response(data=pg_result.rows)
 
 
+def GET_logs(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
+
+    return Response(data=pg_result.rows)
+
+
 def GET_rdas(request):
 
     # TODO: get dynamically off token

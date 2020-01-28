@@ -14,7 +14,7 @@ import gunicorn
 from flask import Flask, request
 from flask_cors import CORS
 
-from ntserv.accounts import GET_favorites, GET_rdas, POST_login, POST_register
+from ntserv.accounts import GET_favorites, GET_logs, GET_rdas, POST_login, POST_register
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
     GET_products__product_id__reviews,
@@ -52,12 +52,6 @@ def get_home_page():
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
     return f"<pre>{home_page}</pre>"
-
-
-@app.route("/logs")
-def get_logs():
-    LOGS = open(f"app.log").read()
-    return f"<pre>{LOGS}</pre>"
 
 
 """
@@ -134,6 +128,11 @@ def get_favorites():
 @app.route("/rdas")
 def get_rdas():
     return Request(GET_rdas, request)
+
+
+@app.route("/logs")
+def get_logs():
+    return Request(GET_logs, request)
 
 
 """
