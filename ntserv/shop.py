@@ -14,7 +14,7 @@ stripe.api_key = STRIPE_API_KEY
 
 def GET_products(request):
 
-    pg_result = psql("SELECT * FROM products")
+    pg_result = psql("SELECT * FROM get_products_ratings()")
 
     return Response(data=pg_result.rows)
 
@@ -76,6 +76,7 @@ def POST_products_reviews(request):
 
 def GET_products_avg_ratings(request):
 
+    # TODO: deprecate, replace with /produces (it has average rating)
     pg_result = psql(
         "SELECT product_id, avg(rating)::float avg_rating FROM reviews GROUP BY product_id"
     )
