@@ -8,7 +8,7 @@ import stripe
 from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY, TOKEN_EXPIRY
-from .utils.auth import AUTH_LEVEL_BASIC
+from .utils.auth import AUTH_LEVEL_BASIC, auth_level as al
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -102,40 +102,12 @@ def POST_login(request):
     username = request.json["username"]
     password = request.json["password"]
 
-    # Get hash (if username exists)
-    pg_result = psql("SELECT passwd FROM users WHERE username=%s", [username])
+    token, auth_level, error = al(username, password)
 
-    #
-    # ERROR: No such user
-    if pg_result.err_msg:
-        return pg_result.Response
-
-    #
-    # Compare password
-    passwd = pg_result.row["passwd"]
-    result = bcrypt.checkpw(password.encode(), passwd.encode())
-
-    # Invalid password
-    if not result:
-        return Response(data={"error": f"Invalid password for: {username}"}, code=400)
-
-    #
-    # Create token
-    # TODO: make auth_level dynamic
-    auth_level = AUTH_LEVEL_BASIC
-
-    expires_at = datetime.now() + TOKEN_EXPIRY
-    token = jwt.encode(
-        {
-            "username": username,
-            "auth-level": auth_level,
-            "expires": int(expires_at.timestamp()),
-        },
-        JWT_SECRET,
-        algorithm="HS256",
-    ).decode()
-
-    return Response(data={"token": token})
+    if token:
+        return Response(data={"token": token, "auth-level": auth_level})
+    else:
+        return Response(data={"error": error, "auth-level": auth_level}, code=400)
 
 
 """

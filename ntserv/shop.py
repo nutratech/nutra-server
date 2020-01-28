@@ -46,6 +46,10 @@ def GET_stripe_skus(request):
     return Response(data=skus)
 
 
+def POST_order(request):
+    pass
+
+
 def POST_products_reviews(request):
 
     # Parse incoming request

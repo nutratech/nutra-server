@@ -34,6 +34,7 @@ from ntserv.shop import (
     GET_skus,
     GET_stripe_products,
     GET_stripe_skus,
+    POST_order,
     POST_products_reviews,
 )
 from ntserv.usda import (
@@ -198,6 +199,11 @@ def get_stripe_products():
 @app.route("/stripe/skus")
 def get_stripe_skus():
     return Request(GET_stripe_skus, request)
+
+
+@app.route("/order", methods=["POST"])
+def post_order():
+    return Request(POST_order, request)
 
 
 @app.route("/products/<id>/reviews")
