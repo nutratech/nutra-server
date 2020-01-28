@@ -155,3 +155,13 @@ def GET_favorites(request):
     pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [user_id])
 
     return Response(data=pg_result.rows)
+
+
+def GET_rdas(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM get_user_rdas(%s)", [user_id])
+
+    return Response(data=pg_result.rows)
