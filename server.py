@@ -14,7 +14,14 @@ import gunicorn
 from flask import Flask, request
 from flask_cors import CORS
 
-from ntserv.accounts import GET_favorites, GET_logs, GET_rdas, POST_login, POST_register
+from ntserv.accounts import (
+    GET_favorites,
+    GET_logs,
+    GET_rdas,
+    GET_recipes,
+    POST_login,
+    POST_register,
+)
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
     GET_products__product_id__reviews,
@@ -123,6 +130,11 @@ Private DB functions
 @app.route("/favorites")
 def get_favorites():
     return Request(GET_favorites, request)
+
+
+@app.route("/recipes")
+def get_recipes():
+    return Request(GET_recipes, request)
 
 
 @app.route("/rdas")

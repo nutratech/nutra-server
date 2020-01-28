@@ -175,3 +175,13 @@ def GET_rdas(request):
     pg_result = psql("SELECT * FROM get_user_rdas(%s)", [user_id])
 
     return Response(data=pg_result.rows)
+
+
+def GET_recipes(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM recipe_des WHERE user_id=%s", [user_id])
+
+    return Response(data=pg_result.rows)
