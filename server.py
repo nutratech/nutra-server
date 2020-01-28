@@ -45,7 +45,7 @@ from ntserv.usda import (
     GET_exercises,
     GET_fdgrp,
     GET_nutrients,
-    POST_search,
+    GET_search,
     GET_serving_sizes,
 )
 from ntserv.utils.cache import reload
@@ -133,9 +133,9 @@ def get_biometrics():
     return Request(GET_biometrics, request)
 
 
-@app.route("/search", methods=["POST"])
-def post_search():
-    return Request(POST_search, request)
+@app.route("/search")
+def gett_search():
+    return Request(GET_search, request)
 
 
 @app.route("/analyze")

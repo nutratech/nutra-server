@@ -40,13 +40,14 @@ def GET_biometrics(request):
     return Response(data=pg_result.rows)
 
 
-def POST_search(request):
+def GET_search(request):
 
-    terms = request.json["terms"].split(",")
+    terms = request.args["terms"].split(",")
     query = " ".join(terms)
 
     scores = {
-        f["id"]: fuzz.ratio(query, f["long_desc"]) for f in cache.food_des.values()
+        f["id"]: fuzz.token_set_ratio(query, f["long_desc"])
+        for f in cache.food_des.values()
     }
     scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:SEARCH_LIMIT]
 
