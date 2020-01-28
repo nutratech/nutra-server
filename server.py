@@ -19,6 +19,8 @@ from ntserv.accounts import (
     GET_logs,
     GET_rdas,
     GET_recipes,
+    GET_trainer_users,
+    GET_user_trainers,
     POST_login,
     POST_register,
 )
@@ -78,6 +80,16 @@ def post_register():
 @app.route("/login", methods=["POST"])
 def post_login():
     return Request(POST_login, request)
+
+
+@app.route("/user/trainers")
+def get_user_trainers():
+    return Request(GET_user_trainers, request)
+
+
+@app.route("/trainer/users")
+def get_trainer_users():
+    return Request(GET_trainer_users, request)
 
 
 """

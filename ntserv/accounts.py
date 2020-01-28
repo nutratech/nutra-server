@@ -143,6 +143,33 @@ def POST_login(request):
 
 """
 -------------------------
+User-Trainer functions
+-------------------------
+"""
+
+
+def GET_trainer_users(request):
+
+    # TODO: get dynamically off token
+    trainer_id = 5
+
+    pg_result = psql("SELECT * FROM get_trainer_users(%s)", [trainer_id])
+
+    return Response(data=pg_result.rows)
+
+
+def GET_user_trainers(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM get_user_trainers(%s)", [user_id])
+
+    return Response(data=pg_result.rows)
+
+
+"""
+-------------------------
 Private DB functions
 -------------------------
 """

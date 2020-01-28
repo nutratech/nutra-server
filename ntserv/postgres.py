@@ -27,7 +27,7 @@ def psql(query, params=None):
     # Print query
     if params:
         query = cur.mogrify(query, params).decode("utf-8")
-    print(f"[psql] {query}")
+    print(f"[psql]   {query};")
 
     # init result object
     result = PgResult(query)
@@ -41,7 +41,7 @@ def psql(query, params=None):
         #
         # Log error
         # https://kb.objectrocket.com/postgresql/python-error-handling-with-the-psycopg2-postgresql-adapter-645
-        print(f"[psql] {err.pgerror}")
+        print(f"[psql]   {err.pgerror}")
 
         # Roll back
         con.rollback()
@@ -65,7 +65,7 @@ def psql(query, params=None):
     #
     # Set return message
     result.msg = cur.statusmessage
-    print(f"[psql] {result.msg}")
+    print(f"[psql]   {result.msg}")
 
     return result
 
