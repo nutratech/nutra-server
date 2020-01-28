@@ -15,6 +15,8 @@ from flask import Flask, request
 from flask_cors import CORS
 
 from ntserv.accounts import (
+    GET_biometric,
+    GET_exercise_log,
     GET_favorites,
     GET_logs,
     GET_rdas,
@@ -159,6 +161,16 @@ def get_rdas():
 @app.route("/logs")
 def get_logs():
     return Request(GET_logs, request)
+
+
+@app.route("/biometric")
+def get_biometric():
+    return Request(GET_biometric, request)
+
+
+@app.route("/exercise_logs")
+def get_exercise_logs():
+    return Request(GET_exercise_log, request)
 
 
 """

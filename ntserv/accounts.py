@@ -195,6 +195,26 @@ def GET_logs(request):
     return Response(data=pg_result.rows)
 
 
+def GET_biometric(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM biometric_logs WHERE user_id=%s", [user_id])
+
+    return Response(data=pg_result.rows)
+
+
+def GET_exercise_log(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM exercise_logs WHERE user_id=%s", [user_id])
+
+    return Response(data=pg_result.rows)
+
+
 def GET_rdas(request):
 
     # TODO: get dynamically off token
