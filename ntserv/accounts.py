@@ -7,7 +7,7 @@ import stripe
 
 from .libserver import Response
 from .postgres import psql
-from .settings import JWT_SECRET, STRIPE_API_KEY, TOKEN_EXPIRY
+from .settings import JWT_SECRET, STRIPE_API_KEY
 from .utils.account import user_id_from_username
 from .utils.auth import AUTH_LEVEL_READ_ONLY, issue_token
 
@@ -109,19 +109,22 @@ def POST_login(request):
     if not user_id:
         return Response(
             data={
-                "error": f"No user found: {username}",
+                "token": None,
                 "auth-level": AUTH_LEVEL_READ_ONLY,
+                "error": f"No user found: {username}",
             },
-            code=400,
+            code=202,
         )
 
     #
     # Get auth level and return JWT (token)
-    token, auth_level, error = issue_token(username, password)
+    token, auth_level, error = issue_token(user_id, password)
     if token:
         return Response(data={"token": token, "auth-level": auth_level})
     else:
-        return Response(data={"error": error, "auth-level": auth_level}, code=400)
+        return Response(
+            data={"token": None, "auth-level": auth_level, "error": error}, code=202
+        )
 
 
 """

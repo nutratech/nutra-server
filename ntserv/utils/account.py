@@ -9,7 +9,7 @@ def user_id_from_username(username):
     if pg_result.err_msg:
         return None
 
-    return pg_result.row[0]
+    return pg_result.row["id"]
 
 
 def user_id_from_email(email):
