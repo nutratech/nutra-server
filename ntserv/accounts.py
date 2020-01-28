@@ -138,3 +138,20 @@ def POST_login(request):
     ).decode()
 
     return Response(data={"token": token})
+
+
+"""
+-------------------------
+Private DB functions
+-------------------------
+"""
+
+
+def GET_favorites(request):
+
+    # TODO: get dynamically off token
+    user_id = 5
+
+    pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [user_id])
+
+    return Response(data=pg_result.rows)
