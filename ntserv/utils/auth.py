@@ -88,3 +88,26 @@ def jwt_token(user_id, auth_level):
     ).decode()
 
     return token
+
+
+def check_token(token):
+    """ Checks auth level from pre-issued token """
+
+    try:
+        token = jwt.decode(token, JWT_SECRET, algorithm="HS256")
+        return AuthResult(token), None
+    except Exception as e:
+        return None, repr(e)
+
+
+def check_request(request):
+    token = request.headers["authorization"].split()[1]
+    return check_token(token)
+
+
+class AuthResult:
+    def __init__(self, token):
+        self.id = token["id"]
+        self.auth_level = token["auth-level"]
+        self.expires = token["expires"]
+        self.expired = datetime.now().timestamp() > self.expires

@@ -15,6 +15,7 @@ from flask import Flask, request
 from flask_cors import CORS
 
 from ntserv.accounts import (
+    DEL_favorites,
     GET_biometric,
     GET_exercise_log,
     GET_favorites,
@@ -23,6 +24,7 @@ from ntserv.accounts import (
     GET_recipes,
     GET_trainer_users,
     GET_user_trainers,
+    POST_favorites,
     POST_login,
     POST_register,
 )
@@ -144,9 +146,15 @@ Private DB functions
 """
 
 
-@app.route("/favorites")
+@app.route("/favorites", methods=["GET", "POST", "DELETE"])
 def get_favorites():
-    return Request(GET_favorites, request)
+    method = request.environ["REQUEST_METHOD"]
+    if method == "POST":
+        return Request(POST_favorites, request)
+    elif method == "GET":
+        return Request(GET_favorites, request)
+    elif method == "DELETE":
+        return Request(DEL_favorites, request)
 
 
 @app.route("/recipes")

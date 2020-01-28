@@ -9,7 +9,13 @@ from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY
 from .utils.account import user_id_from_username
-from .utils.auth import AUTH_LEVEL_READ_ONLY, issue_token
+from .utils.auth import (
+    AUTH_LEVEL_BASIC,
+    AUTH_LEVEL_READ_ONLY,
+    AUTH_LEVEL_UNCONFIRMED,
+    check_request,
+    issue_token,
+)
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -162,13 +168,51 @@ Private DB functions
 
 
 def GET_favorites(request):
+    authr, error = check_request(request)
+    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
+        return Response(data={"error": error}, code=401)
 
-    # TODO: get dynamically off token
-    user_id = 5
-
-    pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [user_id])
+    pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [authr.id])
 
     return Response(data=pg_result.rows)
+
+
+def POST_favorites(request):
+    authr, error = check_request(request)
+    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_BASIC:
+        return Response(data={"error": error}, code=401)
+
+    # Attempt insert
+    food_id = request.json["food_id"]
+    pg_result = psql(
+        "INSERT INTO favorite_foods (user_id, food_id) VALUES (%s, %s) RETURNING created_at",
+        [authr.id, food_id],
+    )
+
+    # ERROR: Duplicate?
+    if pg_result.err_msg:
+        return Response(data={"error": pg_result.err_msg}, code=400)
+
+    return Response()
+
+
+def DEL_favorites(request):
+    authr, error = check_request(request)
+    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_BASIC:
+        return Response(data={"error": error}, code=401)
+
+    # Attempt insert
+    food_id = request.json["food_id"]
+    pg_result = psql(
+        "DELETE FROM favorite_foods WHERE user_id=%s AND food_id=%s RETURNING food_id",
+        [authr.id, food_id],
+    )
+
+    # ERROR: Duplicate?
+    if pg_result.err_msg:
+        return Response(data={"error": pg_result.err_msg}, code=400)
+
+    return Response()
 
 
 def GET_logs(request):
