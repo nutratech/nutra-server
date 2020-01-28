@@ -13,6 +13,20 @@ stripe.api_key = STRIPE_API_KEY
 
 
 def GET_products(request):
+
+    pg_result = psql("SELECT * FROM products")
+
+    return Response(data=pg_result.rows)
+
+
+def GET_skus(request):
+
+    pg_result = psql("SELECT * FROM skus")
+
+    return Response(data=pg_result.rows)
+
+
+def GET_stripe_products(request):
     _products = stripe.Product
     products = []
     for p in _products.auto_paging_iter():
