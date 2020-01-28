@@ -1,5 +1,9 @@
+from fuzzywuzzy import fuzz
+
 from .libserver import Response
 from .postgres import psql
+from .settings import SEARCH_LIMIT
+from .utils import cache
 
 
 def GET_fdgrp(request):
@@ -36,18 +40,18 @@ def GET_biometrics(request):
     return Response(data=pg_result.rows)
 
 
-def GET_search(request):
+def POST_search(request):
 
-    terms = request.args["terms"].split(",")
+    terms = request.json["terms"].split(",")
+    query = " ".join(terms)
 
-    search_query = " | ".join(terms)
-    vector_query = "%" + "%,%".join(terms) + "%"
+    scores = {f["id"]: fuzz.ratio(query, f["shrt_desc"]) for f in cache.food_des}
+    scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:SEARCH_LIMIT]
 
-    pg_result = psql(
-        "SELECT * FROM search_foods_by_name(%s, %s)", [search_query, vector_query]
-    )
-
-    return Response(data=pg_result.rows)
+    results = []
+    for score in scores:
+        pass
+    return Response(data=results)
 
 
 def GET_analyze(request):

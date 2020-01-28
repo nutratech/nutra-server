@@ -45,10 +45,14 @@ from ntserv.usda import (
     GET_exercises,
     GET_fdgrp,
     GET_nutrients,
-    GET_search,
+    POST_search,
     GET_serving_sizes,
 )
+from ntserv.utils.cache import reload
 from ntserv.utils.caffeine import caffeinate
+
+# Load SQL cache in-memory
+reload()
 
 # Export the Flask server for gunicorn
 app = Flask(__name__)
@@ -129,9 +133,9 @@ def get_biometrics():
     return Request(GET_biometrics, request)
 
 
-@app.route("/search")
-def get_search():
-    return Request(GET_search, request)
+@app.route("/search", methods=["POST"])
+def post_search():
+    return Request(POST_search, request)
 
 
 @app.route("/analyze")
