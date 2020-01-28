@@ -36,8 +36,6 @@ def psql(query, params=None):
     # Attempt query
     try:
         cur.execute(query)
-        con.commit()
-        cur.close()
 
     except psycopg2.Error as err:
         #
@@ -58,8 +56,11 @@ def psql(query, params=None):
     # Extract result
     try:
         result.set_rows(cur.fetchall())
+        con.commit()
+        cur.close()
     except:
-        pass
+        con.rollback()
+        cur.close()
 
     #
     # Set return message
