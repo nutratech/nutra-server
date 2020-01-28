@@ -12,7 +12,7 @@ stripe.api_key = STRIPE_API_KEY
 # TODO - remove `result` attribute from: data={'result': products}
 
 
-def GET_stripe_products(request):
+def GET_products(request):
     _products = stripe.Product
     products = []
     for p in _products.auto_paging_iter():
@@ -38,7 +38,11 @@ def POST_products_reviews(request):
     body = request.json
     rating = body["rating"]
     review_text = body["review_text"]
-    stripe_product_id = body["stripe_product_id"]
+    try:
+        product_id = body["product_id"]
+    except:
+        # TODO: deprecate
+        product_id = body["stripe_product_id"]
 
     token = jwt.decode(request.headers["authorization"].split()[1], JWT_SECRET)
 
@@ -48,8 +52,8 @@ def POST_products_reviews(request):
     #
     # Post review
     pg_result = psql(
-        "INSERT INTO reviews (user_id, rating, review_text, stripe_product_id) VALUES (%s, %s, %s, %s) RETURNING id",
-        [user_id, rating, review_text, stripe_product_id],
+        "INSERT INTO reviews (user_id, rating, review_text, product_id) VALUES (%s, %s, %s, %s) RETURNING id",
+        [user_id, rating, review_text, product_id],
     )
 
     #
@@ -63,7 +67,7 @@ def POST_products_reviews(request):
 def GET_products_avg_ratings(request):
 
     pg_result = psql(
-        "SELECT stripe_product_id, avg(rating)::float avg_rating FROM reviews GROUP BY stripe_product_id"
+        "SELECT product_id, avg(rating)::float avg_rating FROM reviews GROUP BY product_id"
     )
 
     return Response(data=pg_result.rows)

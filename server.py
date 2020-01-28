@@ -26,7 +26,7 @@ from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
-    GET_stripe_products,
+    GET_products,
     GET_stripe_skus,
     POST_products_reviews,
 )
@@ -155,8 +155,8 @@ Stripe functions
 
 
 @app.route("/stripe/products")
-def get_stripe_products():
-    return Request(GET_stripe_products, request)
+def get_products():
+    return Request(GET_products, request)
 
 
 @app.route("/stripe/skus")
