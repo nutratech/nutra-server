@@ -101,8 +101,11 @@ def check_token(token):
 
 
 def check_request(request):
-    token = request.headers["authorization"].split()[1]
-    return check_token(token)
+    try:
+        token = request.headers["authorization"].split()[1]
+        return check_token(token)
+    except Exception as e:
+        return None, repr(e)
 
 
 class AuthResult:
