@@ -24,11 +24,3 @@ PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
 TOKEN_EXPIRY = timedelta(days=1)
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
-
-# Authorization levels
-AUTH_LEVEL_UNAUTHED = -10
-AUTH_LEVEL_READ_ONLY = 0
-AUTH_LEVEL_UNCONFIRMED = 10
-AUTH_LEVEL_BASIC = 20
-AUTH_LEVEL_PAID = 30
-AUTH_LEVEL_TRAINER = 40
