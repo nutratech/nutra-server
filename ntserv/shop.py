@@ -38,11 +38,7 @@ def POST_products_reviews(request):
     body = request.json
     rating = body["rating"]
     review_text = body["review_text"]
-    try:
-        product_id = body["product_id"]
-    except:
-        # TODO: deprecate
-        product_id = body["stripe_product_id"]
+    product_id = body["product_id"]
 
     token = jwt.decode(request.headers["authorization"].split()[1], JWT_SECRET)
 
