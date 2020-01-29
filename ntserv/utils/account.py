@@ -1,9 +1,10 @@
 import smtplib
 import ssl
+from email.message import EmailMessage
 
 from ..libserver import Response
 from ..postgres import psql
-from ..settings import PROD_EMAIL, PROD_EMAIL_PASS
+from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 
 
 def user_id_from_username(username):
@@ -26,20 +27,36 @@ def user_id_from_email(email):
 # ----------------------
 
 
-def email(body=None):
+def email(recipient, subject, body):
     """ Sends an email to ourselves """
 
     port = 465  # For SSL
-    username = "routesim.gdia@gmail.com"
-    password = "hypewagon_1"
+
+    msg = EmailMessage()
+    msg["From"] = PROD_EMAIL
+    msg["To"] = recipient
+    msg["Subject"] = subject
+    msg.set_content(body)
 
     # Create a secure SSL context
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         # Login and send
-        server.login(username, password)
-        server.sendmail(username, username, body)
+        server.login(PROD_EMAIL, PROD_EMAIL_PASS)
+        server.send_message(msg)
 
 
-def send_activation_email(email, token):
-    pass
+def send_activation_email(recipient, token):
+    """ Sends an onboarding email """
+
+    """js
+    await sendEmail(email, 'Activate Nutra account',
+        `Click the link to activate your account: http://${utils.SERVER_HOST}/confirm_email?email=${email}&email_token_activate=${token_jwe}`,
+        'Dispatch email to activate account failed',
+        username)
+    """
+    email(
+        recipient,
+        subject="Activate your Nutra account!",
+        body=f"Click the link to activate your account: {SERVER_HOST}/confirm_email?email={recipient}&token=${token}",
+    )

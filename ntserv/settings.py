@@ -15,6 +15,20 @@ STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 PROD_EMAIL = os.getenv("PROD_EMAIL")
 PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
 
+# Server host
+SERVER_PORT = os.getenv("PORT", 8080)
+ON_REMOTE = os.getenv("ON_REMOTE", False)
+SERVER_HOST = (
+    "https://nutra-server.herokuapp.com"
+    if ON_REMOTE
+    else f"http://localhost:{SERVER_PORT}"
+)
+WEB_HOST = (
+    "https://nutra-web.herokuapp.com"
+    if ON_REMOTE
+    else f"http://localhost:{SERVER_PORT}"
+)
+
 # PostgreSQL
 PSQL_DATABASE = os.getenv("PSQL_DB_NAME", "nutra")
 PSQL_SCHEMA = "nt"

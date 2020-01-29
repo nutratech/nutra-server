@@ -87,47 +87,61 @@ def POST_register(request):
     # -------------------------------------
     # Attempt to SQL insert user
     # -------------------------------------
+    # TODO: transactional `block()`
 
     # Check if user has Stripe with us
     if email in cache.customers:
+        # ----------------------
+        # Returning customer
+        # ----------------------
         stripe_id = cache.customers[email].id
+        # TODO - handle these cases
+        return Response(
+            data={
+                "message": "Looks like you have an account, we're working to support this"
+            },
+            code=202,
+        )
     else:
+        # ----------------------
+        # No stripe
+        # ----------------------
         stripe_id = stripe.Customer.create(email=email).id
-    # TODO: transactional `block()`
-    # Insert user
-    passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
-    pg_result = psql(
-        "INSERT INTO users (username, passwd, stripe_id) VALUES (%s, %s, %s) RETURNING id",
-        [username, passwd, stripe_id],
-    )
-    # ERRORs
-    if pg_result.err_msg:
-        return pg_result.Response
-    user_id = pg_result.row["id"]
-    #
-    # Insert emails
-    pg_result = psql(
-        "INSERT INTO emails (user_id, email) VALUES (%s, %s) RETURNING email",
-        [user_id, email],
-    )
-    # ERRORs
-    if pg_result.err_msg:
-        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
-        return pg_result.Response  #
-    #
-    # Insert tokens
-    token = str(uuid.uuid4()).replace("-", "")
-    send_activation_email(email, token)
-    pg_result = psql(
-        "INSERT INTO tokens (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
-        [user_id, token, "email_token_activate"],
-    )
-    # ERRORs
-    if pg_result.err_msg:
-        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
-        return pg_result.Response
 
-    return Response(data={"message": "Successfully registered", "id": user_id})
+        # CREATE USER
+        passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+        pg_result = psql(
+            "INSERT INTO users (username, passwd, stripe_id) VALUES (%s, %s, %s) RETURNING id",
+            [username, passwd, stripe_id],
+        )
+        # ERRORs
+        if pg_result.err_msg:
+            return pg_result.Response
+        user_id = pg_result.row["id"]
+        # Insert emails
+        pg_result = psql(
+            "INSERT INTO emails (user_id, email) VALUES (%s, %s) RETURNING email",
+            [user_id, email],
+        )
+        # ERRORs
+        if pg_result.err_msg:
+            psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
+            return pg_result.Response  #
+        # Insert tokens
+        token = str(uuid.uuid4()).replace("-", "")
+        pg_result = psql(
+            "INSERT INTO tokens (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
+            [user_id, token, "email_token_activate"],
+        )
+        # ERRORs
+        if pg_result.err_msg:
+            psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
+            return pg_result.Response
+        #
+        # Send activation email
+        send_activation_email(email, token)
+
+        return Response(data={"message": "Successfully registered", "id": user_id})
 
 
 def POST_login(request):
