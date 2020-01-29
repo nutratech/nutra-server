@@ -49,7 +49,9 @@ def auth_level(user_id):
 
     #
     # Check if email activated
-    pg_result = psql("SELECT email FROM users WHERE id=%s", [user_id])
+    pg_result = psql(
+        "SELECT email FROM emails WHERE user_id=%s AND activated='t'", [user_id]
+    )
     email = pg_result.row["email"]
     if not email:
         return jwt_token(user_id, auth_level), auth_level, None

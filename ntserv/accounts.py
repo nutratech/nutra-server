@@ -144,12 +144,7 @@ def GET_user_details(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
-    pg_result = psql(
-        "SELECT user_id, username, email, unverified_email, accept_eula, stripe_id, certified_beta_tester, certified_beta_trainer_tester FROM users.users WHERE user_id=%s",
-        [user_id],
-    )
-
+    pg_result = psql("SELECT * FROM get_user_details(%s)", [user_id])
     return Response(data=pg_result.rows)
 
 
@@ -164,9 +159,7 @@ def GET_trainer_users(request):
 
     # TODO: get dynamically off token
     trainer_id = 1
-
     pg_result = psql("SELECT * FROM get_trainer_users(%s)", [trainer_id])
-
     return Response(data=pg_result.rows)
 
 
@@ -174,9 +167,7 @@ def GET_user_trainers(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
     pg_result = psql("SELECT * FROM get_user_trainers(%s)", [user_id])
-
     return Response(data=pg_result.rows)
 
 
@@ -195,7 +186,6 @@ def GET_favorites(request):
         return Response(data={"error": error}, code=401)
 
     pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [authr.id])
-
     return Response(data=pg_result.rows)
 
 
@@ -214,7 +204,6 @@ def POST_favorites(request):
     # ERROR: Duplicate?
     if pg_result.err_msg:
         return Response(data={"error": pg_result.err_msg}, code=400)
-
     return Response()
 
 
@@ -233,7 +222,6 @@ def DEL_favorites(request):
     # ERROR: Duplicate?
     if pg_result.err_msg:
         return Response(data={"error": pg_result.err_msg}, code=400)
-
     return Response()
 
 
@@ -241,9 +229,7 @@ def GET_logs(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
     pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
-
     return Response(data=pg_result.rows)
 
 
@@ -251,9 +237,7 @@ def GET_biometric(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
     pg_result = psql("SELECT * FROM biometric_logs WHERE user_id=%s", [user_id])
-
     return Response(data=pg_result.rows)
 
 
@@ -261,9 +245,7 @@ def GET_exercise_log(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
     pg_result = psql("SELECT * FROM exercise_logs WHERE user_id=%s", [user_id])
-
     return Response(data=pg_result.rows)
 
 
@@ -271,9 +253,7 @@ def GET_rdas(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
     pg_result = psql("SELECT * FROM get_user_rdas(%s)", [user_id])
-
     return Response(data=pg_result.rows)
 
 
@@ -281,7 +261,5 @@ def GET_recipes(request):
 
     # TODO: get dynamically off token
     user_id = 1
-
     pg_result = psql("SELECT * FROM recipe_des WHERE user_id=%s", [user_id])
-
     return Response(data=pg_result.rows)
