@@ -1,4 +1,5 @@
 import re
+import uuid
 from datetime import datetime
 
 import bcrypt
@@ -8,7 +9,8 @@ import stripe
 from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY
-from .utils.account import user_id_from_username
+from .utils import cache
+from .utils.account import send_activation_email, user_id_from_username
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_READ_ONLY,
@@ -17,7 +19,6 @@ from .utils.auth import (
     check_request,
     issue_token,
 )
-from .utils import cache
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -53,7 +54,7 @@ def POST_register(request):
     ):
         return Response(
             data={
-                "error": "Username must be between 6 an 18 characters and contain only lowercase letters, numbers, and underscores"
+                "error": "Username must be 6-18 chars, and contain only lowercase letters, numbers, and underscores"
             },
             code=400,
         )
@@ -70,7 +71,7 @@ def POST_register(request):
     ):
         return Response(
             data={
-                "error": "Password must be 6-18 chars long, and contain both uppercase, lowercase, and a special character",
+                "error": "Password must be 6-18 chars long, and contain an uppercase, a lowercase, and a special character",
             },
             code=400,
         )
@@ -81,30 +82,48 @@ def POST_register(request):
         r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
         email,
     ):
-        return Response(data={"error": "Email invalid"}, code=400)
+        return Response(data={"error": "Email address not recognizable"}, code=400)
 
     # -------------------------------------
     # Attempt to SQL insert user
     # -------------------------------------
-
-    # TODO: transactional `block()`
-    # TODO: check for existing email
 
     # Check if user has Stripe with us
     if email in cache.customers:
         stripe_id = cache.customers[email].id
     else:
         stripe_id = stripe.Customer.create(email=email).id
-
+    # TODO: transactional `block()`
+    # Insert user
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
     pg_result = psql(
         "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s) RETURNING id",
         [username, passwd, email, stripe_id],
     )
-
-    #
     # ERRORs
     if pg_result.err_msg:
+        return pg_result.Response
+    user_id = pg_result.row["id"]
+    #
+    # Insert emails
+    pg_result = psql(
+        "INSERT INTO emails (user_id, email) VALUES (%s, %s) RETURNING email",
+        [user_id, email],
+    )
+    # ERRORs
+    if pg_result.err_msg:
+        psql("DELETE FROM users WHERE id=%s RETURNING product_id", [user_id])
+        return pg_result.Response  #
+    # Insert tokens
+    token = str(uuid.uuid4()).replace("-", "")
+    send_activation_email(email, token)
+    pg_result = psql(
+        "INSERT INTO tokens (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
+        [user_id, token, "email_token_activate"],
+    )
+    # ERRORs
+    if pg_result.err_msg:
+        psql("DELETE FROM users WHERE id=%s RETURNING product_id", [user_id])
         return pg_result.Response
 
     return Response(data={"message": "Successfully registered"})

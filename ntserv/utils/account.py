@@ -15,3 +15,7 @@ def user_id_from_username(username):
 
 def user_id_from_email(email):
     pass
+
+
+def send_activation_email(email, token):
+    pass
