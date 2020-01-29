@@ -3,9 +3,9 @@ from datetime import datetime
 import bcrypt
 import jwt
 
+from ..libserver import Response
 from ..postgres import psql
 from ..settings import JWT_SECRET, TOKEN_EXPIRY
-
 
 # -----------------------------
 # Authorization levels
@@ -22,8 +22,6 @@ AUTH_LEVEL_TRAINER = 40
 def issue_token(user_id, password):
     """ Returns tuple: (token, auth_level, error) """
 
-    # TODO - report/handle:   jwt.exceptions.InvalidSignatureError
-
     # Get hash
     pg_result = psql("SELECT passwd FROM users WHERE id=%s", [user_id])
 
@@ -39,7 +37,6 @@ def issue_token(user_id, password):
     #
     # Create token
     try:
-        # token = jwt.decode(token, secret)
         return auth_level(user_id)
     except Exception as e:
         return None, AUTH_LEVEL_READ_ONLY, repr(e)
@@ -69,8 +66,6 @@ def auth_level(user_id):
 
     # Made it this far.. create token
     return jwt_token(user_id, auth_level), auth_level, None
-
-    # return {'id': user_id, 'auth-level': auth_level}
 
 
 def jwt_token(user_id, auth_level):
@@ -114,3 +109,19 @@ class AuthResult:
         self.auth_level = token["auth-level"]
         self.expires = token["expires"]
         self.expired = datetime.now().timestamp() > self.expires
+
+
+"""
+---------------------
+Auth Decorator
+---------------------
+"""
+
+
+def authdecorator(func, request):
+    """ Decorator function for authorized endpoints """
+    authr, error = check_request(request)
+    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
+        return Response(data={"error": error}, code=401)
+
+    return func()

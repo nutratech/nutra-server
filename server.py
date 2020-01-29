@@ -23,6 +23,7 @@ from ntserv.accounts import (
     GET_rdas,
     GET_recipes,
     GET_trainer_users,
+    GET_user_details,
     GET_user_trainers,
     POST_favorites,
     POST_login,
@@ -30,9 +31,9 @@ from ntserv.accounts import (
 )
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
+    GET_products,
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
-    GET_products,
     GET_skus,
     GET_stripe_products,
     GET_stripe_skus,
@@ -74,11 +75,14 @@ def get_home_page():
     return f"<pre>{home_page}</pre>"
 
 
-"""
--------------------------
-Account functions
--------------------------
-"""
+@app.route("/user_details")
+def get_user_details():
+    return Request(GET_user_details, request)
+
+
+# -------------------------
+# Account functions
+# -------------------------
 
 
 @app.route("/register", methods=["POST"])
@@ -101,11 +105,9 @@ def get_trainer_users():
     return Request(GET_trainer_users, request)
 
 
-"""
--------------------------
-Basic DB functions
--------------------------
-"""
+# -------------------------
+# Basic DB functions
+# -------------------------
 
 
 @app.route("/fdgrp")
@@ -134,7 +136,7 @@ def get_biometrics():
 
 
 @app.route("/search")
-def gett_search():
+def get_search():
     return Request(GET_search, request)
 
 
@@ -143,20 +145,18 @@ def get_analyze():
     return Request(GET_analyze, request)
 
 
-"""
--------------------------
-Private DB functions
--------------------------
-"""
+# -------------------------
+# Private DB functions
+# -------------------------
 
 
 @app.route("/favorites", methods=["GET", "POST", "DELETE"])
-def get_favorites():
+def favorites():
     method = request.environ["REQUEST_METHOD"]
-    if method == "POST":
-        return Request(POST_favorites, request)
-    elif method == "GET":
+    if method == "GET":
         return Request(GET_favorites, request)
+    elif method == "POST":
+        return Request(POST_favorites, request)
     elif method == "DELETE":
         return Request(DEL_favorites, request)
 
@@ -186,11 +186,9 @@ def get_exercise_logs():
     return Request(GET_exercise_log, request)
 
 
-"""
--------------------------
-Stripe functions
--------------------------
-"""
+# -------------------------
+# Stripe functions
+# -------------------------
 
 
 @app.route("/products")
@@ -233,6 +231,7 @@ def get_products_avg_ratings():
     return Request(GET_products_avg_ratings, request)
 
 
+#
 # Make script executable
 if __name__ == "__main__":
     """ Run as file (or debug it in vscode!) """
