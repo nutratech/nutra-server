@@ -98,7 +98,7 @@ def POST_register(request):
 
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
     pg_result = psql(
-        "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s)",
+        "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s) RETURNING id",
         [username, passwd, email, stripe_id],
     )
 
