@@ -97,8 +97,8 @@ def POST_register(request):
     # Insert user
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
     pg_result = psql(
-        "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s) RETURNING id",
-        [username, passwd, email, stripe_id],
+        "INSERT INTO users (username, passwd, stripe_id) VALUES (%s, %s, %s) RETURNING id",
+        [username, passwd, stripe_id],
     )
     # ERRORs
     if pg_result.err_msg:
@@ -114,6 +114,7 @@ def POST_register(request):
     if pg_result.err_msg:
         psql("DELETE FROM users WHERE id=%s RETURNING product_id", [user_id])
         return pg_result.Response  #
+    #
     # Insert tokens
     token = str(uuid.uuid4()).replace("-", "")
     send_activation_email(email, token)

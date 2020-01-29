@@ -11,6 +11,10 @@ load_dotenv(verbose=True)
 # Stripe API Key
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
+# Email creds
+PROD_EMAIL = os.getenv("PROD_EMAIL")
+PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
+
 # PostgreSQL
 PSQL_DATABASE = os.getenv("PSQL_DB_NAME", "nutra")
 PSQL_SCHEMA = "nt"

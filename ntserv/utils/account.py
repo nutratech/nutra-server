@@ -1,5 +1,9 @@
+import smtplib
+import ssl
+
 from ..libserver import Response
 from ..postgres import psql
+from ..settings import PROD_EMAIL, PROD_EMAIL_PASS
 
 
 def user_id_from_username(username):
@@ -15,6 +19,26 @@ def user_id_from_username(username):
 
 def user_id_from_email(email):
     pass
+
+
+# ----------------------
+# Sending emails
+# ----------------------
+
+
+def email(body=None):
+    """ Sends an email to ourselves """
+
+    port = 465  # For SSL
+    username = "routesim.gdia@gmail.com"
+    password = "hypewagon_1"
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+        # Login and send
+        server.login(username, password)
+        server.sendmail(username, username, body)
 
 
 def send_activation_email(email, token):
