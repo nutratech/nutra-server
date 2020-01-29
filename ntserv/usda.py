@@ -33,9 +33,7 @@ def GET_exercises(request):
 
 
 def GET_biometrics(request):
-    pg_result = psql(
-        "SELECT * FROM biometrics WHERE user_id IS NULL OR user_id=%s", [None]
-    )
+    pg_result = psql("SELECT * FROM biometrics")
 
     return Response(data=pg_result.rows)
 
