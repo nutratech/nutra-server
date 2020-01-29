@@ -17,6 +17,7 @@ from .utils.auth import (
     check_request,
     issue_token,
 )
+from .utils import cache
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -82,14 +83,19 @@ def POST_register(request):
     ):
         return Response(data={"error": "Email invalid"}, code=400)
 
-    """
-    -------------------------------------
-    Attempt to SQL insert user
-    -------------------------------------
-    """
+    # -------------------------------------
+    # Attempt to SQL insert user
+    # -------------------------------------
 
     # TODO: transactional `block()`
-    stripe_id = stripe.Customer.create(email=email).id
+    # TODO: check for existing email
+
+    # Check if user has Stripe with us
+    if email in cache.customers:
+        stripe_id = cache.customers[email].id
+    else:
+        stripe_id = stripe.Customer.create(email=email).id
+
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
     pg_result = psql(
         "INSERT INTO users (username, passwd, unverified_email, stripe_id) VALUES (%s, %s, %s, %s)",
