@@ -10,7 +10,11 @@ from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY
 from .utils import cache
-from .utils.account import send_activation_email, user_id_from_username
+from .utils.account import (
+    send_activation_email,
+    user_id_from_unver_email,
+    user_id_from_username,
+)
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_READ_ONLY,
@@ -180,6 +184,44 @@ def GET_user_details(request):
     user_id = 1
     pg_result = psql("SELECT * FROM get_user_details(%s)", [user_id])
     return Response(data=pg_result.rows)
+
+
+def GET_confirm_email(request):
+
+    # TODO: redirect code with user-friendly, non-JSON output
+
+    email = request.args["email"]
+    token = request.args["token"]
+
+    user_id = user_id_from_unver_email(email)
+    if not user_id:
+        return Response(data={"error": "No such user"}, code=400)
+
+    # Grab token(s)
+    pg_result = psql(
+        "SELECT token FROM tokens WHERE user_id=%s AND type='email_token_activate'",
+        [user_id],
+    )
+    if pg_result.err_msg or not pg_result.rows:
+        return Response(data={"error": "No token for you"}, code=400)
+    # Compare token(s)
+    valid = any(r["token"] == token for r in pg_result.rows)
+    if not valid:
+        return Response(data={"error": "Wrong"}, code=401)
+    # ---------------------
+    # Update info
+    # ---------------------
+    # TODO: transactional `block()`
+    pg_result = psql(
+        "UPDATE emails SET activated='t' WHERE user_id=%s AND activated='f' RETURNING user_id",
+        [user_id],
+    )
+    pg_result = psql(
+        "DELETE FROM tokens WHERE user_id=%s AND type='email_token_activate' RETURNING user_id",
+        [user_id],
+    )
+    # TODO: send welcome email?
+    return Response(data={"message": "Successfully activated"})
 
 
 """

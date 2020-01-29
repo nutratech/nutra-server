@@ -16,7 +16,7 @@ PROD_EMAIL = os.getenv("PROD_EMAIL")
 PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
 
 # Server host
-SERVER_PORT = os.getenv("PORT", 8080)
+SERVER_PORT = os.getenv("PORT", 20000)
 ON_REMOTE = os.getenv("ON_REMOTE", False)
 SERVER_HOST = (
     "https://nutra-server.herokuapp.com"

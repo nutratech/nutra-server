@@ -8,18 +8,19 @@ from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 
 
 def user_id_from_username(username):
-
     pg_result = psql("SELECT id FROM users WHERE username=%s", [username])
-
-    # ERRORs
     if pg_result.err_msg or not pg_result.rows:
         return None
 
     return pg_result.row["id"]
 
 
-def user_id_from_email(email):
-    pass
+def user_id_from_unver_email(email):
+    pg_result = psql("SELECT user_id from emails WHERE email=%s", [email])
+    if pg_result.err_msg or not pg_result.rows:
+        return None
+
+    return pg_result.row["user_id"]
 
 
 # ----------------------
@@ -49,14 +50,8 @@ def email(recipient, subject, body):
 def send_activation_email(recipient, token):
     """ Sends an onboarding email """
 
-    """js
-    await sendEmail(email, 'Activate Nutra account',
-        `Click the link to activate your account: http://${utils.SERVER_HOST}/confirm_email?email=${email}&email_token_activate=${token_jwe}`,
-        'Dispatch email to activate account failed',
-        username)
-    """
     email(
         recipient,
         subject="Activate your Nutra account!",
-        body=f"Click the link to activate your account: {SERVER_HOST}/confirm_email?email={recipient}&token=${token}",
+        body=f"Click the link to activate your account: {SERVER_HOST}/confirm_email?email={recipient}&token={token}",
     )

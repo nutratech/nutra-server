@@ -17,6 +17,7 @@ from flask_cors import CORS
 from ntserv.accounts import (
     DEL_favorites,
     GET_biometric,
+    GET_confirm_email,
     GET_exercise_log,
     GET_favorites,
     GET_logs,
@@ -93,6 +94,11 @@ def post_register():
 @app.route("/login", methods=["POST"])
 def post_login():
     return Request(POST_login, request)
+
+
+@app.route("/confirm_email")
+def get_confirm_email():
+    return Request(GET_confirm_email, request)
 
 
 @app.route("/user/trainers")
