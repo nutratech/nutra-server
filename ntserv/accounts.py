@@ -112,7 +112,7 @@ def POST_register(request):
     )
     # ERRORs
     if pg_result.err_msg:
-        psql("DELETE FROM users WHERE id=%s RETURNING product_id", [user_id])
+        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
         return pg_result.Response  #
     #
     # Insert tokens
@@ -124,10 +124,10 @@ def POST_register(request):
     )
     # ERRORs
     if pg_result.err_msg:
-        psql("DELETE FROM users WHERE id=%s RETURNING product_id", [user_id])
+        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
         return pg_result.Response
 
-    return Response(data={"message": "Successfully registered"})
+    return Response(data={"message": "Successfully registered", "id": user_id})
 
 
 def POST_login(request):
