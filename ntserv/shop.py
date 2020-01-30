@@ -13,16 +13,17 @@ stripe.api_key = STRIPE_API_KEY
 
 
 def GET_products(request):
-
     pg_result = psql("SELECT * FROM get_products_ratings()")
-
     return Response(data=pg_result.rows)
 
 
 def GET_skus(request):
-
     pg_result = psql("SELECT * FROM skus")
+    return Response(data=pg_result.rows)
 
+
+def GET_plans(request):
+    pg_result = psql("SELECT * FROM plans")
     return Response(data=pg_result.rows)
 
 
@@ -44,6 +45,16 @@ def GET_stripe_skus(request):
             skus.append(s)
 
     return Response(data=skus)
+
+
+def GET_stripe_plans(request):
+    _plans = stripe.Plan
+    plans = []
+    for p in _plans.auto_paging_iter():
+        if p["active"]:
+            plans.append(p)
+
+    return Response(data=plans)
 
 
 def POST_order(request):
