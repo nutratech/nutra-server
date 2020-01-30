@@ -51,6 +51,7 @@ from ntserv.usda import (
     GET_nutrients,
     GET_search,
     GET_serving_sizes,
+    GET_sort,
 )
 from ntserv.utils.cache import reload
 from ntserv.utils.caffeine import caffeinate
@@ -146,6 +147,11 @@ def get_biometrics():
 @app.route("/search")
 def get_search():
     return Request(GET_search, request)
+
+
+@app.route("/sort")
+def get_sort():
+    return Request(GET_sort, request)
 
 
 @app.route("/analyze")

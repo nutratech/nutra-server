@@ -68,6 +68,12 @@ def GET_search(request):
     return Response(data=results)
 
 
+def GET_sort(request):
+    id = request.args["nutr_id"]
+    pg_result = psql("SELECT * FROM sort_foods_by_nutrient_id(%s)", [id])
+    return Response(data=pg_result.rows)
+
+
 def GET_analyze(request):
 
     # TODO - handle recipe_ids also, see `db.js` old-code
