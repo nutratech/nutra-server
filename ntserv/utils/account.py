@@ -16,7 +16,9 @@ def user_id_from_username(username):
 
 
 def user_id_from_unver_email(email):
-    pg_result = psql("SELECT user_id from emails WHERE email=%s", [email])
+    pg_result = psql(
+        "SELECT user_id from emails WHERE email=%s AND activated='f'", [email]
+    )
     if pg_result.err_msg or not pg_result.rows:
         return None
 
