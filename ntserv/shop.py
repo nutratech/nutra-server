@@ -93,7 +93,7 @@ def GET_products_avg_ratings(request):
 
     # TODO: deprecate, replace with /produces (it has average rating)
     pg_result = psql(
-        "SELECT product_id, avg(rating)::float avg_rating FROM reviews GROUP BY product_id"
+        "SELECT product_id, avg(rating)::REAL avg_rating FROM reviews GROUP BY product_id"
     )
 
     return Response(data=pg_result.rows)
