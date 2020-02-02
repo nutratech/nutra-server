@@ -46,6 +46,7 @@ from ntserv.shop import (
 from ntserv.usda import (
     GET_analyze,
     GET_biometrics,
+    GET_data_src,
     GET_exercises,
     GET_fdgrp,
     GET_nutrients,
@@ -117,6 +118,9 @@ def get_trainer_users():
 # -------------------------
 # Basic DB functions
 # -------------------------
+@app.route("/data_src")
+def get_data_src():
+    return Request(GET_data_src, request)
 
 
 @app.route("/fdgrp")
