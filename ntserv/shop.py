@@ -58,6 +58,16 @@ def GET_stripe_plans(request):
     return Response(data=plans)
 
 
+def GET_stripe_subscriptions(request):
+    _subscriptions = stripe.Subscription
+    subscriptions = []
+    for s in _subscriptions.auto_paging_iter():
+        if s["active"]:
+            subscriptions.append(s)
+
+    return Response(data=subscriptions)
+
+
 @auth
 def POST_orders(request, level=AUTH_LEVEL_BASIC, user_id=None):
     return Response(code=501)

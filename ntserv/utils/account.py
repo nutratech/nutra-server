@@ -2,11 +2,16 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 
+import bcrypt
+
 from ..libserver import Response
 from ..postgres import psql
 from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 
 
+# ----------------------
+# get user_id funcs
+# ----------------------
 def user_id_from_username(username):
     pg_result = psql("SELECT id FROM users WHERE username=%s", [username])
     if pg_result.err_msg or not pg_result.rows:
@@ -26,10 +31,17 @@ def user_id_from_unver_email(email):
 
 
 # ----------------------
+# password comparator
+# ----------------------
+def cmp_pass(user_id, password):
+    pg_result = psql("SELECT passwd FROM users WHERE user_id=%s", [user_id])
+    passwd = pg_result.row["passwd"]
+    return bcrypt.checkpw(password.encode(), passwd.encode())
+
+
+# ----------------------
 # Sending emails
 # ----------------------
-
-
 def email(recipient, subject, body):
     """ Sends an email to ourselves """
 

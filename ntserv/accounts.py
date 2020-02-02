@@ -11,6 +11,7 @@ from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY
 from .utils import cache
 from .utils.account import (
+    cmp_pass,
     send_activation_email,
     user_id_from_unver_email,
     user_id_from_username,
@@ -224,6 +225,56 @@ def GET_confirm_email(request):
     return Response(data={"message": "Successfully activated"})
 
 
+@auth
+def GET_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    email = request.args["email"]
+    password = request.args["password"]
+
+    # Require additional password check
+    if not cmp_pass(user_id, password):
+        return Response(data={"error": "Invalid password"}, code=401)
+
+    # TODO: implement
+    return Response(code=501)
+
+
+@auth
+def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+
+    password_old = request.args["password_old"]
+    password = request.args["password"]
+    password_confirm = request.args["password_confirm"]
+
+    # Require additional password check
+    if not cmp_pass(user_id, password_old):
+        return Response(data={"error": "Invalid password"}, code=401)
+    # Check matching passwords
+    if password != password_confirm:
+        return Response(data={"error": "Passwords don't match"}, code=400)
+
+    # Update
+    passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    psql(
+        "UPDATE users SET passwd=%s WHERE user_id=%s RETURNING user_id",
+        [passwd, user_id],
+    )
+
+    # TODO: return a message?
+    return Response()
+
+
+def POST_username_forgot(request):
+    pass
+
+
+def POST_password_new_request(request):
+    pass
+
+
+def POST_password_new_reset(request):
+    pass
+
+
 """
 -------------------------
 User-Trainer functions
@@ -287,19 +338,19 @@ def DEL_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
 
 
 @auth
-def GET_logs(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def GET_logs_food(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
 
 
 @auth
-def GET_biometric(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def GET_logs_biometric(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM biometric_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
 
 
 @auth
-def GET_exercise_log(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def GET_logs_exercise(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM exercise_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
 

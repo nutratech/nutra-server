@@ -16,11 +16,13 @@ from flask_cors import CORS
 
 from ntserv.accounts import (
     DEL_favorites,
-    GET_biometric,
     GET_confirm_email,
-    GET_exercise_log,
+    GET_email_change,
     GET_favorites,
-    GET_logs,
+    GET_logs_biometric,
+    GET_logs_exercise,
+    GET_logs_food,
+    GET_password_change,
     GET_rdas,
     GET_recipes,
     GET_trainer_users,
@@ -28,7 +30,10 @@ from ntserv.accounts import (
     GET_user_trainers,
     POST_favorites,
     POST_login,
+    POST_password_new_request,
+    POST_password_new_reset,
     POST_register,
+    POST_username_forgot,
 )
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
@@ -100,11 +105,39 @@ def post_login():
     return Request(POST_login, request)
 
 
-@app.route("/confirm_email")
+@app.route("/email/confirm")
 def get_confirm_email():
     return Request(GET_confirm_email, request)
 
 
+@app.route("/email/change")
+def get_email_change():
+    return Request(GET_email_change, request)
+
+
+@app.route("/password/change")
+def get_change_password():
+    return Request(GET_password_change, request)
+
+
+@app.route("/username/forgot")
+def post_forgot_username():
+    return Request(POST_username_forgot, request)
+
+
+@app.route("/password/new/request")
+def post_password_new_request():
+    return Request(POST_password_new_request, request)
+
+
+@app.route("/password/new/reset")
+def post_password_new_reset():
+    return Request(POST_password_new_reset, request)
+
+
+# -------------------------
+# Trainer functions
+# -------------------------
 @app.route("/user/trainers")
 def get_user_trainers():
     return Request(GET_user_trainers, request)
@@ -189,19 +222,19 @@ def get_rdas():
     return Request(GET_rdas, request)
 
 
-@app.route("/logs")
+@app.route("/logs/food")
 def get_logs():
-    return Request(GET_logs, request)
+    return Request(GET_logs_food, request)
 
 
-@app.route("/biometric")
-def get_biometric():
-    return Request(GET_biometric, request)
+@app.route("/logs/biometric")
+def get_logs_biometric():
+    return Request(GET_logs_biometric, request)
 
 
-@app.route("/exercise_logs")
-def get_exercise_logs():
-    return Request(GET_exercise_log, request)
+@app.route("/logs/exercise")
+def get_logs_exercise():
+    return Request(GET_logs_exercise, request)
 
 
 # -------------------------
