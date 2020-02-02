@@ -38,14 +38,15 @@ def email(recipient, subject, body):
     msg = EmailMessage()
     msg["From"] = PROD_EMAIL
     msg["To"] = recipient
+    msg["Cc"] = PROD_EMAIL  # Send a copy to ourselves
     msg["Subject"] = subject
     msg.set_content(body)
 
     # Create a secure SSL context
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+    with smtplib.SMTP_SSL("johnny.heliohost.org", port, context=context) as server:
         # Login and send
-        server.login(PROD_EMAIL, PROD_EMAIL_PASS)
+        server.login("_mainaccount@nutra.heliohost.org", PROD_EMAIL_PASS)
         server.send_message(msg)
 
 
