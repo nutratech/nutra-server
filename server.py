@@ -15,24 +15,24 @@ from flask import Flask, request
 from flask_cors import CORS
 
 from ntserv.accounts import (
-    DEL_favorites,
     GET_confirm_email,
     GET_email_change,
-    GET_favorites,
     GET_logs_biometric,
     GET_logs_exercise,
-    GET_logs_food,
+    OPT_logs_food,
     GET_password_change,
     GET_rdas,
     GET_recipes,
-    GET_trainer_users,
+    GET_recipes_foods,
     GET_user_details,
-    GET_user_trainers,
-    POST_favorites,
+    OPT_favorites,
+    OPT_trainers_users,
+    OPT_users_trainers,
     POST_login,
     POST_password_new_request,
     POST_password_new_reset,
     POST_register,
+    POST_trainers_switch,
     POST_username_forgot,
 )
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
@@ -93,8 +93,6 @@ def get_user_details():
 # -------------------------
 # Account functions
 # -------------------------
-
-
 @app.route("/register", methods=["POST"])
 def post_register():
     return Request(POST_register, request)
@@ -138,14 +136,19 @@ def post_password_new_reset():
 # -------------------------
 # Trainer functions
 # -------------------------
-@app.route("/user/trainers")
-def get_user_trainers():
-    return Request(GET_user_trainers, request)
+@app.route("/users/trainers", methods=["GET", "POST", "DELETE"])
+def users_trainers():
+    return Request(OPT_users_trainers, request)
 
 
-@app.route("/trainer/users")
-def get_trainer_users():
-    return Request(GET_trainer_users, request)
+@app.route("/trainers/users", methods=["GET", "POST", "DELETE"])
+def trainer_users():
+    return Request(OPT_trainers_users, request)
+
+
+@app.route("/trainers/switch")
+def post_trainers_switch():
+    return Request(POST_trainers_switch, request)
 
 
 # -------------------------
@@ -199,17 +202,9 @@ def get_analyze():
 # -------------------------
 # Private DB functions
 # -------------------------
-
-
 @app.route("/favorites", methods=["GET", "POST", "DELETE"])
 def favorites():
-    method = request.environ["REQUEST_METHOD"]
-    if method == "GET":
-        return Request(GET_favorites, request)
-    elif method == "POST":
-        return Request(POST_favorites, request)
-    elif method == "DELETE":
-        return Request(DEL_favorites, request)
+    return Request(OPT_favorites, request)
 
 
 @app.route("/recipes")
@@ -217,14 +212,19 @@ def get_recipes():
     return Request(GET_recipes, request)
 
 
+@app.route("/recipes/foods")
+def get_recipes_foods():
+    return Request(GET_recipes_foods, request)
+
+
 @app.route("/rdas")
 def get_rdas():
     return Request(GET_rdas, request)
 
 
-@app.route("/logs/food")
-def get_logs():
-    return Request(GET_logs_food, request)
+@app.route("/logs/food", methods=["GET", "POST", "DELETE"])
+def logs_food():
+    return Request(OPT_logs_food, request)
 
 
 @app.route("/logs/biometric")

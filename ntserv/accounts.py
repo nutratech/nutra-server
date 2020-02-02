@@ -5,6 +5,7 @@ from datetime import datetime
 import bcrypt
 import jwt
 import stripe
+from dateutil.parser import parse as parse_datetime
 
 from .libserver import Response
 from .postgres import psql
@@ -25,6 +26,7 @@ from .utils.auth import (
     auth,
     check_request,
     issue_token,
+    jwt_token,
 )
 
 # Set Stripe API key
@@ -283,15 +285,73 @@ User-Trainer functions
 
 
 @auth
-def GET_trainer_users(request, level=AUTH_LEVEL_TRAINER, user_id=None):
-    pg_result = psql("SELECT * FROM get_trainer_users(%s)", [user_id])
-    return Response(data=pg_result.rows)
+def OPT_users_trainers(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "GET":
+        pg_result = psql("SELECT * FROM get_user_trainers(%s)", [user_id])
+        return Response(data=pg_result.rows)
+
+    # Approve trainer
+    elif method == "POST":
+        trainer_id = request.json["trainer_id"]
+        pg_result = psql(
+            "UPDATE trainer_users SET approved='t' WHERE user_id=%s AND trainer_id=%s) RETURNING trainer_id",
+            [user_id, trainer_id],
+        )
+        return Response(data=pg_result.rows)
+
+    # Remove trainer
+    elif method == "DELETE":
+        trainer_id = request.json["trainer_id"]
+        pg_result = psql(
+            "DELETE FROM trainer_users WHERE user_id=%s AND trainer_id=%s RETURNING trainer_id",
+            [user_id, trainer_id],
+        )
+        return Response(data=pg_result.rows)
 
 
 @auth
-def GET_user_trainers(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    pg_result = psql("SELECT * FROM get_user_trainers(%s)", [user_id])
-    return Response(data=pg_result.rows)
+def OPT_trainers_users(request, level=AUTH_LEVEL_TRAINER, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "GET":
+        pg_result = psql("SELECT * FROM get_trainer_users(%s)", [user_id])
+        return Response(data=pg_result.rows)
+
+    # Add client to trainer
+    elif method == "POST":
+        client_id = request.json["user_id"]
+        pg_result = psql(
+            "INSERT INTO trainer_users (trainer_id, user_id) VALUES (%s, %s) RETURNING user_id",
+            [user_id, client_id],
+        )
+        return Response(data=pg_result.rows)
+
+    # Remove client
+    elif method == "DELETE":
+        client_id = request.json["user_id"]
+        pg_result = psql(
+            "DELETE FROM trainer_users WHERE trainer_id=%s AND user_id=%s RETURNING user_id",
+            [user_id, client_id],
+        )
+        return Response(data=pg_result.rows)
+
+
+@auth
+def POST_trainers_switch(request, level=AUTH_LEVEL_TRAINER, user_id=None):
+    client_id = request.json["user_id"]
+    pg_result = psql(
+        "SELECT user_id FROM trainer_users WHERE trainer_id=%s AND user_id=%s AND approved='t'",
+        [user_id, client_id],
+    )
+    # Check if valid
+    if not pg_result.rows:
+        return Response(data={"error": "No such approved user"}, code=401)
+
+    # Trainer can do everything unconfirmed member can do
+    token = jwt_token(client_id, AUTH_LEVEL_UNCONFIRMED)
+    return Response(data={"token": token})
 
 
 """
@@ -302,45 +362,84 @@ Private DB functions
 
 
 @auth
-def GET_favorites(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [user_id])
-    return Response(data=pg_result.rows)
+def OPT_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+    if method == "GET":
+        pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [user_id])
+        return Response(data=pg_result.rows)
 
-
-@auth
-def POST_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
     # Attempt insert
-    food_id = request.json["food_id"]
-    pg_result = psql(
-        "INSERT INTO favorite_foods (user_id, food_id) VALUES (%s, %s) RETURNING created_at",
-        [user_id, food_id],
-    )
+    elif method == "POST":
+        food_id = request.json["food_id"]
+        pg_result = psql(
+            "INSERT INTO favorite_foods (user_id, food_id) VALUES (%s, %s) RETURNING created_at",
+            [user_id, food_id],
+        )
 
-    # ERROR: Duplicate?
-    if pg_result.err_msg:
-        return Response(data={"error": pg_result.err_msg}, code=400)
-    return Response()
+        # ERROR: Duplicate?
+        if pg_result.err_msg or not pg_result.rows:
+            return Response(data={"error": pg_result.err_msg}, code=400)
+        return Response()
+
+    # Attempt removal
+    elif method == "DELETE":
+        food_id = request.json["food_id"]
+        pg_result = psql(
+            "DELETE FROM favorite_foods WHERE user_id=%s AND food_id=%s RETURNING food_id",
+            [user_id, food_id],
+        )
+
+        # ERROR: doesn't exist?
+        if pg_result.err_msg or not pg_result.rows:
+            return Response(data={"error": pg_result.err_msg}, code=400)
+        return Response()
 
 
 @auth
-def DEL_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
-    # Attempt insert
-    food_id = request.json["food_id"]
-    pg_result = psql(
-        "DELETE FROM favorite_foods WHERE user_id=%s AND food_id=%s RETURNING food_id",
-        [user_id, food_id],
-    )
+def OPT_logs_food(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+    if method == "GET":
+        pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
+        return Response(data=pg_result.rows)
 
-    # ERROR: Duplicate?
-    if pg_result.err_msg:
-        return Response(data={"error": pg_result.err_msg}, code=400)
-    return Response()
+    # Add to log
+    elif method == "POST":
+        meal_name = request.json["meal_name"]
+        amount = request.json["amount"]
+        msre_id = request.json["msre_id"]
 
+        food_id = request.json.get("food_id")
+        recipe_id = request.json.get("recipe_id")
+        eat_on_date = parse_datetime(request.json["eat_on_date"])
 
-@auth
-def GET_logs_food(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
-    return Response(data=pg_result.rows)
+        if food_id:
+            # Add food to log
+            pg_result = psql(
+                "INSERT INTO food_logs (user_id, eat_on_date, meal_name, amount, msre_id, food_id) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+                [user_id, eat_on_date, meal_name, amount, msre_id, food_id],
+            )
+            return Response(data=pg_result.row)
+        elif recipe_id:
+            # Add recipe to log
+            pg_result = psql(
+                "INSERT INTO food_logs (user_id, eat_on_date, meal_name, amount, recipe_id) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                [user_id, eat_on_date, meal_name, amount, recipe_id],
+            )
+            return Response(data=pg_result.row)
+        else:
+            return Response(data={"error": "No food or recipe specified"}, code=400)
+
+    # Remove from log
+    elif method == "DELETE":
+        id = request.json["id"]
+        pg_result = psql(
+            "DELETE FROM food_logs WHERE user_id=%s and id=%s RETURNING id",
+            [user_id, id],
+        )
+        # Failed to delete, probably doesn't exist or isn't ours
+        if not pg_result.rows:
+            return Response(code=400)
+        return Response()
 
 
 @auth
@@ -364,4 +463,14 @@ def GET_rdas(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 @auth
 def GET_recipes(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM recipe_des WHERE user_id=%s", [user_id])
+    return Response(data=pg_result.rows)
+
+
+@auth
+def GET_recipes_foods(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    recipe_ids = [int(x) for x in request.json["recipe_ids"].split(",")]
+    pg_result = psql(
+        "SELECT * FROM recipe_dat WHERE user_id=%s and recipe_id=any(%s)",
+        [user_id, recipe_ids],
+    )
     return Response(data=pg_result.rows)
