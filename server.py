@@ -17,21 +17,22 @@ from flask_cors import CORS
 from ntserv.accounts import (
     GET_confirm_email,
     GET_email_change,
-    GET_logs_biometric,
-    GET_logs_exercise,
-    OPT_logs_food,
     GET_password_change,
-    GET_rdas,
     GET_recipes,
     GET_recipes_foods,
     GET_user_details,
     OPT_favorites,
+    OPT_logs_biometric,
+    OPT_logs_exercise,
+    OPT_logs_food,
+    OPT_rdas,
     OPT_trainers_users,
     OPT_users_trainers,
     POST_login,
     POST_password_new_request,
     POST_password_new_reset,
     POST_register,
+    POST_report,
     POST_trainers_switch,
     POST_username_forgot,
 )
@@ -217,9 +218,9 @@ def get_recipes_foods():
     return Request(GET_recipes_foods, request)
 
 
-@app.route("/rdas")
-def get_rdas():
-    return Request(GET_rdas, request)
+@app.route("/users/rdas", methods=["POST", "DELETE"])
+def rdas():
+    return Request(OPT_rdas, request)
 
 
 @app.route("/logs/food", methods=["GET", "POST", "DELETE"])
@@ -227,21 +228,24 @@ def logs_food():
     return Request(OPT_logs_food, request)
 
 
-@app.route("/logs/biometric")
-def get_logs_biometric():
-    return Request(GET_logs_biometric, request)
+@app.route("/logs/biometric", methods=["GET", "POST", "DELETE"])
+def logs_biometric():
+    return Request(OPT_logs_biometric, request)
 
 
-@app.route("/logs/exercise")
-def get_logs_exercise():
-    return Request(GET_logs_exercise, request)
+@app.route("/logs/exercise", methods=["GET", "POST", "DELETE"])
+def logs_exercise():
+    return Request(OPT_logs_exercise, request)
+
+
+@app.route("/report", methods=["POST"])
+def post_report():
+    return Request(POST_report, request)
 
 
 # -------------------------
 # Stripe functions
 # -------------------------
-
-
 @app.route("/products")
 def get_products():
     return Request(GET_products, request)

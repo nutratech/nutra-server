@@ -443,6 +443,101 @@ def OPT_logs_food(request, level=AUTH_LEVEL_BASIC, user_id=None):
 
 
 @auth
+def OPT_logs_exercise(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+    if method == "GET":
+        pg_result = psql("SELECT * FROM exercise_logs WHERE user_id=%s", [user_id])
+        return Response(data=pg_result.rows)
+
+    # Add to log
+    elif method == "POST":
+        exercise_id = request.json["exercise_id"]
+        date = request.json["date"]
+
+        reps = request.json.get("reps")
+        weight = request.json.get("weight")
+        duration_min = request.json.get("duration_min")
+
+        if reps and weight:
+            pg_result = psql(
+                "INSERT INTO users.exercise_logs (user_id, exercise_id, date, reps, weight) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                [user_id, exercise_id, date, reps, weight],
+            )
+            id = pg_result.row["id"]
+            return Response(data=id)
+        elif duration_min:
+            pg_result = psql(
+                "INSERT INTO users.exercise_logs (user_id, exercise_id, date, duration_min) VALUES (%s, %s, %s, %s) RETURNING id",
+                [user_id, exercise_id, date, duration_min],
+            )
+            id = pg_result.row["id"]
+            return Response(data=id)
+        else:
+            return Response(
+                data={"error": "Not enough info to create exericse log item"}, code=400
+            )
+
+    # Remove from log
+    elif method == "DELETE":
+        id = request.json["id"]
+        pg_result = psql(
+            "DELETE FROM exercise_logs WHERE user_id=%s and id=%s RETURNING id",
+            [user_id, id],
+        )
+        # Failed to delete, probably doesn't exist or isn't ours
+        if not pg_result.rows:
+            return Response(code=400)
+        return Response()
+
+
+@auth
+def OPT_logs_biometric(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+    if method == "GET":
+        pg_result = psql("SELECT * FROM biometric_logs WHERE user_id=%s", [user_id])
+        return Response(data=pg_result.rows)
+
+    # Add to log
+    elif method == "POST":
+        meal_name = request.json["meal_name"]
+        amount = request.json["amount"]
+        msre_id = request.json["msre_id"]
+
+        food_id = request.json.get("food_id")
+        recipe_id = request.json.get("recipe_id")
+        eat_on_date = parse_datetime(request.json["eat_on_date"])
+
+        if food_id:
+            # Add food to log
+            pg_result = psql(
+                "INSERT INTO food_logs (user_id, eat_on_date, meal_name, amount, msre_id, food_id) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+                [user_id, eat_on_date, meal_name, amount, msre_id, food_id],
+            )
+            return Response(data=pg_result.row)
+        elif recipe_id:
+            # Add recipe to log
+            pg_result = psql(
+                "INSERT INTO food_logs (user_id, eat_on_date, meal_name, amount, recipe_id) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                [user_id, eat_on_date, meal_name, amount, recipe_id],
+            )
+            return Response(data=pg_result.row)
+        else:
+            return Response(data={"error": "No food or recipe specified"}, code=400)
+
+    # Remove from log
+    elif method == "DELETE":
+        id = request.json["id"]
+        pg_result = psql(
+            "DELETE FROM food_logs WHERE user_id=%s and id=%s RETURNING id",
+            [user_id, id],
+        )
+        # Failed to delete, probably doesn't exist or isn't ours
+        if not pg_result.rows:
+            return Response(code=400)
+        return Response()
+
+
+@auth
 def GET_logs_biometric(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM biometric_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
@@ -455,9 +550,31 @@ def GET_logs_exercise(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 
 @auth
-def GET_rdas(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    pg_result = psql("SELECT * FROM get_user_rdas(%s)", [user_id])
-    return Response(data=pg_result.rows)
+def OPT_rdas(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "GET":
+        pg_result = psql("SELECT * FROM get_user_rdas(%s)", [user_id])
+        return Response(data=pg_result.rows)
+
+    elif method == "POST":
+        nutr_id = request.json["nutr_id"]
+        rda = request.json["rda"]
+        # TODO - ask Kyle about this query
+        pg_result = psql(
+            "INSERT INTO users.rda (user_id, nutr_id, rda) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT rda_pkey DO UPDATE SET rda=excluded.rda WHERE rda.user_id=excluded.user_id AND rda.nutr_id=excluded.nutr_id RETURNING nutr_id",
+            [user_id, nutr_id, rda],
+        )
+        return Response()
+
+    elif method == "DELETE":
+        nutr_id = request.json["nutr_id"]
+        rda = request.json["rda"]
+        pg_result = psql(
+            "DELETE FROM rda WHERE user_id=$1 AND nutr_id=$2 RETURNING nutr_id",
+            [user_id, nutr_id],
+        )
+        return Response()
 
 
 @auth
@@ -474,3 +591,19 @@ def GET_recipes_foods(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
         [user_id, recipe_ids],
     )
     return Response(data=pg_result.rows)
+
+
+# ---------------
+# File a report
+# ---------------
+@auth
+def POST_report(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    report_type = request.json["report_type"]
+    report_message = request.json["report_message"]
+
+    psql(
+        "INSERT INTO reports (user_id, report_type, report_message) VALUES (%s, %s, %s) RETURNING user_id",
+        [user_id, report_type, report_message],
+    )
+
+    return Response()
