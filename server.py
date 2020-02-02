@@ -40,7 +40,7 @@ from ntserv.shop import (
     GET_stripe_plans,
     GET_stripe_products,
     GET_stripe_skus,
-    POST_order,
+    POST_orders,
     POST_products_reviews,
 )
 from ntserv.usda import (
@@ -235,9 +235,9 @@ def get_stripe_plans():
     return Request(GET_stripe_plans, request)
 
 
-@app.route("/order", methods=["POST"])
-def post_order():
-    return Request(POST_order, request)
+@app.route("/orders", methods=["POST"])
+def post_orders():
+    return Request(POST_orders, request)
 
 
 @app.route("/products/<id>/reviews")

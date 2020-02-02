@@ -120,10 +120,17 @@ Auth Decorator
 """
 
 
-def authdecorator(func, request):
-    """ Decorator function for authorized endpoints """
-    authr, error = check_request(request)
-    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-        return Response(data={"error": error}, code=401)
+def auth(og_func, level=None):
+    """ Auth decorator, use to send 401s """
 
-    return func()
+    def func(request):
+        # Check authorization
+        authr, error = check_request(request)
+        if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
+            return Response(data={"error": error}, code=401)
+
+        # Execute original function
+        return og_func(request, user_id=authr.id)
+
+    # Returns a function
+    return func

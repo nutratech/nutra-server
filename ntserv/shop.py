@@ -5,6 +5,7 @@ from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, STRIPE_API_KEY
 from .utils.account import user_id_from_username
+from .utils.auth import AUTH_LEVEL_BASIC, auth
 
 # Set Stripe API key
 stripe.api_key = STRIPE_API_KEY
@@ -57,22 +58,19 @@ def GET_stripe_plans(request):
     return Response(data=plans)
 
 
-def POST_order(request):
-    pass
+@auth
+def POST_orders(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    return Response(code=501)
 
 
-def POST_products_reviews(request):
+@auth
+def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
 
     # Parse incoming request
     body = request.json
     rating = body["rating"]
     review_text = body["review_text"]
     product_id = body["product_id"]
-
-    token = jwt.decode(request.headers["authorization"].split()[1], JWT_SECRET)
-
-    # Get user_id
-    user_id = user_id_from_username(token["username"])
 
     #
     # Post review

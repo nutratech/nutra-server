@@ -17,9 +17,11 @@ from .utils.account import (
 )
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
+    AUTH_LEVEL_PAID,
     AUTH_LEVEL_READ_ONLY,
+    AUTH_LEVEL_TRAINER,
     AUTH_LEVEL_UNCONFIRMED,
-    authdecorator,
+    auth,
     check_request,
     issue_token,
 )
@@ -178,10 +180,8 @@ def POST_login(request):
         )
 
 
-def GET_user_details(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM get_user_details(%s)", [user_id])
     return Response(data=pg_result.rows)
 
@@ -231,18 +231,14 @@ User-Trainer functions
 """
 
 
-def GET_trainer_users(request):
-
-    # TODO: get dynamically off token
-    trainer_id = 1
-    pg_result = psql("SELECT * FROM get_trainer_users(%s)", [trainer_id])
+@auth
+def GET_trainer_users(request, level=AUTH_LEVEL_TRAINER, user_id=None):
+    pg_result = psql("SELECT * FROM get_trainer_users(%s)", [user_id])
     return Response(data=pg_result.rows)
 
 
-def GET_user_trainers(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_user_trainers(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM get_user_trainers(%s)", [user_id])
     return Response(data=pg_result.rows)
 
@@ -254,27 +250,19 @@ Private DB functions
 """
 
 
-# @customannotation(auth=AUTH_LEVEL_BASIC)
-# @authdecorator(self, request)
-def GET_favorites(request):
-    authr, error = check_request(request)
-    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-        return Response(data={"error": error}, code=401)
-
-    pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [authr.id])
+@auth
+def GET_favorites(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    pg_result = psql("SELECT * FROM get_user_favorite_foods(%s)", [user_id])
     return Response(data=pg_result.rows)
 
 
-def POST_favorites(request):
-    authr, error = check_request(request)
-    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_BASIC:
-        return Response(data={"error": error}, code=401)
-
+@auth
+def POST_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
     # Attempt insert
     food_id = request.json["food_id"]
     pg_result = psql(
         "INSERT INTO favorite_foods (user_id, food_id) VALUES (%s, %s) RETURNING created_at",
-        [authr.id, food_id],
+        [user_id, food_id],
     )
 
     # ERROR: Duplicate?
@@ -283,16 +271,13 @@ def POST_favorites(request):
     return Response()
 
 
-def DEL_favorites(request):
-    authr, error = check_request(request)
-    if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_BASIC:
-        return Response(data={"error": error}, code=401)
-
+@auth
+def DEL_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
     # Attempt insert
     food_id = request.json["food_id"]
     pg_result = psql(
         "DELETE FROM favorite_foods WHERE user_id=%s AND food_id=%s RETURNING food_id",
-        [authr.id, food_id],
+        [user_id, food_id],
     )
 
     # ERROR: Duplicate?
@@ -301,41 +286,31 @@ def DEL_favorites(request):
     return Response()
 
 
-def GET_logs(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_logs(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
 
 
-def GET_biometric(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_biometric(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM biometric_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
 
 
-def GET_exercise_log(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_exercise_log(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM exercise_logs WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
 
 
-def GET_rdas(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_rdas(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM get_user_rdas(%s)", [user_id])
     return Response(data=pg_result.rows)
 
 
-def GET_recipes(request):
-
-    # TODO: get dynamically off token
-    user_id = 1
+@auth
+def GET_recipes(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM recipe_des WHERE user_id=%s", [user_id])
     return Response(data=pg_result.rows)
