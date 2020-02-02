@@ -27,25 +27,37 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
 from fuzzywuzzy import fuzz
+import ujson as json
 
 from ntserv.postgres import psql
 
 
-@pytest.mark.skip(reason="work in progress, long running test")
+# @pytest.mark.skip(reason="work in progress, long running test")
 def test_pair_foods():
-    pg_result = psql("SELECT * FROM food_des")
-    food_des = {f["id"]: f for f in pg_result.rows}
+    pg_result = psql("SELECT * FROM food_des WHERE data_src_id=1")
+    sr_food_des = {f["id"]: f for f in pg_result.rows}
+    pg_result = psql("SELECT * FROM food_des WHERE data_src_id=2")
+    si_food_des = {f["id"]: f for f in pg_result.rows}
 
-    keys = list(food_des.keys())
     scores = []
-    for i in range(len(food_des)):
+    for i, f1 in enumerate(sr_food_des):
         print(f"food #: {i}")
-        f1 = food_des[keys[i]]
-        for j in range(i, len(food_des)):
-            f2 = food_des[keys[j]]
+        f1 = sr_food_des[f1]
+        for j, f2 in enumerate(si_food_des):
+            f2 = si_food_des[f2]
             score = fuzz.token_set_ratio(f1["long_desc"], f2["long_desc"])
+            if score < 80:
+                continue
+            score = {
+                "score": score,
+                "f1": (f1["id"], f1["long_desc"]),
+                "f2": (f2["id"], f2["long_desc"]),
+            }
             scores.append(score)
+
+    scores = sorted(scores, key=lambda x: x["score"], reverse=True)
     print(len(scores))
+    json.dump(scores, open("resources/scores.json", "w+"), indent=2)
     # pg_result = psql("SELECT * FROM nut_data")
 
     # nut_data = {}
