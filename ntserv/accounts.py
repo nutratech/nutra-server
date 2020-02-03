@@ -266,15 +266,15 @@ def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 
 def POST_username_forgot(request):
-    pass
+    return Response(code=501)
 
 
 def POST_password_new_request(request):
-    pass
+    return Response(code=501)
 
 
 def POST_password_new_reset(request):
-    pass
+    return Response(code=501)
 
 
 """

@@ -142,7 +142,7 @@ def self_route_rules(app):
         # More filtering
         if str(r) != "/static/<path:filename>":
             rule = r.rule.replace("<", "&lt").replace(">", "&gt")
-            rules.append(f"{str(methods).ljust(10)} {rule}")
+            rules.append(f"{str(methods).ljust(30)} {rule}")
 
     # Return string
     return "\n".join(rules)
