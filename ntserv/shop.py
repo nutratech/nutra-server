@@ -13,6 +13,16 @@ stripe.api_key = STRIPE_API_KEY
 # TODO - remove `result` attribute from: data={'result': products}
 
 
+def GET_countries(request):
+    pg_result = psql("SELECT * FROM get_countries_states()")
+    return Response(data=pg_result.rows)
+
+
+def GET_shipping_methods(request):
+    pg_result = psql("SELECT * FROM shipping_methods")
+    return Response(data=pg_result.rows)
+
+
 def GET_products(request):
     pg_result = psql("SELECT * FROM get_products_ratings()")
     return Response(data=pg_result.rows)

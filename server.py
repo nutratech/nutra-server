@@ -39,10 +39,12 @@ from ntserv.accounts import (
 )
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
+    GET_countries,
     GET_plans,
     GET_products,
     GET_products__product_id__reviews,
     GET_products_avg_ratings,
+    GET_shipping_methods,
     GET_skus,
     GET_stripe_plans,
     GET_stripe_products,
@@ -91,6 +93,16 @@ def get_home_page():
 @app.route("/user_details")
 def get_user_details():
     return Request(GET_user_details, request)
+
+
+@app.route("/countries")
+def get_countries():
+    return Request(GET_countries, request)
+
+
+@app.route("/shipping/methods")
+def get_shipping_methods():
+    return Request(GET_shipping_methods, request)
 
 
 # -------------------------

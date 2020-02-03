@@ -68,5 +68,5 @@ def send_activation_email(recipient, token):
     email(
         recipient,
         subject="Activate your Nutra account!",
-        body=f"Click the link to activate your account: {SERVER_HOST}/confirm_email?email={recipient}&token={token}",
+        body=f"Click the link to activate your account: {SERVER_HOST}/email/confirm?email={recipient}&token={token}",
     )
