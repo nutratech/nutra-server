@@ -97,60 +97,41 @@ def POST_register(request):
     # Attempt to SQL insert user
     # -------------------------------------
     # TODO: transactional `block()`
+    # CREATE USER
+    passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    pg_result = psql(
+        "INSERT INTO users (username, passwd) VALUES (%s, %s) RETURNING id",
+        [username, passwd],
+    )
+    # ERRORs
+    if pg_result.err_msg:
+        return pg_result.Response
+    user_id = pg_result.row["id"]
+    # Insert emails
+    pg_result = psql(
+        "INSERT INTO emails (user_id, email) VALUES (%s, %s) RETURNING email",
+        [user_id, email],
+    )
+    # ERRORs
+    if pg_result.err_msg:
+        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
+        return pg_result.Response
+    # Insert tokens
+    token = str(uuid.uuid4()).replace("-", "")
+    pg_result = psql(
+        "INSERT INTO tokens (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
+        [user_id, token, "EMAIL_TOKEN_ACTIVATE"],
+    )
+    # ERRORs
+    if pg_result.err_msg:
+        psql("DELETE FROM emails WHERE user_id=%s RETURNING email", [user_id])
+        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
+        return pg_result.Response
+    #
+    # Send activation email
+    send_activation_email(email, token)
 
-    # Check if user has Stripe with us
-    if email in cache.customers:
-        # ----------------------
-        # Returning customer
-        # ----------------------
-        stripe_id = cache.customers[email].id
-        # TODO - handle these cases
-        return Response(
-            data={
-                "message": "Looks like you have an account, we're working to support this"
-            },
-            code=202,
-        )
-    else:
-        # ----------------------
-        # No stripe
-        # ----------------------
-        stripe_id = stripe.Customer.create(email=email).id
-
-        # CREATE USER
-        passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
-        pg_result = psql(
-            "INSERT INTO users (username, passwd, stripe_id) VALUES (%s, %s, %s) RETURNING id",
-            [username, passwd, stripe_id],
-        )
-        # ERRORs
-        if pg_result.err_msg:
-            return pg_result.Response
-        user_id = pg_result.row["id"]
-        # Insert emails
-        pg_result = psql(
-            "INSERT INTO emails (user_id, email) VALUES (%s, %s) RETURNING email",
-            [user_id, email],
-        )
-        # ERRORs
-        if pg_result.err_msg:
-            psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
-            return pg_result.Response  #
-        # Insert tokens
-        token = str(uuid.uuid4()).replace("-", "")
-        pg_result = psql(
-            "INSERT INTO tokens (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
-            [user_id, token, "email_token_activate"],
-        )
-        # ERRORs
-        if pg_result.err_msg:
-            psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
-            return pg_result.Response
-        #
-        # Send activation email
-        send_activation_email(email, token)
-
-        return Response(data={"message": "Successfully registered", "id": user_id})
+    return Response(data={"message": "Successfully registered", "id": user_id})
 
 
 def POST_login(request):
@@ -202,7 +183,7 @@ def GET_confirm_email(request):
 
     # Grab token(s)
     pg_result = psql(
-        "SELECT token FROM tokens WHERE user_id=%s AND type='email_token_activate'",
+        "SELECT token FROM tokens WHERE user_id=%s AND type='EMAIL_TOKEN_ACTIVATE'",
         [user_id],
     )
     if pg_result.err_msg or not pg_result.rows:
@@ -220,7 +201,7 @@ def GET_confirm_email(request):
         [user_id],
     )
     pg_result = psql(
-        "DELETE FROM tokens WHERE user_id=%s AND type='email_token_activate' RETURNING user_id",
+        "DELETE FROM tokens WHERE user_id=%s AND type='EMAIL_TOKEN_ACTIVATE' RETURNING user_id",
         [user_id],
     )
     # TODO: send welcome email?
