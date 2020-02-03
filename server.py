@@ -18,14 +18,15 @@ from ntserv.accounts import (
     GET_confirm_email,
     GET_email_change,
     GET_password_change,
-    GET_recipes,
     GET_recipes_foods,
     GET_user_details,
+    OPT_custom_foods,
     OPT_favorites,
     OPT_logs_biometric,
     OPT_logs_exercise,
     OPT_logs_food,
     OPT_rdas,
+    OPT_recipes,
     OPT_trainers_users,
     OPT_users_trainers,
     POST_login,
@@ -59,6 +60,7 @@ from ntserv.usda import (
     GET_search,
     GET_serving_sizes,
     GET_sort,
+    OPT_nutrients,
 )
 from ntserv.utils.cache import reload
 from ntserv.utils.caffeine import caffeinate
@@ -175,6 +177,11 @@ def get_nutrients():
     return Request(GET_nutrients, request)
 
 
+@app.route("/nutrients", methods=["POST", "DELETE"])
+def nutrients():
+    return Request(OPT_nutrients, request)
+
+
 @app.route("/exercises")
 def get_exercises():
     return Request(GET_exercises, request)
@@ -208,9 +215,9 @@ def favorites():
     return Request(OPT_favorites, request)
 
 
-@app.route("/recipes")
-def get_recipes():
-    return Request(GET_recipes, request)
+@app.route("/recipes", methods=["GET", "POST", "DELETE"])
+def recipes():
+    return Request(OPT_recipes, request)
 
 
 @app.route("/recipes/foods")
@@ -218,7 +225,7 @@ def get_recipes_foods():
     return Request(GET_recipes_foods, request)
 
 
-@app.route("/users/rdas", methods=["POST", "DELETE"])
+@app.route("/users/rdas", methods=["GET", "POST", "DELETE"])
 def rdas():
     return Request(OPT_rdas, request)
 

@@ -43,3 +43,4 @@ JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
 TOKEN_EXPIRY = timedelta(days=1)
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
 SEARCH_LIMIT = 100
+CUSTOM_FOOD_DATA_SRC_ID = 6

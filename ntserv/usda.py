@@ -4,6 +4,7 @@ from .libserver import Response
 from .postgres import psql
 from .settings import SEARCH_LIMIT
 from .utils import cache
+from .utils.auth import AUTH_LEVEL_BASIC, auth
 
 
 def GET_data_src(request):
@@ -24,8 +25,25 @@ def GET_serving_sizes(request):
 
 
 def GET_nutrients(request):
-    pg_result = psql("SELECT * FROM nutr_def")
+    pg_result = psql("SELECT * FROM nutr_def WHERE user_id IS NULL")
     return Response(data=pg_result.rows)
+
+
+@auth
+def OPT_nutrients(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "POST":
+        # TODO: this
+        return Response(code=501)
+
+    elif method == "DELETE":
+        nutr_id = request.json["nutr_id"]
+        psql(
+            "DELETE FROM nutr_def WHERE user_id=%s AND nutr_id=%s RETURNING nutr_id",
+            [user_id, nutr_id],
+        )
+        return Response()
 
 
 def GET_exercises(request):

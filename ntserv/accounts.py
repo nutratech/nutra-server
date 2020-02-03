@@ -9,7 +9,7 @@ from dateutil.parser import parse as parse_datetime
 
 from .libserver import Response
 from .postgres import psql
-from .settings import JWT_SECRET, STRIPE_API_KEY
+from .settings import CUSTOM_FOOD_DATA_SRC_ID, JWT_SECRET, STRIPE_API_KEY
 from .utils import cache
 from .utils.account import (
     cmp_pass,
@@ -460,14 +460,14 @@ def OPT_logs_exercise(request, level=AUTH_LEVEL_BASIC, user_id=None):
 
         if reps and weight:
             pg_result = psql(
-                "INSERT INTO users.exercise_logs (user_id, exercise_id, date, reps, weight) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                "INSERT INTO exercise_logs (user_id, exercise_id, date, reps, weight) VALUES (%s, %s, %s, %s, %s) RETURNING id",
                 [user_id, exercise_id, date, reps, weight],
             )
             id = pg_result.row["id"]
             return Response(data=id)
         elif duration_min:
             pg_result = psql(
-                "INSERT INTO users.exercise_logs (user_id, exercise_id, date, duration_min) VALUES (%s, %s, %s, %s) RETURNING id",
+                "INSERT INTO exercise_logs (user_id, exercise_id, date, duration_min) VALUES (%s, %s, %s, %s) RETURNING id",
                 [user_id, exercise_id, date, duration_min],
             )
             id = pg_result.row["id"]
@@ -562,7 +562,7 @@ def OPT_rdas(request, level=AUTH_LEVEL_BASIC, user_id=None):
         rda = request.json["rda"]
         # TODO - ask Kyle about this query
         pg_result = psql(
-            "INSERT INTO users.rda (user_id, nutr_id, rda) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT rda_pkey DO UPDATE SET rda=excluded.rda WHERE rda.user_id=excluded.user_id AND rda.nutr_id=excluded.nutr_id RETURNING nutr_id",
+            "INSERT INTO rda (user_id, nutr_id, rda) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT rda_pkey DO UPDATE SET rda=excluded.rda WHERE rda.user_id=excluded.user_id AND rda.nutr_id=excluded.nutr_id RETURNING nutr_id",
             [user_id, nutr_id, rda],
         )
         return Response()
@@ -571,16 +571,31 @@ def OPT_rdas(request, level=AUTH_LEVEL_BASIC, user_id=None):
         nutr_id = request.json["nutr_id"]
         rda = request.json["rda"]
         pg_result = psql(
-            "DELETE FROM rda WHERE user_id=$1 AND nutr_id=$2 RETURNING nutr_id",
+            "DELETE FROM rda WHERE user_id=%s AND nutr_id=%s RETURNING nutr_id",
             [user_id, nutr_id],
         )
         return Response()
 
 
 @auth
-def GET_recipes(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    pg_result = psql("SELECT * FROM recipe_des WHERE user_id=%s", [user_id])
-    return Response(data=pg_result.rows)
+def OPT_recipes(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "GET":
+        pg_result = psql("SELECT * FROM recipe_des WHERE user_id=%s", [user_id])
+        return Response(data=pg_result.rows)
+
+    elif method == "POST":
+        # TODO: this
+        return Response(code=501)
+
+    elif method == "DELETE":
+        recipe_id = request.json["recipe_id"]
+        pg_result = psql(
+            "DELETE FROM recipe_des WHERE user_id=%s AND recipe_id=%s RETURNING recipe_id",
+            [user_id, recipe_id],
+        )
+        return Response()
 
 
 @auth
@@ -591,6 +606,39 @@ def GET_recipes_foods(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
         [user_id, recipe_ids],
     )
     return Response(data=pg_result.rows)
+
+
+@auth
+def OPT_custom_foods(request, level=AUTH_LEVEL_BASIC, user_id=None):
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "GET":
+        pg_result = psql("SELECT * FROM food_des WHERE user_id=%s", [user_id])
+        return Response(data=pg_result.rows)
+
+    elif method == "POST":
+        long_desc = request.json["food_name"]
+        tags = request.json["tags"]
+        fdgrp_id = request.json["fdgrp_id"]
+        shared = request.json["shared"]
+        _nutrients = request.json["nutrients"]
+        _servings = request.json["servings"]
+
+        pg_result = psql(
+            "INSERT INTO food_des (long_desc, fdgrp_id, data_src_id, user_id, shared) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+            [long_desc, fdgrp_id, CUSTOM_FOOD_DATA_SRC_ID, user_id, shared],
+        )
+        id = pg_result.row["id"]
+        # TODO - finish up
+        return Response()
+
+    elif method == "DELETE":
+        food_id = request.json["food_id"]
+        pg_result = psql(
+            "DELETE FROM food_des WHERE user_id=%s AND food_id=%s RETURNING id",
+            [user_id, food_id],
+        )
+        return Response()
 
 
 # ---------------
