@@ -11,4 +11,4 @@ fuzzywuzzy==0.17.0
 python-Levenshtein==0.12.0
 ujson==1.35
 python-dateutil==2.8.1
-
+python-crontab==2.4.0
