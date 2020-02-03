@@ -406,8 +406,8 @@ def OPT_logs_food(request, level=AUTH_LEVEL_BASIC, user_id=None):
     elif method == "POST":
         meal_name = request.json["meal_name"]
         amount = request.json["amount"]
-        msre_id = request.json["msre_id"]
 
+        msre_id = request.json.get("msre_id")
         food_id = request.json.get("food_id")
         recipe_id = request.json.get("recipe_id")
         eat_on_date = parse_datetime(request.json["eat_on_date"])
