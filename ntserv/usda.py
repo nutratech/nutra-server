@@ -74,9 +74,11 @@ def GET_search(request):
         score = score[1]
         item = cache.food_des[id]
         fdgrp_id = item["fdgrp_id"]
+        data_src_id = item["data_src_id"]
         result = {
             "food_id": id,
             "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
+            "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
         }
@@ -88,6 +90,7 @@ def GET_search(request):
 
 def GET_sort(request):
     id = request.args["nutr_id"]
+    # TODO - filter by food group?  Makes more sense here than /search
     pg_result = psql("SELECT * FROM sort_foods_by_nutrient_id(%s)", [id])
     return Response(data=pg_result.rows)
 
