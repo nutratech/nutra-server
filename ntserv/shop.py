@@ -23,59 +23,14 @@ def GET_shipping_methods(request):
     return Response(data=pg_result.rows)
 
 
-def GET_products(request):
+def GET_products_ratings(request):
     pg_result = psql("SELECT * FROM get_products_ratings()")
     return Response(data=pg_result.rows)
 
 
-def GET_skus(request):
-    pg_result = psql("SELECT * FROM skus")
+def GET_products_variants(request):
+    pg_result = psql("SELECT * FROM get_products_variants()")
     return Response(data=pg_result.rows)
-
-
-def GET_plans(request):
-    pg_result = psql("SELECT * FROM plans")
-    return Response(data=pg_result.rows)
-
-
-def GET_stripe_products(request):
-    _products = stripe.Product
-    products = []
-    for p in _products.auto_paging_iter():
-        if p["active"]:
-            products.append(p)
-
-    return Response(data=products)
-
-
-def GET_stripe_skus(request):
-    _skus = stripe.SKU
-    skus = []
-    for s in _skus.auto_paging_iter():
-        if s["active"]:
-            skus.append(s)
-
-    return Response(data=skus)
-
-
-def GET_stripe_plans(request):
-    _plans = stripe.Plan
-    plans = []
-    for p in _plans.auto_paging_iter():
-        if p["active"]:
-            plans.append(p)
-
-    return Response(data=plans)
-
-
-def GET_stripe_subscriptions(request):
-    _subscriptions = stripe.Subscription
-    subscriptions = []
-    for s in _subscriptions.auto_paging_iter():
-        if s["active"]:
-            subscriptions.append(s)
-
-    return Response(data=subscriptions)
 
 
 @auth
@@ -103,16 +58,6 @@ def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
     # ERRORs
     if pg_result.err_msg:
         return pg_result.Response
-
-    return Response(data=pg_result.rows)
-
-
-def GET_products_avg_ratings(request):
-
-    # TODO: deprecate, replace with /produces (it has average rating)
-    pg_result = psql(
-        "SELECT product_id, avg(rating)::REAL avg_rating FROM reviews GROUP BY product_id"
-    )
 
     return Response(data=pg_result.rows)
 

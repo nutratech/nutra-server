@@ -40,15 +40,10 @@ from ntserv.accounts import (
 from ntserv.libserver import Request, Response, home_page_text, self_route_rules
 from ntserv.shop import (
     GET_countries,
-    GET_plans,
-    GET_products,
     GET_products__product_id__reviews,
-    GET_products_avg_ratings,
+    GET_products_ratings,
+    GET_products_variants,
     GET_shipping_methods,
-    GET_skus,
-    GET_stripe_plans,
-    GET_stripe_products,
-    GET_stripe_skus,
     POST_orders,
     POST_products_reviews,
 )
@@ -265,34 +260,14 @@ def post_report():
 # -------------------------
 # Stripe functions
 # -------------------------
-@app.route("/products")
-def get_products():
-    return Request(GET_products, request)
+@app.route("/products/ratings")
+def get_products_ratings():
+    return Request(GET_products_ratings, request)
 
 
-@app.route("/skus")
-def get_skus():
-    return Request(GET_skus, request)
-
-
-@app.route("/plans")
-def get_plans():
-    return Request(GET_plans, request)
-
-
-@app.route("/stripe/products")
-def get_stripe_products():
-    return Request(GET_stripe_products, request)
-
-
-@app.route("/stripe/skus")
-def get_stripe_skus():
-    return Request(GET_stripe_skus, request)
-
-
-@app.route("/stripe/plans")
-def get_stripe_plans():
-    return Request(GET_stripe_plans, request)
+@app.route("/products/variants")
+def get_products_variants():
+    return Request(GET_products_variants, request)
 
 
 @app.route("/orders", methods=["POST"])
@@ -308,11 +283,6 @@ def get_products__product_id__reviews(id):
 @app.route("/products/reviews", methods=["POST"])
 def post_products_reviews():
     return Request(POST_products_reviews, request)
-
-
-@app.route("/products/avg_ratings")
-def get_products_avg_ratings():
-    return Request(GET_products_avg_ratings, request)
 
 
 #
