@@ -90,16 +90,6 @@ def get_user_details():
     return Request(GET_user_details, request)
 
 
-@app.route("/countries")
-def get_countries():
-    return Request(GET_countries, request)
-
-
-@app.route("/shipping/methods")
-def get_shipping_methods():
-    return Request(GET_shipping_methods, request)
-
-
 # -------------------------
 # Account functions
 # -------------------------
@@ -258,8 +248,18 @@ def post_report():
 
 
 # -------------------------
-# Stripe functions
+# Shop functions
 # -------------------------
+@app.route("/countries")
+def get_countries():
+    return Request(GET_countries, request)
+
+
+@app.route("/shipping/methods")
+def get_shipping_methods():
+    return Request(GET_shipping_methods, request)
+
+
 @app.route("/products/ratings")
 def get_products_ratings():
     return Request(GET_products_ratings, request)
