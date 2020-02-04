@@ -9,6 +9,7 @@ stripe.api_key = STRIPE_API_KEY
 # ---------------
 # Cache
 # ---------------
+nut_data = []
 food_des = []
 fdgrp = []
 data_src = []
@@ -21,6 +22,9 @@ customers = []
 # ---------------
 def reload():
     global food_des, fdgrp, data_src, users, customers
+
+    # pg_result = psql("SELECT * FROM nut_data")
+    # nut_data = {}
 
     pg_result = psql("SELECT * FROM food_des")
     food_des = {f["id"]: f for f in pg_result.rows}

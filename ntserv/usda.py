@@ -71,6 +71,7 @@ def GET_search(request):
     for score in scores:
         # Tally each score
         id = score[0]
+
         score = score[1]
         item = cache.food_des[id]
         fdgrp_id = item["fdgrp_id"]
@@ -81,6 +82,7 @@ def GET_search(request):
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
+            "len_nutrients": len_nutrients,
         }
         # Add result to list
         results.append(result)
