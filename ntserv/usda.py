@@ -82,7 +82,7 @@ def GET_search(request):
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
-            "len_nutrients": len_nutrients,
+            # "len_nutrients": len_nutrients,
         }
         # Add result to list
         results.append(result)
