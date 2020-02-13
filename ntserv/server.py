@@ -14,7 +14,7 @@ import gunicorn
 from flask import Flask, request
 from flask_cors import CORS
 
-from ntserv.accounts import (
+from .accounts import (
     GET_confirm_email,
     GET_email_change,
     GET_password_change,
@@ -37,8 +37,8 @@ from ntserv.accounts import (
     POST_trainers_switch,
     POST_username_forgot,
 )
-from ntserv.libserver import Request, Response, home_page_text, self_route_rules
-from ntserv.shop import (
+from .libserver import Request, Response, home_page_text, self_route_rules
+from .shop import (
     GET_countries,
     GET_products__product_id__reviews,
     GET_products_ratings,
@@ -47,7 +47,7 @@ from ntserv.shop import (
     POST_orders,
     POST_products_reviews,
 )
-from ntserv.usda import (
+from .usda import (
     GET_analyze,
     GET_biometrics,
     GET_data_src,
@@ -59,8 +59,8 @@ from ntserv.usda import (
     GET_sort,
     OPT_nutrients,
 )
-from ntserv.utils.cache import reload
-from ntserv.utils.caffeine import caffeinate
+from .utils.cache import reload
+from .utils.caffeine import caffeinate
 
 # Load SQL cache in-memory
 reload()
