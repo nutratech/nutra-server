@@ -6,6 +6,8 @@ try:
     sys.path.append("/home/nutra/public_html/api")
 
     sys.path.insert(0, os.path.dirname(__file__))
+
+    os.chdir("/home/nutra/public_html/api")
     from server import app
 
     # make the secret code a little better
@@ -13,10 +15,13 @@ try:
 
     # start server
     port = int(os.getenv("PORT", 20000))
+    if port == 81:
+        port = 20000
     app.run(
         host="127.0.0.1", port=port, debug=True,
     )
 except Exception as e:
-    with open("error.txt", "w+") as f:
+    with open("/home/nutra/public_html/api/error.txt", "w+") as f:
+        f.write(f"port: {port}\n")
         f.write(repr(e) + "\n")
         f.write("\n".join(format_tb(e.__traceback__)))
