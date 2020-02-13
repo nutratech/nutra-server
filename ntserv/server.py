@@ -283,15 +283,3 @@ def get_products__product_id__reviews(id):
 @app.route("/products/reviews", methods=["POST"])
 def post_products_reviews():
     return Request(POST_products_reviews, request)
-
-
-#
-# Make script executable
-if __name__ == "__main__":
-    """ Run as file (or debug it in vscode!) """
-
-    print("[__main__] bypassing gunicorn...")
-    port = int(os.getenv("PORT", 20000))
-    app.run(
-        host="127.0.0.1", port=port, debug=True,
-    )
