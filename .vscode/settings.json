@@ -20,4 +20,5 @@
         "**/__pycache__/**": true,
         "**/.pytest_cache/**": true,
     },
+    "python.formatting.provider": "black",
 }
