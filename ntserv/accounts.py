@@ -73,14 +73,14 @@ def POST_register(request):
         return Response(data={"error": "Passwords do NOT match"}, code=400)
     elif (
         len(password) < 6
-        or len(password) > 18
+        or len(password) > 40
         or not re.findall(r"""[~`!#$%\^&*+=\-\[\]\\',/{}|\\":<>\?]""", password)
         or not re.findall("[a-z]", password)
         or not re.findall("[A-Z]", password)
     ):
         return Response(
             data={
-                "error": "Password must be 6-18 chars long, and contain an uppercase, a lowercase, and a special character",
+                "error": "Password must be 6-40 chars long, and contain an uppercase, a lowercase, and a special character",
             },
             code=400,
         )
