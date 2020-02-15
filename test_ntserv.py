@@ -32,7 +32,7 @@ import ujson as json
 from ntserv.postgres import psql
 
 
-# @pytest.mark.skip(reason="work in progress, long running test")
+@pytest.mark.skip(reason="work in progress, long running test")
 def test_pair_foods():
     pg_result = psql("SELECT * FROM food_des WHERE data_src_id=1")
     sr_food_des = {f["id"]: f for f in pg_result.rows}
