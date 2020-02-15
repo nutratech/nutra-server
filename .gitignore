@@ -8,6 +8,7 @@
 # Our files
 .vscode/
 Pipfile*
+tmp/
 
 ####################
 ## Python Ignores ##

@@ -12,6 +12,16 @@ from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 # ----------------------
 # get user_id funcs
 # ----------------------
+def user_id_from_username_or_email(identifier):
+    pg_result = psql(
+        "SELECT * FROM get_user_id_from_username_or_email(%s)", [identifier]
+    )
+    if pg_result.err_msg or not pg_result.rows:
+        return None
+
+    return pg_result.row["id"]
+
+
 def user_id_from_username(username):
     pg_result = psql("SELECT id FROM users WHERE username=%s", [username])
     if pg_result.err_msg or not pg_result.rows:
