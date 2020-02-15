@@ -10,7 +10,7 @@ import subprocess
 import threading
 
 import gunicorn
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 
 from .accounts import (
@@ -82,6 +82,11 @@ def get_home_page():
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
     return f"<pre>{home_page}</pre>"
+
+
+@app.route("/favicon.ico")
+def get_favicon_ico():
+    return send_from_directory(f"{app.root_path}/static", "favicon.ico",)
 
 
 @app.route("/user_details")
