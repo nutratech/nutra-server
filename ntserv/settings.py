@@ -11,6 +11,9 @@ load_dotenv(verbose=True)
 # Stripe API Key
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
+# Shippo token
+SHIPPO_API_KEY = os.getenv("SHIPPO_TOKEN")
+
 # Email creds
 PROD_EMAIL = os.getenv("PROD_EMAIL")
 PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
