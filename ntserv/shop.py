@@ -1,5 +1,5 @@
 import jwt
-import pyshipping
+import py3dbp
 import shippo
 import stripe
 
@@ -33,7 +33,19 @@ def GET_countries(request):
 def POST_shipping_esimates(request):
     body = request.json
     address = body["address"]
-    products = body["products"]
+    items = {int(k): v for k, v in body["items"].items()}
+
+    # Get products and shipping methods from db
+    pg_result = psql("SELECT * FROM variants")
+    variants = {r["id"]: r for r in pg_result.rows}
+    pg_result = psql("SELECT * FROM shipping_methods WHERE is_physical=TRUE")
+    methods = pg_result.rows
+
+    #############
+    # 3D bin-pack
+
+    ########
+    # SHIPPO
 
     # Example address_to object dict
     # The complete refence for the address object is available here: https://goshippo.com/docs/reference#addresses
@@ -70,9 +82,6 @@ def POST_shipping_esimates(request):
         asynchronous=False,
     )
 
-    pg_result = psql("SELECT * FROM shipping_methods WHERE is_physical=TRUE")
-    methods = pg_result.rows
-    print(methods)
     return Response(data=methods)
 
 
