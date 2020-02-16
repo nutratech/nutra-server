@@ -80,8 +80,8 @@ def GET_products_ratings(request):
     return Response(data=pg_result.rows)
 
 
-def GET_products_variants(request):
-    pg_result = psql("SELECT * FROM get_products_variants()")
+def GET_products(request):
+    pg_result = psql("SELECT * FROM get_products()")
     return Response(data=pg_result.rows)
 
 

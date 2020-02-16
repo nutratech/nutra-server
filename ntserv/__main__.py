@@ -41,7 +41,7 @@ from .shop import (
     GET_countries,
     GET_products__product_id__reviews,
     GET_products_ratings,
-    GET_products_variants,
+    GET_products,
     POST_shipping_esimates,
     POST_orders,
     POST_products_reviews,
@@ -269,9 +269,9 @@ def get_products_ratings():
     return Request(GET_products_ratings, request)
 
 
-@app.route("/products/variants")
-def get_products_variants():
-    return Request(GET_products_variants, request)
+@app.route("/products")
+def get_products():
+    return Request(GET_products, request)
 
 
 @app.route("/orders", methods=["POST"])
