@@ -45,6 +45,7 @@ from .shop import (
     POST_shipping_esimates,
     POST_orders,
     POST_products_reviews,
+    POST_register_email,
 )
 from .usda import (
     GET_analyze,
@@ -100,6 +101,11 @@ def get_user_details():
 @app.route("/register", methods=["POST"])
 def post_register():
     return Request(POST_register, request)
+
+
+@app.route("/register/email", methods=["POST"])
+def post_register_email():
+    return Request(POST_register_email, request)
 
 
 @app.route("/login", methods=["POST"])

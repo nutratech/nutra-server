@@ -1,7 +1,9 @@
+import re
+
 import jwt
-import py3dbp
 import shippo
 import stripe
+from py3dbp.main import Bin, Item, Packer
 
 from .libserver import Response
 from .postgres import psql
@@ -30,6 +32,35 @@ def GET_countries(request):
     return Response(data=pg_result.rows)
 
 
+def POST_register_email(request):
+
+    email = request.json["email"]
+
+    # Regex input validation
+    if not re.match(
+        r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
+        email,
+    ):
+        return Response(data={"error": "Not a valid e-mail address"}, code=400)
+
+    # See if already registered
+    pg_result = psql("SELECT user_id FROM emails WHERE email=%s", [email])
+
+    # Return existing user_id
+    if pg_result.rows:
+        user_id = pg_result.row["user_id"]
+        return Response(data={"user_id": user_id}, code=207)
+
+    # Create user and email
+    pg_result = psql("INSERT INTO users DEFAULT VALUES RETURNING id")
+    user_id = pg_result.row["id"]
+    pg_result = psql(
+        "INSERT INTO emails (email, user_id) VALUES (%s, %s) RETURNING user_id",
+        [email, user_id],
+    )
+    return Response(data={"user_id": user_id}, code=202)
+
+
 def POST_shipping_esimates(request):
     body = request.json
     address = body["address"]
@@ -43,6 +74,8 @@ def POST_shipping_esimates(request):
 
     #############
     # 3D bin-pack
+    packer = Packer()
+    p
 
     ########
     # SHIPPO
