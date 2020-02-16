@@ -3,6 +3,7 @@ psycopg2==2.8.4
 pytest==5.3.4
 stripe==2.42.0
 shippo==2.0.0
+pyShipping==1.7
 Flask_Cors==3.0.8
 Flask==1.1.1
 PyJWT==1.7.1
