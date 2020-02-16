@@ -5,8 +5,7 @@ Created on Sat Feb  1 13:18:44 2020
 @author: shane
 
 This file is part of nutra, a nutrient analysis program.
-    https://github.com/nutratech/cli
-    https://pypi.org/project/nutra/
+    https://github.com/gamesguru/nutra-server
 
 nutra-server, a server for nutratracker clients
 Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] mathmuncher11@gmail.com
