@@ -12,254 +12,6 @@
 					"name": "TODO",
 					"item": [
 						{
-							"name": "/request_new_password",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
-										"exec": [
-											"pm.environment.set(\"EMAIL_TOKEN_PW_RESET\", JSON.parse(responseBody).data.message);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "email",
-											"value": "loanwolf200@gmail.com",
-											"type": "text"
-										},
-										{
-											"key": "username",
-											"value": "kthprog",
-											"type": "text",
-											"disabled": true
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRI_URL}}/request_new_password",
-									"host": [
-										"{{NUTRI_URL}}"
-									],
-									"path": [
-										"request_new_password"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/reset_password",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
-										"exec": [
-											"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "{{NUTRI_URL}}/reset_password?email=mathmuncher11@gmail.com&email_token_pw_reset={{EMAIL_TOKEN_PW_RESET}}",
-									"host": [
-										"{{NUTRI_URL}}"
-									],
-									"path": [
-										"reset_password"
-									],
-									"query": [
-										{
-											"key": "email",
-											"value": "mathmuncher11@gmail.com"
-										},
-										{
-											"key": "email_token_pw_reset",
-											"value": "{{EMAIL_TOKEN_PW_RESET}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/change_email",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "16e85b86-3f41-4cab-88ef-63842712e5b3",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "new_email",
-											"value": "mathmuncher11@gmail.com",
-											"type": "text"
-										},
-										{
-											"key": "confirm_new_email",
-											"value": "mathmuncher11@gmail.com",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "101Problems!",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRI_URL}}/change_email",
-									"host": [
-										"{{NUTRI_URL}}"
-									],
-									"path": [
-										"change_email"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/change_password",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "16e85b86-3f41-4cab-88ef-63842712e5b3",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "new_password",
-											"value": "101Problems!",
-											"type": "text"
-										},
-										{
-											"key": "confirm_password",
-											"value": "101Problems!",
-											"type": "text"
-										},
-										{
-											"key": "old_password",
-											"value": "101Problems!",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRI_URL}}/change_password",
-									"host": [
-										"{{NUTRI_URL}}"
-									],
-									"path": [
-										"change_password"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/forgot_username",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
-										"exec": [
-											"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "email",
-											"value": "loanwolf200@gmail.com",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRI_URL}}/forgot_username",
-									"host": [
-										"{{NUTRI_URL}}"
-									],
-									"path": [
-										"forgot_username"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "/report",
 							"request": {
 								"auth": {
@@ -387,7 +139,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"kthprog0222\",\n    \"email\": \"loanwolf200@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\"\n}",
+							"raw": "{\n    \"username\": \"jsheener\",\n    \"email\": \"jsheener3@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -401,6 +153,40 @@
 							],
 							"path": [
 								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/register/email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jsheener3@gmail.com\",\n    \"2email\": \"nutratracker@gmail.com\",\n    \"3email\": \"n@g.c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/register/email",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"register",
+								"email"
 							]
 						}
 					},
@@ -452,6 +238,275 @@
 					"response": []
 				},
 				{
+					"name": "/email/confirm",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "intentionally blank",
+							"host": [
+								"intentionally blank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/email/change",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "16e85b86-3f41-4cab-88ef-63842712e5b3",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "new_email",
+									"value": "mathmuncher11@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "confirm_new_email",
+									"value": "mathmuncher11@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "101Problems!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRI_URL}}/email/change",
+							"host": [
+								"{{NUTRI_URL}}"
+							],
+							"path": [
+								"email",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/password/change",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "16e85b86-3f41-4cab-88ef-63842712e5b3",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "new_password",
+									"value": "101Problems!",
+									"type": "text"
+								},
+								{
+									"key": "confirm_password",
+									"value": "101Problems!",
+									"type": "text"
+								},
+								{
+									"key": "old_password",
+									"value": "101Problems!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRI_URL}}/password/change",
+							"host": [
+								"{{NUTRI_URL}}"
+							],
+							"path": [
+								"password",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/password/new/reset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
+								"exec": [
+									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/password/new/reset?email=mathmuncher11@gmail.com&email_token_pw_reset={{EMAIL_TOKEN_PW_RESET}}",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"password",
+								"new",
+								"reset"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "mathmuncher11@gmail.com"
+								},
+								{
+									"key": "email_token_pw_reset",
+									"value": "{{EMAIL_TOKEN_PW_RESET}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/password/new/request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
+								"exec": [
+									"pm.environment.set(\"EMAIL_TOKEN_PW_RESET\", JSON.parse(responseBody).data.message);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "loanwolf200@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "kthprog",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/password/new/request",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"password",
+								"new",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/username/forgot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
+								"exec": [
+									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "loanwolf200@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SEVER_URL}}/username/forgot",
+							"host": [
+								"{{NUTRA_SEVER_URL}}"
+							],
+							"path": [
+								"username",
+								"forgot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "/user_details",
 					"request": {
 						"auth": {
@@ -477,20 +532,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "/confirm_email",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "intentionally blank",
-							"host": [
-								"intentionally blank"
-							]
-						}
-					},
-					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -498,6 +539,57 @@
 		{
 			"name": "Shop",
 			"item": [
+				{
+					"name": "/countries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/countries",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/shipping/estimates",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\": \"7737 Kercheval St, Detroit, MI 48214\",\n    \"items\": {\n        \"1\": 3,\n        \"2\": 2\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/shipping/estimates",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"shipping",
+								"estimates"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "/products/<id>/reviews",
 					"protocolProfileBehavior": {
@@ -735,6 +827,49 @@
 							"path": [
 								"stripe",
 								"skus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"TODO\": \"define this api\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/orders",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"orders"
 							]
 						}
 					},
