@@ -55,6 +55,7 @@ def POST_shipping_esimates(request):
         bin = Bin(c["tag"], l, w, h, c["weight_max"])
         packer.add_bin(bin)
 
+    items_ = []
     for i in items:
         # TODO - include stock/inventory check at this point, or earlier in shop
         i = variants[i]
@@ -63,6 +64,7 @@ def POST_shipping_esimates(request):
         h = i["dimensions"][2] / 2.54
         weight = i["weight"]
         item = Item(i["denomination"], l, w, h, weight)
+        items_.append(item)
         packer.add_item(item)
 
     packer.pack()
@@ -74,11 +76,15 @@ def POST_shipping_esimates(request):
     parcels = []
     for bin in bins:
         parcel = {
+            "name": bin.name,
             "length": bin.width,
             "width": bin.height,
             "height": bin.depth,
             "distance_unit": "in",
-            "weight": sum([i.weight for i in bin.items]),
+            # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
+            # currently we are just assuming one package == sum( all items' weights )
+            # "weight": sum([i.weight for i in bin.items]),
+            "weight": sum([i.weight for i in items_]),
             "mass_unit": "g",
         }
         parcels.append(parcel)
@@ -90,7 +96,7 @@ def POST_shipping_esimates(request):
         asynchronous=False,
     )
 
-    return Response(data={"bins": bins, "rates": shipment.rates})
+    return Response(data={"parcels": parcels, "rates": shipment.rates})
 
 
 def GET_products_ratings(request):
