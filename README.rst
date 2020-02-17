@@ -34,43 +34,55 @@ A ``.env`` file is recommended in the ``server`` folder root as well.
     export PSQL_PASSWORD=
     export PSQL_HOST=nutra.heliohost.org
 
-**Option 2** create local db (see ``nutra-db`` repo):
+**Option 2** create local db (see ``ntdb`` repo):
 
 .. code-block:: bash
 
-    export PSQL_LOCAL_DB_DIR="/home/$LOGNAME/postgres_nutra2_db"
+    export PSQL_LOCAL_DB_DIR="/home/$LOGNAME/.pgsql/nutra"
+    mkdir -p $PSQL_LOCAL_DB_DIR
 
     git clone git@github.com:gamesguru/ntdb.git
-    cd nutra-db
+    cd ntdb
 
     cd sql
-    ./local.sh
-    ./rebuild.sh
+    cp .env.local .env
+    # exit the sql shell by entering \q
+    bash local.sh
+    bash rebuild.sh
 
-Run (Remote DB)
-===============
-
-TODO: this
-
-Run (Local DB)
-==============
-
-You can also debug from VS Code.
+Each time you reboot your computer, start the sql server:
 
 .. code-block:: bash
 
-    ./server.py
+    ./local.sh
+
+Run (Local DB)
+##############
+
+.. code-block:: bash
+
+    python3 server.py
+
+You can also debug from VS Code.
+Install the Python extension and press F5.
+
+Run (Remote DB)
+###############
+
+TODO: this
 
 Heroku Config (env) Variables
 #############################
 
+TODO: update
+
 .. code-block:: bash
 
-    JWE_SECRET         = 
+    JWT_SECRET         =
     ON_HEROKU          = 1
     PROD_EMAIL         = nutratracker@gmail.com
-    PROD_EMAIL_PASS    = 
+    PROD_EMAIL_PASS    =
     PSQL_DATABASE      = nutra
     PSQL_USER          = nutra
-    PSQL_PASSWORD      = 
+    PSQL_PASSWORD      =
     PSQL_HOST          = nutra.heliohost.org
