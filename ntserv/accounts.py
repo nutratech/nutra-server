@@ -37,26 +37,33 @@ def POST_register(request):
 
     # Parse incoming request
     body = request.json
-    username = body["username"]
     email = body["email"]
-    password = body["password"]
-    password_confirm = body["password-confirm"]
+
+    username = body.get("username")
+    password = body.get("password")
+    password_confirm = body.get("password-confirm")
 
     # TODO: break up below block into "service-level" function
 
-    """
-    -------------------------------------
-    Registration validation checks
-    -------------------------------------
+    # -------------------------------------
+    # Registration validation checks
+    # -------------------------------------
 
-    Python regex:
-        https://www.tutorialspoint.com/How-to-match-any-one-uppercase-character-in-python-using-Regular-Expression
-        https://www.tutorialspoint.com/How-to-check-if-a-string-contains-only-upper-case-letters-in-Python
-    """
-
-    #
+    ##################
+    # Email (required)
+    if not re.match(
+        r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
+        email,
+    ):
+        return Response(data={"error": "Email address not recognizable"}, code=400)
+    # Allow "guest" registration with email only
+    # Email exists already?
+    pg_result = psql("SELECT user_id FROM emails WHERE email=%s", [email])
+    if pg_result.rows:
+        return Response(data={"user_id": pg_result.row["user_id"],}, code=207)
+    ##########
     # Username
-    if (
+    elif username and (
         len(username) < 6
         or len(username) > 18
         or not re.match("^[0-9a-z_]+$", username)
@@ -67,11 +74,11 @@ def POST_register(request):
             },
             code=400,
         )
-    #
+    ##########
     # Password
-    elif password_confirm != password:
+    elif password and password_confirm != password:
         return Response(data={"error": "Passwords do NOT match"}, code=400)
-    elif (
+    elif password and (
         len(password) < 6
         or len(password) > 40
         or not re.findall(r"""[~`!#$%\^&*+=\-\[\]\\',/{}|\\":<>\?]""", password)
@@ -85,20 +92,15 @@ def POST_register(request):
             code=400,
         )
 
-    #
-    # Email
-    elif not re.match(
-        r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
-        email,
-    ):
-        return Response(data={"error": "Email address not recognizable"}, code=400)
-
     # -------------------------------------
     # Attempt to SQL insert user
     # -------------------------------------
     # TODO: transactional `block()`
     # CREATE USER
-    passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    if password:
+        passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    else:
+        passwd = None
     pg_result = psql(
         "INSERT INTO users (username, passwd) VALUES (%s, %s) RETURNING id",
         [username, passwd],
