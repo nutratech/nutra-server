@@ -59,7 +59,6 @@ from .usda import (
     OPT_nutrients,
 )
 from .utils.cache import reload
-from .utils.caffeine import caffeinate
 
 # Load SQL cache in-memory
 reload()
@@ -67,7 +66,6 @@ reload()
 # Export the Flask server for gunicorn
 app = Flask(__name__)
 CORS(app)
-caffeinate()
 
 
 """
