@@ -159,7 +159,7 @@
 					"response": []
 				},
 				{
-					"name": "/register/email",
+					"name": "/register (email only)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -172,7 +172,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"jsheener3@gmail.com\",\n    \"2email\": \"nutratracker@gmail.com\",\n    \"3email\": \"n@g.c\"\n}",
+							"raw": "{\n    \"email\": \"jsheener4@gmail.com\",\n    \"2email\": \"nutratracker@gmail.com\",\n    \"3email\": \"n@g.c\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -180,13 +180,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/register/email",
+							"raw": "{{NUTRA_SERVER_URL}}/register",
 							"host": [
 								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
-								"register",
-								"email"
+								"register"
 							]
 						}
 					},
@@ -570,7 +569,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address\": \"7737 Kercheval St, Detroit, MI 48214\",\n    \"items\": {\n        \"1\": 3,\n        \"2\": 2\n    }\n}",
+							"raw": "{\n    \"address\": {\n        \"street1\": \"7737 Kercheval St\",\n        \"city\": \"Detroit\",\n        \"state\": \"MI\",\n        \"zip\": 48214,\n        \"country\": \"US\"\n    },\n    \"items\": [\n        1,\n        1,\n        1,\n        2,\n        2\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
