@@ -16,14 +16,12 @@ shippo.config.api_key = SHIPPO_API_KEY
 stripe.api_key = STRIPE_API_KEY
 
 address_from = {
-    "name": "Shippo Team",
-    "street1": "965 Mission St",
-    "street2": "Unit 480",
-    "city": "San Francisco",
-    "state": "CA",
-    "zip": "94103",
+    "street1": "100 Renaissance Center",
+    "street2": "Ste 1014",
+    "city": "Detroit",
+    "state": "MI",
+    "zip": 48243,
     "country": "US",
-    "phone": "+1 555 341 9393",
 }
 
 
@@ -35,58 +33,64 @@ def GET_countries(request):
 def POST_shipping_esimates(request):
     body = request.json
     address = body["address"]
-    items = {int(k): v for k, v in body["items"].items()}
+    items = body["items"]
 
-    # Get products and shipping methods from db
+    # Query DB for products, shipping methods and containers
     pg_result = psql("SELECT * FROM variants")
     variants = {r["id"]: r for r in pg_result.rows}
-    pg_result = psql("SELECT * FROM shipping_methods WHERE is_physical=TRUE")
-    methods = pg_result.rows
+    # TODO - reduce down to subset of shipping options (more user-friendly?)
+    # pg_result = psql("SELECT * FROM shipping_methods WHERE is_physical=TRUE")
+    # methods = pg_result.rows
+    pg_result = psql("SELECT * FROM shipping_containers")
+    containers = pg_result.rows
 
     #############
     # 3D bin-pack
     packer = Packer()
-    p
+
+    for c in containers:
+        l = c["dimensions"][0]
+        w = c["dimensions"][1]
+        h = c["dimensions"][2]
+        bin = Bin(c["tag"], l, w, h, c["weight_max"])
+        packer.add_bin(bin)
+
+    for i in items:
+        # TODO - include stock/inventory check at this point, or earlier in shop
+        i = variants[i]
+        l = i["dimensions"][0] / 2.54
+        w = i["dimensions"][1] / 2.54
+        h = i["dimensions"][2] / 2.54
+        weight = i["weight"]
+        item = Item(i["denomination"], l, w, h, weight)
+        packer.add_item(item)
+
+    packer.pack()
+
+    bins = [bin for bin in packer.bins if bin.items]
 
     ########
     # SHIPPO
+    parcels = []
+    for bin in bins:
+        parcel = {
+            "length": bin.width,
+            "width": bin.height,
+            "height": bin.depth,
+            "distance_unit": "in",
+            "weight": sum([i.weight for i in bin.items]),
+            "mass_unit": "g",
+        }
+        parcels.append(parcel)
 
-    # Example address_to object dict
-    # The complete refence for the address object is available here: https://goshippo.com/docs/reference#addresses
-
-    address_to = {
-        "name": "Shippo Friend",
-        "street1": "1092 Indian Summer Ct",
-        "city": "San Jose",
-        "state": "CA",
-        "zip": "95122",
-        "country": "US",
-        "phone": "+1 555 341 9393",
-    }
-
-    # parcel object dict
-    # The complete reference for parcel object is here: https://goshippo.com/docs/reference#parcels
-    parcel = {
-        "length": "5",
-        "width": "5",
-        "height": "5",
-        "distance_unit": "in",
-        "weight": "2",
-        "mass_unit": "lb",
-    }
-
-    # Example shipment object
-    # For complete reference to the shipment object: https://goshippo.com/docs/reference#shipments
-    # This object has asynchronous=False, indicating that the function will wait until all rates are generated before it returns.
-    # By default, Shippo handles responses asynchronously. However this will be depreciated soon. Learn more: https://goshippo.com/docs/async
     shipment = shippo.Shipment.create(
         address_from=address_from,
-        address_to=address_to,
-        parcels=[parcel],
+        address_to=address,
+        parcels=parcels,
         asynchronous=False,
     )
 
-    return Response(data=methods)
+    return Response(data={"bins": bins, "rates": shipment.rates})
 
 
 def GET_products_ratings(request):
