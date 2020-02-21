@@ -53,6 +53,7 @@ def POST_shipping_esimates(request):
         w = c["dimensions"][1]
         h = c["dimensions"][2]
         bin = Bin(c["tag"], l, w, h, c["weight_max"])
+        # print(f"packer.add_bin(Bin('{c['tag']}', {l}, {w}, {h}, {c['weight_max']}))")
         packer.add_bin(bin)
 
     items_ = []
@@ -64,6 +65,7 @@ def POST_shipping_esimates(request):
         h = i["dimensions"][2] / 2.54
         weight = i["weight"]
         item = Item(i["denomination"], l, w, h, weight)
+        # print(f"packer.add_item(Item('{i['denomination']}', {l}, {w}, {h}, {weight}))")
         items_.append(item)
         packer.add_item(item)
 
