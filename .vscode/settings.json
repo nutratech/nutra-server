@@ -1,9 +1,4 @@
 {
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "-v",
-        "-s",
-    ],
     "files.exclude": {
         "**/__pycache__/**": true,
         "**/.pytest_cache/**": true,
@@ -20,4 +15,9 @@
         "**/.pytest_cache/**": true,
     },
     "python.formatting.provider": "black",
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "-v",
+        "-s",
+    ],
 }

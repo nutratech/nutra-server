@@ -1,15 +1,17 @@
+import json
 import re
 
 import jwt
 import shippo
 import stripe
+from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
 
 from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, SHIPPO_API_KEY, STRIPE_API_KEY
 from .utils.account import user_id_from_username
-from .utils.auth import AUTH_LEVEL_BASIC, auth
+from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNAUTHED, auth
 
 # Set Stripe & Shippo API keys
 shippo.config.api_key = SHIPPO_API_KEY
@@ -111,9 +113,42 @@ def GET_products(request):
     return Response(data=pg_result.rows)
 
 
-@auth
-def POST_orders(request, level=AUTH_LEVEL_BASIC, user_id=None):
-    return Response(code=501)
+# @auth
+def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
+    body = request.json
+    user_id = int(body["user_id"])
+    shipping_method = body["shipping_method"]
+    shipping_price = float(body["shipping_price"])
+    payment_method = body["payment_method"]
+    address_bill = body["address_bill"]
+    address_ship = body["address_ship"]
+    items = body["items"]
+
+    shipping_method_id = psql(
+        "SELECT id FROM shipping_methods WHERE shipping_type=%s", [shipping_method]
+    ).row["id"]
+
+    pg_result = psql(
+        "INSERT INTO orders (user_id, shipping_method_id, shipping_price, payment_method, address_bill, address_ship) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+        [
+            user_id,
+            shipping_method_id,
+            shipping_price,
+            payment_method,
+            Json(address_bill),
+            Json(address_ship),
+        ],
+    )
+    order_id = pg_result.row["id"]
+    for id in set(items):
+        quantity = items.count(id)
+        price = psql("SELECT price FROM variants WHERE id=%s", [id]).row["price"]
+        # TODO: handle error, for example change quantity to quanity and see how it fails silently
+        pg_result = psql(
+            "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
+            [order_id, id, quantity, price],
+        )
+    return Response(data={"order_id": order_id})
 
 
 @auth
