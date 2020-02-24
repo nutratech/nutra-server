@@ -117,6 +117,7 @@ def GET_products(request):
 def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
     body = request.json
     user_id = int(body["user_id"])
+    paypal_id = body["paypal_id"]
     shipping_method = body["shipping_method"]
     shipping_price = float(body["shipping_price"])
     payment_method = body["payment_method"]
@@ -129,9 +130,10 @@ def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
     ).row["id"]
 
     pg_result = psql(
-        "INSERT INTO orders (user_id, shipping_method_id, shipping_price, payment_method, address_bill, address_ship) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+        "INSERT INTO orders (user_id, paypal_id, shipping_method_id, shipping_price, payment_method, address_bill, address_ship) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
         [
             user_id,
+            paypal_id,
             shipping_method_id,
             shipping_price,
             payment_method,
