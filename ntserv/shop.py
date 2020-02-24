@@ -117,7 +117,6 @@ def GET_products(request):
 def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
     body = request.json
     user_id = int(body["user_id"])
-    paypal_id = body["paypal_id"]
     shipping_method = body["shipping_method"]
     shipping_price = float(body["shipping_price"])
     payment_method = body["payment_method"]
@@ -130,10 +129,9 @@ def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
     ).row["id"]
 
     pg_result = psql(
-        "INSERT INTO orders (user_id, paypal_id, shipping_method_id, shipping_price, payment_method, address_bill, address_ship) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+        "INSERT INTO orders (user_id, shipping_method_id, shipping_price, payment_method, address_bill, address_ship) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
         [
             user_id,
-            paypal_id,
             shipping_method_id,
             shipping_price,
             payment_method,
@@ -151,6 +149,23 @@ def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
             [order_id, id, quantity, price],
         )
     return Response(data={"order_id": order_id})
+
+
+def PATCH_orders(request):
+    body = request.json
+    id = body["order_id"]
+    paypal_id = body.get("paypal_id")
+    status = body.get("status")
+
+    if paypal_id:
+        psql(
+            "UPDATE orders SET paypal_id=%s RETURNING paypal_id WHERE id=%s",
+            [paypal_id, id],
+        )
+    if status:
+        psql("UPDATE orders SET status=%s RETURNING status WHERE id=%s", [status, id])
+
+    return Response()
 
 
 @auth
