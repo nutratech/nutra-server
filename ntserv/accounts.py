@@ -1,15 +1,12 @@
 import re
 import uuid
-from datetime import datetime
 
 import bcrypt
-import jwt
 from dateutil.parser import parse as parse_datetime
 
 from .libserver import Response
 from .postgres import psql
-from .settings import CUSTOM_FOOD_DATA_SRC_ID, JWT_SECRET
-from .utils import cache
+from .settings import CUSTOM_FOOD_DATA_SRC_ID
 from .utils.account import (
     cmp_pass,
     send_activation_email,
@@ -23,7 +20,6 @@ from .utils.auth import (
     AUTH_LEVEL_TRAINER,
     AUTH_LEVEL_UNCONFIRMED,
     auth,
-    check_request,
     issue_token,
     jwt_token,
 )

@@ -4,7 +4,6 @@ from email.message import EmailMessage
 
 import bcrypt
 
-from ..libserver import Response
 from ..postgres import psql
 from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 

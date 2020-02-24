@@ -5,10 +5,6 @@ Created on Sat Jan  4 18:20:27 2020
 @author: shane
 """
 
-import os
-import subprocess
-import threading
-
 import gunicorn
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
@@ -19,7 +15,7 @@ from .accounts import (
     GET_password_change,
     GET_recipes_foods,
     GET_user_details,
-    OPT_custom_foods,
+    # OPT_custom_foods,
     OPT_favorites,
     OPT_logs_biometric,
     OPT_logs_exercise,
@@ -36,16 +32,16 @@ from .accounts import (
     POST_trainers_switch,
     POST_username_forgot,
 )
-from .libserver import Request, Response, home_page_text, self_route_rules
+from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
     GET_countries,
+    GET_products,
     GET_products__product_id__reviews,
     GET_products_ratings,
-    GET_products,
-    POST_shipping_esimates,
     PATCH_orders,
     POST_orders,
     POST_products_reviews,
+    POST_shipping_esimates,
     POST_validate_addresses,
 )
 from .usda import (
