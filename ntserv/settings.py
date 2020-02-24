@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 load_dotenv(verbose=True)
 
 
-# Stripe API Key
-STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
-
 # Shippo token
 SHIPPO_API_KEY = os.getenv("SHIPPO_TOKEN")
 

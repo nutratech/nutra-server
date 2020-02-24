@@ -3,19 +3,17 @@ import re
 
 import jwt
 import shippo
-import stripe
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
 
 from .libserver import Response
 from .postgres import psql
-from .settings import JWT_SECRET, SHIPPO_API_KEY, STRIPE_API_KEY
+from .settings import JWT_SECRET, SHIPPO_API_KEY
 from .utils.account import user_id_from_username
 from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth
 
-# Set Stripe & Shippo API keys
+# Set Shippo API key
 shippo.config.api_key = SHIPPO_API_KEY
-stripe.api_key = STRIPE_API_KEY
 
 address_from = {
     "street1": "100 Renaissance Center",

@@ -4,12 +4,11 @@ from datetime import datetime
 
 import bcrypt
 import jwt
-import stripe
 from dateutil.parser import parse as parse_datetime
 
 from .libserver import Response
 from .postgres import psql
-from .settings import CUSTOM_FOOD_DATA_SRC_ID, JWT_SECRET, STRIPE_API_KEY
+from .settings import CUSTOM_FOOD_DATA_SRC_ID, JWT_SECRET
 from .utils import cache
 from .utils.account import (
     cmp_pass,
@@ -28,9 +27,6 @@ from .utils.auth import (
     issue_token,
     jwt_token,
 )
-
-# Set Stripe API key
-stripe.api_key = STRIPE_API_KEY
 
 
 def POST_register(request):
