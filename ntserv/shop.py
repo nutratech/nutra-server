@@ -11,7 +11,7 @@ from .libserver import Response
 from .postgres import psql
 from .settings import JWT_SECRET, SHIPPO_API_KEY, STRIPE_API_KEY
 from .utils.account import user_id_from_username
-from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNAUTHED, auth
+from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth
 
 # Set Stripe & Shippo API keys
 shippo.config.api_key = SHIPPO_API_KEY
@@ -114,7 +114,7 @@ def GET_products(request):
 
 
 # @auth
-def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
+def POST_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     body = request.json
     user_id = int(body["user_id"])
     shipping_method = body["shipping_method"]
@@ -151,6 +151,7 @@ def POST_orders(request, level=AUTH_LEVEL_UNAUTHED, user_id=None):
     return Response(data={"order_id": order_id})
 
 
+# @auth
 def PATCH_orders(request):
     body = request.json
     id = body["order_id"]
@@ -159,11 +160,10 @@ def PATCH_orders(request):
 
     if paypal_id:
         psql(
-            "UPDATE orders SET paypal_id=%s RETURNING paypal_id WHERE id=%s",
-            [paypal_id, id],
+            "UPDATE orders SET paypal_id=%s WHERE id=%s RETURNING id", [paypal_id, id],
         )
     if status:
-        psql("UPDATE orders SET status=%s RETURNING status WHERE id=%s", [status, id])
+        psql("UPDATE orders SET status=%s WHERE id=%s RETURNING id", [status, id])
 
     return Response()
 

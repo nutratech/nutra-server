@@ -43,6 +43,7 @@ from .shop import (
     GET_products_ratings,
     GET_products,
     POST_shipping_esimates,
+    PATCH_orders,
     POST_orders,
     POST_products_reviews,
 )
@@ -275,6 +276,11 @@ def get_products():
 @app.route("/orders", methods=["POST"])
 def post_orders():
     return Request(POST_orders, request)
+
+
+@app.route("/orders", methods=["PATCH"])
+def patch_orders():
+    return Request(PATCH_orders, request)
 
 
 @app.route("/products/<id>/reviews")
