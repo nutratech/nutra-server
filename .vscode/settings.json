@@ -3,7 +3,6 @@
         "**/__pycache__/**": true,
         "**/.pytest_cache/**": true,
         "**/.vscode/**": true,
-        "runtime.txt": true,
         "Procfile": true,
     },
     "search.exclude": {
