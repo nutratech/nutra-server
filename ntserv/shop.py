@@ -16,18 +16,48 @@ from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth
 shippo.config.api_key = SHIPPO_API_KEY
 
 address_from = {
+    # "name": "Post Office",
+    # "company": "USPS",
     "street1": "100 Renaissance Center",
     "street2": "Ste 1014",
     "city": "Detroit",
     "state": "MI",
     "zip": 48243,
     "country": "US",
+    # "phone": "+1 313 259 3219.",
+    # "email": "postalone@email.usps.gov",
+    # "metadata": "Neither snow nor rain nor heat nor gloom of night stays these couriers from the swift completion of their appointed rounds",
 }
 
 
 def GET_countries(request):
     pg_result = psql("SELECT * FROM get_countries_states()")
     return Response(data=pg_result.rows)
+
+
+def POST_validate_addresses(request):
+    addresses_ = request.json
+
+    addresses = []
+    for address_ in addresses_:
+        try:
+            address = shippo.Address.create(
+                name=address_.get("name"),
+                company=address_.get("company"),
+                street1=address_["street1"],
+                street2=address_.get("street2"),
+                city=address_["city"],
+                state=address_["state"],
+                zip=address_.get("zip"),
+                country=address_["country"],
+                validate=True,
+            )
+        except Exception as e:
+            # TODO: better bundle exceptions
+            address = json.loads(json.dumps(e, default=lambda x: x.__dict__))
+        addresses.append(address)
+
+    return Response(data=addresses)
 
 
 def POST_shipping_esimates(request):

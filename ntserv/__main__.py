@@ -46,6 +46,7 @@ from .shop import (
     PATCH_orders,
     POST_orders,
     POST_products_reviews,
+    POST_validate_addresses,
 )
 from .usda import (
     GET_analyze,
@@ -256,6 +257,11 @@ def post_report():
 @app.route("/countries")
 def get_countries():
     return Request(GET_countries, request)
+
+
+@app.route("/validate/addresses", methods=["POST"])
+def post_validate_addresses():
+    return Request(POST_validate_addresses, request)
 
 
 @app.route("/shipping/estimates", methods=["POST"])
