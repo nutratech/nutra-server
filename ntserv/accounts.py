@@ -1,5 +1,6 @@
 import re
 import uuid
+from hashlib import sha3_256 as sha3
 
 import bcrypt
 from dateutil.parser import parse as parse_datetime
@@ -32,6 +33,7 @@ def POST_register(request):
     email = body["email"]
 
     username = body.get("username")
+    hashword = body.get("hashword")
     password = body.get("password")
     password_confirm = body.get("password-confirm")
 
@@ -90,7 +92,14 @@ def POST_register(request):
     # TODO: transactional `block()`
     # CREATE USER
     if password:
+        # Unhashed
+        hashword = password.encode()
+        for _ in range(80000):
+            hashword = sha3(hashword).digest()
         passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    elif hashword:
+        # Hashed
+        passwd = bcrypt.hashpw(hashword.encode(), bcrypt.gensalt(12)).decode()
     else:
         passwd = None
     pg_result = psql(
@@ -132,7 +141,10 @@ def POST_login(request):
 
     # Parse incoming request
     username = request.json["username"]
-    password = request.json["password"]
+    hashword = request.json.get("hashword")
+    password = request.json.get("password")
+    if not hashword and not password:
+        return Response(data={"error": "missing password/hashword"}, code=400)
 
     #
     # See if user exists
@@ -146,10 +158,16 @@ def POST_login(request):
             },
             code=202,
         )
+    # Pre-hash
+    # if password:
+    #     hashword = password.encode()
+    #     for _ in range(80000):
+    #         hashword = sha3(hashword).digest()
 
     #
     # Get auth level and return JWT (token)
-    token, auth_level, error = issue_token(user_id, password)
+    hashword = password.encode()
+    token, auth_level, error = issue_token(user_id, hashword)
     if token:
         return Response(data={"token": token, "auth-level": auth_level})
     else:

@@ -139,7 +139,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"jsheener\",\n    \"email\": \"jsheener3@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\"\n}",
+							"raw": "{\n    \"username\": \"jsheener\",\n    \"email\": \"jsheener3@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\",\n    \"x-hashword\": \"0d18d301e9a23a7a593e704fe7b554e3dcba61d0de262eff00ae2b2b2ca3d2fb\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

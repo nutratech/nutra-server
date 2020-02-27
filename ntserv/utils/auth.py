@@ -19,7 +19,7 @@ AUTH_LEVEL_TRAINER = 40
 # -----------------------------
 
 
-def issue_token(user_id, password):
+def issue_token(user_id, hashword):
     """ Returns tuple: (token, auth_level, error) """
 
     # Get hash
@@ -28,7 +28,7 @@ def issue_token(user_id, password):
     #
     # Compare password
     passwd = pg_result.row["passwd"]
-    result = bcrypt.checkpw(password.encode(), passwd.encode())
+    result = bcrypt.checkpw(hashword, passwd.encode())
 
     # Invalid password
     if not result:
