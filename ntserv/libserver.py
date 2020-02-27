@@ -5,10 +5,8 @@ from datetime import datetime
 
 import requests
 
+from . import __version__
 from .settings import SLACK_TOKEN
-
-__version__ = "0.0.1"
-__release__ = 1
 
 
 def Request(func, req):
@@ -34,7 +32,6 @@ def Response(data={}, code=200, status="OK"):
         {
             "program": "nutra-server",
             "version": __version__,
-            "release": __release__,
             "datetime": datetime.now().strftime("%c").strip(),
             "timestamp": int(time.time() * 1000),
             "status": status if code < 400 else "Failure",

@@ -19,6 +19,9 @@ AUTH_LEVEL_TRAINER = 40
 # -----------------------------
 
 
+# ---------------------------------------------
+# Create tokens from persistent permissions
+# ---------------------------------------------
 def issue_token(user_id, password):
     """ Returns tuple: (token, auth_level, error) """
 
@@ -87,20 +90,27 @@ def jwt_token(user_id, auth_level):
     return token
 
 
+# -------------------------------
+# Check requests and tokens
+# -------------------------------
+def check_request(request):
+    """ Authorizes a request """
+    # Rate limiting
+
+    # Authorized from token
+    try:
+        token = request.headers["authorization"].split()[1]
+        return check_token(token)
+    except Exception as e:
+        return None, repr(e)
+
+
 def check_token(token):
     """ Checks auth level from pre-issued token """
 
     try:
         token = jwt.decode(token, JWT_SECRET, algorithm="HS256")
         return AuthResult(token), None
-    except Exception as e:
-        return None, repr(e)
-
-
-def check_request(request):
-    try:
-        token = request.headers["authorization"].split()[1]
-        return check_token(token)
     except Exception as e:
         return None, repr(e)
 
@@ -113,13 +123,9 @@ class AuthResult:
         self.expired = datetime.now().timestamp() > self.expires
 
 
-"""
----------------------
-Auth Decorator
----------------------
-"""
-
-
+# ---------------------
+# Auth Decorator
+# ---------------------
 def auth(og_func, level=None):
     """ Auth decorator, use to send 401s """
 
