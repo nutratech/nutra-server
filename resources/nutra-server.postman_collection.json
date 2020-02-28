@@ -49,9 +49,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/report",
+									"raw": "{{NUTRA_SERVER_URL}}/report",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"report"
@@ -76,9 +76,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/preorder",
+									"raw": "{{NUTRA_SERVER_URL}}/preorder",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"preorder"
@@ -139,7 +139,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"jsheener\",\n    \"email\": \"jsheener3@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\"\n}",
+							"raw": "{\n    \"username\": \"jsheener\",\n    \"email\": \"jsheener3@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\",\n    \"x-hashword\": \"0d18d301e9a23a7a593e704fe7b554e3dcba61d0de262eff00ae2b2b2ca3d2fb\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -298,9 +298,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{NUTRI_URL}}/email/change",
+							"raw": "{{NUTRA_SERVER_URL}}/email/change",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"email",
@@ -358,9 +358,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{NUTRI_URL}}/password/change",
+							"raw": "{{NUTRA_SERVER_URL}}/password/change",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"password",
@@ -603,7 +603,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"items\": [\n        1,\n        1,\n        1,\n        2,\n        2,\n        2,\n        2,\n        2,\n        2\n    ]\n}",
+							"raw": "{\n    \"address\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"items\": [\n    \t1\n    ],\n    \"x-items\": [\n        1,\n        1,\n        1,\n        2,\n        2,\n        2,\n        2,\n        2,\n        2\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -652,8 +652,8 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "stripe_product_id",
-									"value": "prod_F9tAjgt53kC2DO",
+									"key": "product_id",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -677,64 +677,6 @@
 								"products",
 								"prod_F9t9QWJWt8Abz0",
 								"reviews"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/products/avg_ratings",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "stripe_product_id",
-									"value": "prod_F9tAjgt53kC2DO",
-									"type": "text"
-								},
-								{
-									"key": "rating",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "review_text",
-									"value": "garbage",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/products/avg_ratings",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"products",
-								"avg_ratings"
 							]
 						}
 					},
@@ -766,8 +708,8 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "stripe_product_id",
-									"value": "prod_F9tAjgt53kC2DO",
+									"key": "product_id",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -790,76 +732,6 @@
 							"path": [
 								"products",
 								"reviews"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/stripe/products",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/x-www-form-urlencoded",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/stripe/products",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"stripe",
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/stripe/skus",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/stripe/skus",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"stripe",
-								"skus"
 							]
 						}
 					},
@@ -993,9 +865,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/trainers/remove_user",
+									"raw": "{{NUTRA_SERVER_URL}}/trainers/remove_user",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"trainers",
@@ -1038,9 +910,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/users/approve_trainer",
+									"raw": "{{NUTRA_SERVER_URL}}/users/approve_trainer",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"users",
@@ -1083,9 +955,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/trainers/switch",
+									"raw": "{{NUTRA_SERVER_URL}}/trainers/switch",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"trainers",
@@ -1128,9 +1000,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/trainers/add_user",
+									"raw": "{{NUTRA_SERVER_URL}}/trainers/add_user",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"trainers",
@@ -1173,9 +1045,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/users/remove_trainer",
+									"raw": "{{NUTRA_SERVER_URL}}/users/remove_trainer",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"users",
@@ -1288,9 +1160,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{NUTRI_URL}}/nutrients",
+									"raw": "{{NUTRA_SERVER_URL}}/nutrients",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"nutrients"
@@ -1358,9 +1230,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/nutrients",
+									"raw": "{{NUTRA_SERVER_URL}}/nutrients",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"nutrients"
@@ -1402,9 +1274,9 @@
 									]
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/favorites",
+									"raw": "{{NUTRA_SERVER_URL}}/favorites",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"favorites"
@@ -1443,9 +1315,9 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/recipes/foods?recipe_ids=1,2",
+									"raw": "{{NUTRA_SERVER_URL}}/recipes/foods?recipe_ids=1,2",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"recipes",
@@ -1488,9 +1360,9 @@
 									"raw": "{\n    \"recipe_name\": \"Butter with butter\",\n    \"shared\": true,\n    \"foods\": [\n        {\n            \"food_id\": 1001,\n            \"quantity\": {\n                \"msre_id\": 1,\n                \"amount\": 1\n            }\n        },\n        {\n            \"food_id\": 1002,\n            \"quantity\": {\n                \"msre_id\": 1,\n                \"amount\": 1\n            }\n        },\n        {\n            \"food_id\": 1003,\n            \"grams\": 65\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/recipes",
+									"raw": "{{NUTRA_SERVER_URL}}/recipes",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"recipes"
@@ -1515,9 +1387,9 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{NUTRI_URL}}/recipes/5",
+									"raw": "{{NUTRA_SERVER_URL}}/recipes/5",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"recipes",
@@ -1554,9 +1426,9 @@
 									"raw": "{\n    \"food_name\": \"Can't believe it is butter\",\n    \"fdgrp_id\": 100,\n    \"shared\": true,\n    \"servings\": [\n        {\n            \"msre_desc\": \"tbsp\",\n            \"grams\": 50\n        },\n        {\n            \"msre_desc\": \"bottle\",\n            \"grams\": 500\n        },\n        {\n            \"msre_desc\": \"something_new\",\n            \"grams\": 150\n        }\n    ],\n    \"nutrients\": [\n        {\n            \"nutr_no\": 606,\n            \"nutr_val\": 50\n        },\n        {\n            \"nutr_no\": 607,\n            \"nutr_val\": 50\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/custom_foods",
+									"raw": "{{NUTRA_SERVER_URL}}/custom_foods",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"custom_foods"
@@ -1592,9 +1464,9 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/custom_foods/2000000000",
+									"raw": "{{NUTRA_SERVER_URL}}/custom_foods/2000000000",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"custom_foods",
@@ -1634,9 +1506,9 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{NUTRI_URL}}/custom_foods",
+									"raw": "{{NUTRA_SERVER_URL}}/custom_foods",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"custom_foods"
@@ -1665,9 +1537,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{NUTRI_URL}}/favorites",
+							"raw": "{{NUTRA_SERVER_URL}}/favorites",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"favorites"
@@ -1708,9 +1580,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{NUTRI_URL}}/favorites",
+							"raw": "{{NUTRA_SERVER_URL}}/favorites",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"favorites"
@@ -1742,9 +1614,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{NUTRI_URL}}/recipes",
+							"raw": "{{NUTRA_SERVER_URL}}/recipes",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"recipes"
@@ -1773,9 +1645,9 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{NUTRI_URL}}/serving_sizes?food_id=1001",
+							"raw": "{{NUTRA_SERVER_URL}}/serving_sizes?food_id=1001",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"serving_sizes"
@@ -1805,9 +1677,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{NUTRI_URL}}/sort?nutr_no=789",
+									"raw": "{{NUTRA_SERVER_URL}}/sort?nutr_no=789",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"sort"
@@ -1828,9 +1700,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{NUTRI_URL}}/sort?tagname=egcg",
+									"raw": "{{NUTRA_SERVER_URL}}/sort?tagname=egcg",
 									"host": [
-										"{{NUTRI_URL}}"
+										"{{NUTRA_SERVER_URL}}"
 									],
 									"path": [
 										"sort"
@@ -1895,9 +1767,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{NUTRI_URL}}/analyze?food_ids=1001,1002,1003",
+							"raw": "{{NUTRA_SERVER_URL}}/analyze?food_ids=1001,1002,1003",
 							"host": [
-								"{{NUTRI_URL}}"
+								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
 								"analyze"
