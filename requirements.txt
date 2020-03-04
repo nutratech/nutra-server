@@ -7,6 +7,6 @@ psycopg2==2.8.4
 py3dbp==0.4
 PyJWT==1.7.1
 python-dateutil==2.8.1
-python-dotenv==0.11.0
+python-dotenv==0.12.0
 python-Levenshtein==0.12.0
 shippo==2.0.0
