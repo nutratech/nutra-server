@@ -115,7 +115,7 @@ def POST_shipping_esimates(request):
             # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
             # currently we are just assuming one package == sum( all items' weights )
             # "weight": sum([i.weight for i in bin.items]),
-            "weight": sum([i.weight for i in items_]),
+            "weight": round(sum([i.weight for i in items_]), 4),
             "mass_unit": "g",
         }
         parcels.append(parcel)
@@ -126,6 +126,8 @@ def POST_shipping_esimates(request):
         parcels=parcels,
         asynchronous=False,
     )
+
+    # TODO: insert into orders, even though not ordered yet?
 
     return Response(data={"parcels": parcels, "rates": shipment.rates})
 
