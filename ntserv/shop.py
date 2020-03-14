@@ -8,6 +8,7 @@ from py3dbp.main import Bin, Item, Packer
 from .libserver import Response
 from .postgres import psql
 from .settings import SHIPPO_API_KEY
+from .utils.account import user_id_from_username_or_email
 from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth
 
 # Set Shippo API key
@@ -197,37 +198,33 @@ def POST_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 
 def PATCH_orders(request):
+    # TODO: better security against user's messing each others' orders and against DDoS
     body = request.json
+    order_id = body["order_id"]
+    email = body["email"]
+    user_id = user_id_from_username_or_email(email)
+    if not user_id:
+        return Response(data={"error": "No such user"}, code=400)
 
     # Create patch-order object
     patcher = {
-        "order_id": body["order_id"],
-        "email": body["email"],
         "updated": int(datetime.now().timestamp()),
     }
-
     for k in body.keys():
-        if not k in patcher:
+        if not k in patcher and not (k == "order_id" or k == "email"):
             patcher[k] = body[k]
 
-    return Response(data=patcher)
+    # Parameterize SQL and UPDATE
+    parameters = ", ".join([f"{k}=%s" for k in patcher.keys()])
+    values = list(patcher.values())
+    values.extend([order_id, user_id])
 
+    pg_result = psql(
+        f"UPDATE orders SET {parameters} WHERE id=%s AND user_id=%s  RETURNING status",
+        values,
+    )
 
-# @auth
-# def PATCH_orders(request):
-#     body = request.json
-#     id = body["order_id"]
-#     paypal_id = body.get("paypal_id")
-#     status = body.get("status")
-
-#     if paypal_id:
-#         psql(
-#             "UPDATE orders SET paypal_id=%s WHERE id=%s RETURNING id", [paypal_id, id],
-#         )
-#     if status:
-#         psql("UPDATE orders SET status=%s WHERE id=%s RETURNING id", [status, id])
-
-#     return Response()
+    return Response(data=pg_result.row)
 
 
 @auth

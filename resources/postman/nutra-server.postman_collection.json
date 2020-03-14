@@ -804,7 +804,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"order_id\": 1,\n    \"status\": \"PAID\",\n    \"paypal_id\": \"UNKNOWN\"\n}",
+							"raw": "{\n    \"order_id\": 1,\n    \"email\": \"nutratracker@gmail.com\",\n    \"status\": \"PROCESSING\",\n    \"shipping_method\": \"usps_priority\",\n    \"paypal_id\": \"UNKNOWN\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
