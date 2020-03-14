@@ -227,7 +227,7 @@ def rdas():
     return Request(OPT_rdas, request)
 
 
-@app.route("/logs/food", methods=["GET", "POST", "DELETE"])
+@app.route("/logs/food", methods=["GET", "POST", "DELETE", "PATCH"])
 def logs_food():
     return Request(OPT_logs_food, request)
 

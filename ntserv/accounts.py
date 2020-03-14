@@ -1,5 +1,6 @@
 import re
 import uuid
+from datetime import datetime
 
 import bcrypt
 from dateutil.parser import parse as parse_datetime
@@ -373,19 +374,21 @@ def OPT_favorites(request, level=AUTH_LEVEL_BASIC, user_id=None):
 @auth
 def OPT_logs_food(request, level=AUTH_LEVEL_BASIC, user_id=None):
     method = request.environ["REQUEST_METHOD"]
+    body = request.json
+
     if method == "GET":
         pg_result = psql("SELECT * FROM food_logs WHERE user_id=%s", [user_id])
         return Response(data=pg_result.rows)
 
     # Add to log
     elif method == "POST":
-        meal_name = request.json["meal_name"]
-        amount = request.json["amount"]
+        meal_name = body["meal_name"]
+        amount = body["amount"]
 
-        msre_id = request.json.get("msre_id")
-        food_id = request.json.get("food_id")
-        recipe_id = request.json.get("recipe_id")
-        eat_on_date = parse_datetime(request.json["eat_on_date"])
+        msre_id = body.get("msre_id")
+        food_id = body.get("food_id")
+        recipe_id = body.get("recipe_id")
+        eat_on_date = parse_datetime(body["eat_on_date"])
 
         if food_id:
             # Add food to log
@@ -406,7 +409,7 @@ def OPT_logs_food(request, level=AUTH_LEVEL_BASIC, user_id=None):
 
     # Remove from log
     elif method == "DELETE":
-        id = request.json["id"]
+        id = body["id"]
         pg_result = psql(
             "DELETE FROM food_logs WHERE user_id=%s and id=%s RETURNING id",
             [user_id, id],
@@ -415,6 +418,32 @@ def OPT_logs_food(request, level=AUTH_LEVEL_BASIC, user_id=None):
         if not pg_result.rows:
             return Response(code=400)
         return Response()
+
+    # Update log
+    elif method == "PATCH":
+        id = body["id"]
+
+        # Prep patcher object
+        patcher = {
+            "updated": int(datetime.now().timestamp()),
+        }
+        for k in body:
+            if not k in patcher and not (k == "id"):
+                patcher[k] = body[k]
+
+        # Parameterize SQL and UPDATE
+        assignments = ", ".join([f"{k}=%s" for k in patcher.keys()])
+        conditions = "id=%s"
+        parameters = list(patcher.values())
+        parameters.extend([id])
+        pg_result = psql(
+            f"UPDATE food_logs SET {assignments} WHERE {conditions} RETURNING id",
+            parameters,
+        )
+        # Failed to update
+        if not pg_result.rows:
+            return Response(code=400)
+        return Response(data=pg_result.row)
 
 
 @auth

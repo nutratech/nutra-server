@@ -215,13 +215,13 @@ def PATCH_orders(request):
             patcher[k] = body[k]
 
     # Parameterize SQL and UPDATE
-    parameters = ", ".join([f"{k}=%s" for k in patcher.keys()])
-    values = list(patcher.values())
-    values.extend([order_id, user_id])
-
+    assignments = ", ".join([f"{k}=%s" for k in patcher.keys()])
+    conditions = "id=%s AND user_id=%s"
+    parameters = list(patcher.values())
+    parameters.extend([order_id, user_id])
     pg_result = psql(
-        f"UPDATE orders SET {parameters} WHERE id=%s AND user_id=%s  RETURNING status",
-        values,
+        f"UPDATE orders SET {assignments} WHERE {conditions}  RETURNING status",
+        parameters,
     )
 
     return Response(data=pg_result.row)
