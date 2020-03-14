@@ -129,7 +129,7 @@ def POST_shipping_esimates(request):
 
     # TODO: insert into orders, even though not ordered yet?
 
-    return Response(data={"parcels": parcels, "rates": shipment.rates})
+    return Response(data=shipment)
 
 
 def GET_products_ratings(request):
