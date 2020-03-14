@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 import shippo
 from psycopg2.extras import Json
@@ -195,21 +196,38 @@ def POST_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     return Response(data={"order_id": order_id})
 
 
-# @auth
 def PATCH_orders(request):
     body = request.json
-    id = body["order_id"]
-    paypal_id = body.get("paypal_id")
-    status = body.get("status")
 
-    if paypal_id:
-        psql(
-            "UPDATE orders SET paypal_id=%s WHERE id=%s RETURNING id", [paypal_id, id],
-        )
-    if status:
-        psql("UPDATE orders SET status=%s WHERE id=%s RETURNING id", [status, id])
+    # Create patch-order object
+    patcher = {
+        "order_id": body["order_id"],
+        "email": body["email"],
+        "updated": int(datetime.now().timestamp()),
+    }
 
-    return Response()
+    for k in body.keys():
+        if not k in patcher:
+            patcher[k] = body[k]
+
+    return Response(data=patcher)
+
+
+# @auth
+# def PATCH_orders(request):
+#     body = request.json
+#     id = body["order_id"]
+#     paypal_id = body.get("paypal_id")
+#     status = body.get("status")
+
+#     if paypal_id:
+#         psql(
+#             "UPDATE orders SET paypal_id=%s WHERE id=%s RETURNING id", [paypal_id, id],
+#         )
+#     if status:
+#         psql("UPDATE orders SET status=%s WHERE id=%s RETURNING id", [status, id])
+
+#     return Response()
 
 
 @auth
