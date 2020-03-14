@@ -59,6 +59,7 @@ def POST_validate_addresses(request):
 
 def POST_shipping_esimates(request):
     body = request.json
+    user_id = body["user_id"]
     address = body["address"]
     items = body["items"]
 
@@ -127,7 +128,21 @@ def POST_shipping_esimates(request):
         asynchronous=False,
     )
 
-    # TODO: insert into orders, even though not ordered yet?
+    # TODO: return order_id along with response object
+    # TODO: support different bill/ship addresses
+    pg_result = psql(
+        "INSERT INTO orders (user_id, address_bill, address_ship, shippo_json) VALUES (%s, %s, %s, %s) RETURNING id",
+        [user_id, Json(address_from), Json(address_from), Json(shipment)],
+    )
+    order_id = pg_result.row["id"]
+    # TODO: bulk insert order_items
+    for variant_id in set(items):
+        quantity = items.count(variant_id)
+        price = variants[variant_id]["price"]
+        pg_result = psql(
+            "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING order_id",
+            [order_id, variant_id, quantity, price],
+        )
 
     return Response(data=shipment)
 
