@@ -85,21 +85,22 @@ def POST_shipping_esimates(request):
     packer = Packer()
 
     for c in containers:
-        l = c["dimensions"][0]
-        w = c["dimensions"][1]
-        h = c["dimensions"][2]
-        bin = Bin(c["tag"], l, w, h, c["weight_max"])
-        print(f"packer.add_bin(Bin('{c['tag']}', {l}, {w}, {h}, {c['weight_max']}))")
+        l = c["dimensions"][0] * 2.54  # inches --> cm
+        w = c["dimensions"][1] * 2.54
+        h = c["dimensions"][2] * 2.54
+        weight = c["weight_max"] * 454  # pounds --> grams
+        bin = Bin(c["tag"], l, w, h, weight)
+        print(f"packer.add_bin(Bin('{c['tag']}', {l}, {w}, {h}, {weight}))")
         packer.add_bin(bin)
 
     items_ = []
     for i in items:
         # TODO - include stock/inventory check at this point, or earlier in shop
         i = variants[i]
-        l = i["dimensions"][0] / 2.54
-        w = i["dimensions"][1] / 2.54
-        h = i["dimensions"][2] / 2.54
-        weight = i["weight"] / 454
+        l = i["dimensions"][0]  # cm
+        w = i["dimensions"][1]
+        h = i["dimensions"][2]
+        weight = i["weight"]  # grams
         item = Item(i["denomination"], l, w, h, weight)
         print(
             f"packer.add_item(Item('{i['denomination']}', {round(l, 3)}, {round(w, 3)}, {round(h, 3)}, {round(weight, 3)}))"
@@ -120,7 +121,7 @@ def POST_shipping_esimates(request):
             "length": bin.width,
             "width": bin.height,
             "height": bin.depth,
-            "distance_unit": "in",
+            "distance_unit": "cm",
             # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
             # currently we are just assuming one package == sum( all items' weights )
             # "weight": sum([i.weight for i in bin.items]),
