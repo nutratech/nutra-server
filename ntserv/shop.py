@@ -181,34 +181,34 @@ def POST_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     return Response(data={"order_id": order_id})
 
 
-def PATCH_orders(request):
-    # TODO: better security against user's messing each others' orders and against DDoS
-    body = request.json
-    order_id = body["order_id"]
-    email = body["email"]
-    user_id = user_id_from_username_or_email(email)
-    if not user_id:
-        return Response(data={"error": "No such user"}, code=400)
+# def PATCH_orders(request):
+#     # TODO: better security against user's messing each others' orders and against DDoS
+#     body = request.json
+#     order_id = body["order_id"]
+#     email = body["email"]
+#     user_id = user_id_from_username_or_email(email)
+#     if not user_id:
+#         return Response(data={"error": "No such user"}, code=400)
 
-    # Create patch-order object
-    patcher = {
-        "updated": int(datetime.now().timestamp()),
-    }
-    for k in body.keys():
-        if not k in patcher and not (k == "order_id" or k == "email"):
-            patcher[k] = body[k]
+#     # Create patch-order object
+#     patcher = {
+#         "updated": int(datetime.now().timestamp()),
+#     }
+#     for k in body.keys():
+#         if not k in patcher and not (k == "order_id" or k == "email"):
+#             patcher[k] = body[k]
 
-    # Parameterize SQL and UPDATE
-    assignments = ", ".join([f"{k}=%s" for k in patcher.keys()])
-    conditions = "id=%s AND user_id=%s"
-    parameters = list(patcher.values())
-    parameters.extend([order_id, user_id])
-    pg_result = psql(
-        f"UPDATE orders SET {assignments} WHERE {conditions}  RETURNING status",
-        parameters,
-    )
+#     # Parameterize SQL and UPDATE
+#     assignments = ", ".join([f"{k}=%s" for k in patcher.keys()])
+#     conditions = "id=%s AND user_id=%s"
+#     parameters = list(patcher.values())
+#     parameters.extend([order_id, user_id])
+#     pg_result = psql(
+#         f"UPDATE orders SET {assignments} WHERE {conditions}  RETURNING status",
+#         parameters,
+#     )
 
-    return Response(data=pg_result.row)
+#     return Response(data=pg_result.row)
 
 
 @auth
