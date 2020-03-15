@@ -539,6 +539,56 @@
 			"name": "Shop",
 			"item": [
 				{
+					"name": "TODO",
+					"item": [
+						{
+							"name": "/orders",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"order_id\": 1,\n    \"email\": \"nutratracker@gmail.com\",\n    \"status\": \"PROCESSING\",\n    \"shipping_method\": \"usps_priority\",\n    \"paypal_id\": \"UNKNOWN\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/orders",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "/countries",
 					"request": {
 						"method": "GET",
@@ -761,7 +811,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id\": 1,\n    \"paypal_id\": \"UNKNOWN2\",\n    \"shipping_method\": \"usps_priority\",\n    \"shipping_price\": 7.34,\n    \"payment_method\": \"paypal_one\",\n    \"address_bill\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"items\": [\n        1,\n        1,\n        1,\n        2,\n        2,\n        2,\n        2,\n        2,\n        2\n    ]\n}",
+							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"shipping_method\": \"usps_priority\",\n    \"shipping_price\": 7.34,\n    \"items\": [\n        1,\n        1,\n        1,\n        2,\n        2,\n        2,\n        2,\n        2,\n        2\n    ],\n    \"paypal_id\": \"UNKNOWN\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -781,7 +831,7 @@
 					"response": []
 				},
 				{
-					"name": "/orders",
+					"name": "/orders/ship",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -804,7 +854,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"order_id\": 1,\n    \"email\": \"nutratracker@gmail.com\",\n    \"status\": \"PROCESSING\",\n    \"shipping_method\": \"usps_priority\",\n    \"paypal_id\": \"UNKNOWN\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
+							"raw": "{\n\t\"order_id\": 1,\n\t\"status\": \"PROCESSING\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -812,12 +862,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/orders",
+							"raw": "{{NUTRA_SERVER_URL}}/orders/ship",
 							"host": [
 								"{{NUTRA_SERVER_URL}}"
 							],
 							"path": [
-								"orders"
+								"orders",
+								"ship"
 							]
 						}
 					},

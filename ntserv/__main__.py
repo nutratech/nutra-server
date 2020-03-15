@@ -11,11 +11,11 @@ from flask_cors import CORS
 
 from .accounts import (
     GET_confirm_email,
+    # OPT_custom_foods,
     GET_email_change,
     GET_password_change,
     GET_recipes_foods,
     GET_user_details,
-    # OPT_custom_foods,
     OPT_favorites,
     OPT_logs_biometric,
     OPT_logs_exercise,
@@ -38,7 +38,7 @@ from .shop import (
     GET_products,
     GET_products__product_id__reviews,
     GET_products_ratings,
-    # PATCH_orders,
+    PATCH_orders_admin,
     POST_orders,
     POST_products_reviews,
     POST_shipping_esimates,
@@ -280,9 +280,9 @@ def post_orders():
     return Request(POST_orders, request)
 
 
-# @app.route("/orders", methods=["PATCH"])
-# def patch_orders():
-#     return Request(PATCH_orders, request)
+@app.route("/orders/admin", methods=["PATCH"])
+def patch_orders_admin():
+    return Request(PATCH_orders_admin, request)
 
 
 @app.route("/products/<id>/reviews")

@@ -9,7 +9,13 @@ from .libserver import Response
 from .postgres import psql
 from .settings import SHIPPO_API_KEY
 from .utils.account import user_id_from_username_or_email
-from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth, check_request
+from .utils.auth import (
+    AUTH_LEVEL_BASIC,
+    AUTH_LEVEL_FULL_ADMIN,
+    AUTH_LEVEL_UNCONFIRMED,
+    auth,
+    check_request,
+)
 
 # Set Shippo API key
 shippo.config.api_key = SHIPPO_API_KEY
@@ -191,34 +197,32 @@ def POST_orders(request):
     return Response(data={"order_id": order_id})
 
 
-# def PATCH_orders(request):
-#     # TODO: better security against user's messing each others' orders and against DDoS
-#     body = request.json
-#     order_id = body["order_id"]
-#     email = body["email"]
-#     user_id = user_id_from_username_or_email(email)
-#     if not user_id:
-#         return Response(data={"error": "No such user"}, code=400)
+@auth
+def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
+    body = request.json
+    order_id = body["order_id"]
 
-#     # Create patch-order object
-#     patcher = {
-#         "updated": int(datetime.now().timestamp()),
-#     }
-#     for k in body.keys():
-#         if not k in patcher and not (k == "order_id" or k == "email"):
-#             patcher[k] = body[k]
+    # Create patch-order object
+    patcher = {
+        "updated": int(datetime.now().timestamp()),
+    }
+    for k in body.keys():
+        if not k in patcher and not (k == "order_id" or k == "email"):
+            patcher[k] = body[k]
 
-#     # Parameterize SQL and UPDATE
-#     assignments = ", ".join([f"{k}=%s" for k in patcher.keys()])
-#     conditions = "id=%s AND user_id=%s"
-#     parameters = list(patcher.values())
-#     parameters.extend([order_id, user_id])
-#     pg_result = psql(
-#         f"UPDATE orders SET {assignments} WHERE {conditions}  RETURNING status",
-#         parameters,
-#     )
+    # Parameterize SQL and UPDATE
+    assignments = ", ".join([f"{k}=%s" for k in patcher.keys()])
+    conditions = "id=%s"
+    parameters = list(patcher.values())
+    parameters.extend([order_id])
+    pg_result = psql(
+        f"UPDATE orders SET {assignments} WHERE {conditions} RETURNING status",
+        parameters,
+    )
 
-#     return Response(data=pg_result.row)
+    # TODO: send confirmation email to both us (admins) and user
+
+    return Response(data=pg_result.row)
 
 
 @auth

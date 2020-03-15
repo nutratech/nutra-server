@@ -16,6 +16,7 @@ AUTH_LEVEL_UNCONFIRMED = 10
 AUTH_LEVEL_BASIC = 20
 AUTH_LEVEL_PAID = 30
 AUTH_LEVEL_TRAINER = 40
+AUTH_LEVEL_FULL_ADMIN = 10000
 # -----------------------------
 
 
@@ -65,6 +66,12 @@ def auth_level(user_id):
     #
     # Check if paid trainer
     pass
+
+    #
+    # Check if administrator
+    admin_ids = {1, 2}
+    if user_id in admin_ids:
+        auth_level = AUTH_LEVEL_FULL_ADMIN
 
     # Made it this far.. create token
     return jwt_token(user_id, auth_level), auth_level, None
