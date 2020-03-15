@@ -9,7 +9,7 @@ from .libserver import Response
 from .postgres import psql
 from .settings import SHIPPO_API_KEY
 from .utils.account import user_id_from_username_or_email
-from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth
+from .utils.auth import AUTH_LEVEL_BASIC, AUTH_LEVEL_UNCONFIRMED, auth, check_request
 
 # Set Shippo API key
 shippo.config.api_key = SHIPPO_API_KEY
@@ -143,40 +143,50 @@ def GET_products(request):
     return Response(data=pg_result.rows)
 
 
-# @auth
-def POST_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def POST_orders(request):
     body = request.json
-    user_id = int(body["user_id"])
+
+    email = body.get("email")
+
+    address_bill = body["address_bill"]
+    address_ship = body.get("address_ship")
+
     shipping_method = body["shipping_method"]
     shipping_price = float(body["shipping_price"])
-    payment_method = body["payment_method"]
-    address_bill = body["address_bill"]
-    address_ship = body["address_ship"]
+
     items = body["items"]
 
-    shipping_method_id = psql(
-        "SELECT id FROM shipping_methods WHERE shipping_type=%s", [shipping_method]
-    ).row["id"]
+    if not email:
+        # Check authorization
+        authr, error = check_request(request)
+        if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
+            return Response(data={"error": error}, code=401)
+        # Set user_id
+        user_id = authr.id
 
+    # Insert order
     pg_result = psql(
-        "INSERT INTO orders (user_id, shipping_method_id, shipping_price, payment_method, address_bill, address_ship) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+        "INSERT INTO orders (user_id, email, address_bill, address_ship, shipping_method, shipping_price) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
         [
             user_id,
-            shipping_method_id,
-            shipping_price,
-            payment_method,
+            email,
             Json(address_bill),
             Json(address_ship),
+            shipping_method,
+            shipping_price,
         ],
     )
+    # Insert items
     order_id = pg_result.row["id"]
-    for id in set(items):
-        quantity = items.count(id)
-        price = psql("SELECT price FROM variants WHERE id=%s", [id]).row["price"]
+    for variant_id in set(items):
+        quantity = items.count(variant_id)
+        price = psql("SELECT price FROM variants WHERE id=%s", [variant_id]).row[
+            "price"
+        ]
         # TODO: handle error, for example change quantity to quanity and see how it fails silently
         pg_result = psql(
             "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
-            [order_id, id, quantity, price],
+            [order_id, variant_id, quantity, price],
         )
     return Response(data={"order_id": order_id})
 
