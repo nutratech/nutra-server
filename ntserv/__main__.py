@@ -47,6 +47,8 @@ from .shop import (
 from .usda import (
     GET_analyze,
     GET_biometrics,
+    GET_calc_bodyfat,
+    GET_calc_lblimits,
     GET_data_src,
     GET_exercises,
     GET_fdgrp,
@@ -202,6 +204,16 @@ def get_sort():
 @app.route("/analyze")
 def get_analyze():
     return Request(GET_analyze, request)
+
+
+@app.route("/calc/bodyfat")
+def get_calc_bodyfat():
+    return Request(GET_calc_bodyfat, request)
+
+
+@app.route("/calc/lblimits")
+def get_calc_lblimits():
+    return Request(GET_calc_lblimits, request)
 
 
 # -------------------------

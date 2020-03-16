@@ -1839,6 +1839,66 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "/calc/bodyfat",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"gender\": \"male\",\n\t\"age\": 27,\n\t\"height\": 179,\n\t\"waist\": 81,\n\t\"neck\": 39,\n\t\"chest\": 12,\n\t\"ab\": 19,\n\t\"thigh\": 16,\n\t\"tricep\": 13,\n\t\"sub\": 10,\n\t\"sup\": 9,\n\t\"mid\": 13\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/bodyfat",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"bodyfat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/calc/lblimits",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"gender\": \"male\",\n\t\"height\": 179,\n\t\"desired-bf\": 14,\n\t\"wrist\": 19,\n\t\"ankle\": 27\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/lblimits",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"lblimits"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
