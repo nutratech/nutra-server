@@ -170,6 +170,8 @@ def POST_orders(request):
             return Response(data={"error": error}, code=401)
         # Set user_id
         user_id = authr.id
+    else:
+        user_id = None
 
     # Insert order
     pg_result = psql(
