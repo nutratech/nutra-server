@@ -166,8 +166,6 @@ def POST_orders(request):
     if not email:
         # Check authorization
         authr, error = check_request(request)
-        if authr.expired:
-            error = "TOKEN_EXPIRED"
         if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
             return Response(data={"error": error}, code=401)
         # Set user_id
