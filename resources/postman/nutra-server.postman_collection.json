@@ -6,6 +6,1127 @@
 	},
 	"item": [
 		{
+			"name": "[TODO] App Functions",
+			"item": [
+				{
+					"name": "Dietary Logs",
+					"item": [
+						{
+							"name": "/logs/food",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/logs/food",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"logs",
+										"food"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/logs/food",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/logs/food",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"logs",
+										"food"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/logs/food",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/logs/food",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"logs",
+										"food"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/logs/food",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n\t\"eat_on_date\": \"2020-03-14\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/logs/food",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"logs",
+										"food"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Public functions",
+					"item": [
+						{
+							"name": "TODO",
+							"item": [
+								{
+									"name": "/sort by nutr_no",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/sort?nutr_no=789",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"sort"
+											],
+											"query": [
+												{
+													"key": "nutr_no",
+													"value": "789"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/sort by tagname",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/sort?tagname=egcg",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"sort"
+											],
+											"query": [
+												{
+													"key": "tagname",
+													"value": "egcg"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "/search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/search?terms=mushrooms,ultraviolet",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"search"
+									],
+									"query": [
+										{
+											"key": "terms",
+											"value": "mushrooms,ultraviolet"
+										},
+										{
+											"key": "fdgrp_ids",
+											"value": "1100",
+											"disabled": true
+										},
+										{
+											"key": "data_src_ids",
+											"value": "1",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/analyze",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/analyze?food_ids=1001,1002,1003",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"analyze"
+									],
+									"query": [
+										{
+											"key": "recipe_ids",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "food_ids",
+											"value": "1001,1002,1003"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Trainer",
+					"item": [
+						{
+							"name": "TODO",
+							"item": [
+								{
+									"name": "/trainers/remove_user",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "user_id",
+													"value": "1",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/trainers/remove_user",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"trainers",
+												"remove_user"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/users/approve_trainer",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "trainer_id",
+													"value": "6",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/users/approve_trainer",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"users",
+												"approve_trainer"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/trainers/switch",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "user_id",
+													"value": "5",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/trainers/switch",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"trainers",
+												"switch"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/trainers/add_user",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "user_id",
+													"value": "5",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/trainers/add_user",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"trainers",
+												"add_user"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/users/remove_trainer",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "trainer_id",
+													"value": "1",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/users/remove_trainer",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"users",
+												"remove_trainer"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "/trainer/users",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/trainer/users",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"trainer",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/user/trainers",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/user/trainers",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"user",
+										"trainers"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Recipes and customs",
+					"item": [
+						{
+							"name": "TODO",
+							"item": [
+								{
+									"name": "/nutrients",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/nutrients",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"nutrients"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/nutrients",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "shared",
+													"value": "True",
+													"type": "text"
+												},
+												{
+													"key": "rda",
+													"value": "500",
+													"type": "text"
+												},
+												{
+													"key": "units",
+													"value": "mg",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "is_anti",
+													"value": "False",
+													"type": "text"
+												},
+												{
+													"key": "tagname",
+													"value": "FLEC2",
+													"type": "text"
+												},
+												{
+													"key": "nutr_desc",
+													"value": "Fleridine",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/nutrients",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"nutrients"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/favorites/{food_id}",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "food_id",
+													"value": "1001",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/favorites",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"favorites"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/recipes/foods",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/recipes/foods?recipe_ids=1,2",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"recipes",
+												"foods"
+											],
+											"query": [
+												{
+													"key": "recipe_ids",
+													"value": "1,2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/recipes",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"recipe_name\": \"Butter with butter\",\n    \"shared\": true,\n    \"foods\": [\n        {\n            \"food_id\": 1001,\n            \"quantity\": {\n                \"msre_id\": 1,\n                \"amount\": 1\n            }\n        },\n        {\n            \"food_id\": 1002,\n            \"quantity\": {\n                \"msre_id\": 1,\n                \"amount\": 1\n            }\n        },\n        {\n            \"food_id\": 1003,\n            \"grams\": 65\n        }\n    ]\n}"
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/recipes",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"recipes"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/recipes/{:recipe_id}",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/recipes/5",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"recipes",
+												"5"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/custom_foods",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"food_name\": \"Can't believe it is butter\",\n    \"fdgrp_id\": 100,\n    \"shared\": true,\n    \"servings\": [\n        {\n            \"msre_desc\": \"tbsp\",\n            \"grams\": 50\n        },\n        {\n            \"msre_desc\": \"bottle\",\n            \"grams\": 500\n        },\n        {\n            \"msre_desc\": \"something_new\",\n            \"grams\": 150\n        }\n    ],\n    \"nutrients\": [\n        {\n            \"nutr_no\": 606,\n            \"nutr_val\": 50\n        },\n        {\n            \"nutr_no\": 607,\n            \"nutr_val\": 50\n        }\n    ]\n}"
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/custom_foods",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"custom_foods"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/custom_foods/{:food_id}",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/custom_foods/2000000000",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"custom_foods",
+												"2000000000"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "/custom_foods",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{USER_CREDENTIALS_TOKEN}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/x-www-form-urlencoded",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": {
+											"raw": "{{NUTRA_SERVER_URL}}/custom_foods",
+											"host": [
+												"{{NUTRA_SERVER_URL}}"
+											],
+											"path": [
+												"custom_foods"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "/favorites",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/favorites",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"favorites"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/favorites",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"food_id\": 1001\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/favorites",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"favorites"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/recipes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/recipes",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"recipes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/serving_sizes",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/serving_sizes?food_id=1001",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"serving_sizes"
+									],
+									"query": [
+										{
+											"key": "food_id",
+											"value": "1001"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Account",
 			"item": [
 				{
@@ -217,7 +1338,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"gamesguru\",\n    \"password\": \"Testpw*\"\n}",
+							"raw": "{\n    \"username\": \"kthprog\",\n    \"password\": \"101Problems!\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -536,6 +1657,72 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Public functions",
+			"item": [
+				{
+					"name": "/calc/bodyfat",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"gender\": \"male\",\n\t\"age\": 27,\n\t\"height\": 179,\n\t\"waist\": 81,\n\t\"neck\": 39,\n\t\"chest\": 12,\n\t\"ab\": 19,\n\t\"thigh\": 16,\n\t\"tricep\": 13,\n\t\"sub\": 10,\n\t\"sup\": 9,\n\t\"mid\": 13\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/bodyfat",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"bodyfat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/calc/lblimits",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"gender\": \"male\",\n\t\"height\": 176.5,\n\t\"desired-bf\": 12,\n\t\"wrist\": 17.2,\n\t\"ankle\": 22.5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/lblimits",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"lblimits"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Shop",
 			"item": [
 				{
@@ -619,7 +1806,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n    {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    }\n]",
+							"raw": "[\n    {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"\",\n        \"state\": \"CA\",\n        \"zip\": 12260,\n        \"country\": \"US\"\n    }\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -791,14 +1978,7 @@
 					"name": "/orders",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [
@@ -811,7 +1991,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"shipping_method\": \"usps_priority\",\n    \"shipping_price\": 7.34,\n    \"items\": [\n        1,\n        1,\n        1,\n        2,\n        2,\n        2,\n        2,\n        2,\n        2\n    ],\n    \"paypal_id\": \"UNKNOWN\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
+							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"email\": \"hi\",\n    \"paypal_id\": \"4XJ52194CG0464404\",\n    \"shipping_method\": \"usps_first\",\n    \"shipping_price\": 0,\n    \"items\": [\n        7\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -869,1177 +2049,6 @@
 							"path": [
 								"orders",
 								"admin"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Trainer",
-			"item": [
-				{
-					"name": "TODO",
-					"item": [
-						{
-							"name": "/trainers/remove_user",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/x-www-form-urlencoded"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "user_id",
-											"value": "1",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/trainers/remove_user",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"trainers",
-										"remove_user"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/users/approve_trainer",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/x-www-form-urlencoded"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "trainer_id",
-											"value": "6",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/users/approve_trainer",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"users",
-										"approve_trainer"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/trainers/switch",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "user_id",
-											"value": "5",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/trainers/switch",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"trainers",
-										"switch"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/trainers/add_user",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "user_id",
-											"value": "5",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/trainers/add_user",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"trainers",
-										"add_user"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/users/remove_trainer",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/x-www-form-urlencoded"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "trainer_id",
-											"value": "1",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/users/remove_trainer",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"users",
-										"remove_trainer"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "/trainer/users",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/trainer/users",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"trainer",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/user/trainers",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/user/trainers",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"user",
-								"trainers"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Recipes and customs",
-			"item": [
-				{
-					"name": "TODO",
-					"item": [
-						{
-							"name": "/nutrients",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/nutrients",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"nutrients"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/nutrients",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "shared",
-											"value": "True",
-											"type": "text"
-										},
-										{
-											"key": "rda",
-											"value": "500",
-											"type": "text"
-										},
-										{
-											"key": "units",
-											"value": "mg",
-											"type": "text",
-											"disabled": true
-										},
-										{
-											"key": "is_anti",
-											"value": "False",
-											"type": "text"
-										},
-										{
-											"key": "tagname",
-											"value": "FLEC2",
-											"type": "text"
-										},
-										{
-											"key": "nutr_desc",
-											"value": "Fleridine",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/nutrients",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"nutrients"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/favorites/{food_id}",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/x-www-form-urlencoded"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "food_id",
-											"value": "1001",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/favorites",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"favorites"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/recipes/foods",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/recipes/foods?recipe_ids=1,2",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"recipes",
-										"foods"
-									],
-									"query": [
-										{
-											"key": "recipe_ids",
-											"value": "1,2"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/recipes",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"recipe_name\": \"Butter with butter\",\n    \"shared\": true,\n    \"foods\": [\n        {\n            \"food_id\": 1001,\n            \"quantity\": {\n                \"msre_id\": 1,\n                \"amount\": 1\n            }\n        },\n        {\n            \"food_id\": 1002,\n            \"quantity\": {\n                \"msre_id\": 1,\n                \"amount\": 1\n            }\n        },\n        {\n            \"food_id\": 1003,\n            \"grams\": 65\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/recipes",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"recipes"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/recipes/{:recipe_id}",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/recipes/5",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"recipes",
-										"5"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/custom_foods",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"food_name\": \"Can't believe it is butter\",\n    \"fdgrp_id\": 100,\n    \"shared\": true,\n    \"servings\": [\n        {\n            \"msre_desc\": \"tbsp\",\n            \"grams\": 50\n        },\n        {\n            \"msre_desc\": \"bottle\",\n            \"grams\": 500\n        },\n        {\n            \"msre_desc\": \"something_new\",\n            \"grams\": 150\n        }\n    ],\n    \"nutrients\": [\n        {\n            \"nutr_no\": 606,\n            \"nutr_val\": 50\n        },\n        {\n            \"nutr_no\": 607,\n            \"nutr_val\": 50\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/custom_foods",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"custom_foods"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/custom_foods/{:food_id}",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/custom_foods/2000000000",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"custom_foods",
-										"2000000000"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/custom_foods",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/custom_foods",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"custom_foods"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "/favorites",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/favorites",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"favorites"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/favorites",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"food_id\": 1001\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/favorites",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"favorites"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/recipes",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/x-www-form-urlencoded",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/recipes",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"recipes"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/serving_sizes",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/x-www-form-urlencoded",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/serving_sizes?food_id=1001",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"serving_sizes"
-							],
-							"query": [
-								{
-									"key": "food_id",
-									"value": "1001"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Public functions",
-			"item": [
-				{
-					"name": "TODO",
-					"item": [
-						{
-							"name": "/sort by nutr_no",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/sort?nutr_no=789",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"sort"
-									],
-									"query": [
-										{
-											"key": "nutr_no",
-											"value": "789"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/sort by tagname",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/sort?tagname=egcg",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"sort"
-									],
-									"query": [
-										{
-											"key": "tagname",
-											"value": "egcg"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "/search",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/search?terms=mushrooms,ultraviolet",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"search"
-							],
-							"query": [
-								{
-									"key": "terms",
-									"value": "mushrooms,ultraviolet"
-								},
-								{
-									"key": "fdgrp_ids",
-									"value": "1100",
-									"disabled": true
-								},
-								{
-									"key": "data_src_ids",
-									"value": "1",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/analyze",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/analyze?food_ids=1001,1002,1003",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"analyze"
-							],
-							"query": [
-								{
-									"key": "recipe_ids",
-									"value": "1",
-									"disabled": true
-								},
-								{
-									"key": "food_ids",
-									"value": "1001,1002,1003"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bodyfat",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"male\",\n\t\"age\": 27,\n\t\"height\": 179,\n\t\"waist\": 81,\n\t\"neck\": 39,\n\t\"chest\": 12,\n\t\"ab\": 19,\n\t\"thigh\": 16,\n\t\"tricep\": 13,\n\t\"sub\": 10,\n\t\"sup\": 9,\n\t\"mid\": 13\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bodyfat",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bodyfat"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/lblimits",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"male\",\n\t\"height\": 179,\n\t\"desired-bf\": 14,\n\t\"wrist\": 19,\n\t\"ankle\": 27\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/lblimits",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"lblimits"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Dietary Logs",
-			"item": [
-				{
-					"name": "/logs/food",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/logs/food",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"logs",
-								"food"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/logs/food",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/logs/food",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"logs",
-								"food"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/logs/food",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/logs/food",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"logs",
-								"food"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/logs/food",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": 1,\n\t\"eat_on_date\": \"2020-03-14\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/logs/food",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"logs",
-								"food"
 							]
 						}
 					},
