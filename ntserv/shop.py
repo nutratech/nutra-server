@@ -8,7 +8,6 @@ from py3dbp.main import Bin, Item, Packer
 from .libserver import Response
 from .postgres import psql
 from .settings import SHIPPO_API_KEY
-from .utils.account import user_id_from_username_or_email
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_FULL_ADMIN,
