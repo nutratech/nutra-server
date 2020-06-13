@@ -26,7 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 import pytest
-from fuzzywuzzy import fuzz
+# from fuzzywuzzy import fuzz
 
 from ntserv.postgres import psql
 
