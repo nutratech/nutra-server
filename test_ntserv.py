@@ -27,3 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import pytest
 
 from ntserv.postgres import psql
+
+
+def test_placeholder():
+    pass
