@@ -5,6 +5,8 @@ Created on Sat Jan  4 18:20:27 2020
 @author: shane
 """
 
+import os
+
 import gunicorn
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
@@ -63,7 +65,11 @@ def get_home_page():
 
 @app.route("/favicon.ico")
 def get_favicon_ico():
-    return send_from_directory(f"{app.root_path}/static", "favicon.ico",)
+    return send_from_directory(
+        os.path.join(os.path.dirname(app.root_path), "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+    )
 
 
 @app.route("/user_details")
