@@ -209,7 +209,7 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
         "updated": int(datetime.now().timestamp()),
     }
     for k in body.keys():
-        if not k in patcher and not (k == "order_id" or k == "email"):
+        if k not in patcher and not (k == "order_id" or k == "email"):
             patcher[k] = body[k]
 
     # Parameterize SQL and UPDATE

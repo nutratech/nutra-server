@@ -13,9 +13,7 @@ from .utils.account import (
 )
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
-    AUTH_LEVEL_PAID,
     AUTH_LEVEL_READ_ONLY,
-    AUTH_LEVEL_TRAINER,
     AUTH_LEVEL_UNCONFIRMED,
     auth,
     issue_token,
@@ -50,7 +48,7 @@ def POST_register(request):
     # Email exists already?
     pg_result = psql("SELECT user_id FROM emails WHERE email=%s", [email])
     if pg_result.rows:
-        return Response(data={"user_id": pg_result.row["user_id"],}, code=207)
+        return Response(data={"user_id": pg_result.row["user_id"]}, code=207)
     ##########
     # Username
     elif username and (
@@ -210,7 +208,7 @@ def GET_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
         return Response(data={"error": "Invalid password"}, code=401)
 
     # TODO: implement
-    return Response(code=501)
+    return Response(data={"email": email}, code=501)
 
 
 @auth
