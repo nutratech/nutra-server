@@ -7,7 +7,7 @@ from usps import USPSApi
 
 from .libserver import Response
 from .postgres import psql
-from .settings import SHIPPO_API_KEY
+from .settings import SHIPPO_API_KEY, USPS_API_KEY
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_FULL_ADMIN,
@@ -19,8 +19,8 @@ from .utils.auth import (
 # Set Shippo API key
 shippo.config.api_key = SHIPPO_API_KEY
 
-# Set USPS API key/instance
-usps = USPSApi("381NUTRA8025")
+# Set USPS API key
+usps = USPSApi(USPS_API_KEY)
 
 address_from = {
     # "name": "Post Office",
