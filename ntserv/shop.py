@@ -1,10 +1,9 @@
-import json
 from datetime import datetime
 
 import shippo
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
-from usps import Address, USPSApi
+from usps import USPSApi
 
 from .libserver import Response
 from .postgres import psql
@@ -41,42 +40,6 @@ address_from = {
 def GET_countries(request):
     pg_result = psql("SELECT * FROM get_countries_states()")
     return Response(data=pg_result.rows)
-
-
-def POST_validate_addresses(request):
-    addresses_ = request.json
-
-    addresses = []
-    for address_ in addresses_:
-        try:
-            # address = shippo.Address.create(
-            #     name=address_.get("name"),
-            #     company=address_.get("company"),
-            #     street1=address_["street1"],
-            #     street2=address_.get("street2"),
-            #     city=address_["city"],
-            #     state=address_["state"],
-            #     zip=address_.get("zip"),
-            #     country=address_["country"],
-            #     validate=True,
-            # )
-            address = Address(
-                name=address_.get("name"),
-                company=address_.get("company"),
-                address_1=address_["street1"],
-                address_2=address_.get("street2"),
-                city=address_["city"],
-                state=address_["state"],
-                zipcode=address_.get("zip"),
-            )
-            validation = usps.validate_address(address)
-            print(validation.result)
-        except Exception as e:
-            # TODO: better bundle exceptions
-            address = json.loads(json.dumps(e, default=lambda x: x.__dict__))
-        addresses.append(address)
-
-    return Response(data=addresses)
 
 
 def POST_shipping_esimates(request):

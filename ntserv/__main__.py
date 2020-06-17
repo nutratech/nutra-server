@@ -32,7 +32,6 @@ from .shop import (
     POST_orders,
     POST_products_reviews,
     POST_shipping_esimates,
-    POST_validate_addresses,
 )
 from .usda import (
     GET_calc_bodyfat,
