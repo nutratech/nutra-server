@@ -140,11 +140,6 @@ def get_countries():
     return Request(GET_countries, request)
 
 
-@app.route("/validate/addresses", methods=["POST"])
-def post_validate_addresses():
-    return Request(POST_validate_addresses, request)
-
-
 @app.route("/shipping/estimates", methods=["POST"])
 def post_shipping_methods():
     return Request(POST_shipping_esimates, request)
