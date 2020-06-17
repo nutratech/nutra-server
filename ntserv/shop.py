@@ -117,14 +117,14 @@ def POST_shipping_esimates(request):
     for bin in bins:
         parcel = {
             "name": bin.name,
-            "length": bin.width,
-            "width": bin.height,
-            "height": bin.depth,
+            "length": float(bin.width),
+            "width": float(bin.height),
+            "height": float(bin.depth),
             "distance_unit": "cm",
             # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
             # currently we are just assuming one package == sum( all items' weights )
             # "weight": sum([i.weight for i in bin.items]),
-            "weight": round(sum([i.weight for i in items_]), 4),
+            "weight": float(round(sum([i.weight for i in items_]), 4)),
             "mass_unit": "g",
         }
         parcels.append(parcel)
