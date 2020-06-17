@@ -28,7 +28,6 @@ from .shop import (
     GET_countries,
     GET_products,
     GET_products__product_id__reviews,
-    GET_products_ratings,
     PATCH_orders_admin,
     POST_orders,
     POST_products_reviews,
@@ -149,11 +148,6 @@ def post_validate_addresses():
 @app.route("/shipping/estimates", methods=["POST"])
 def post_shipping_methods():
     return Request(POST_shipping_esimates, request)
-
-
-@app.route("/products/ratings")
-def get_products_ratings():
-    return Request(GET_products_ratings, request)
 
 
 @app.route("/products")

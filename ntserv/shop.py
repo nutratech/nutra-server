@@ -139,11 +139,6 @@ def POST_shipping_esimates(request):
     return Response(data=shipment)
 
 
-def GET_products_ratings(request):
-    pg_result = psql("SELECT * FROM get_products_ratings()")
-    return Response(data=pg_result.rows)
-
-
 def GET_products(request):
     pg_result = psql("SELECT * FROM get_products()")
     return Response(data=pg_result.rows)
