@@ -61,13 +61,16 @@ def POST_shipping_esimates(request):
     # 3D bin-pack
     packer = Packer()
 
+    # TODO: DHL box standards for international shipments
+
     for c in containers:
         l = c["dimensions"][0] * 2.54  # inches --> cm
         w = c["dimensions"][1] * 2.54
         h = c["dimensions"][2] * 2.54
-        weight = c["weight_max"] * 454  # pounds --> grams
-        bin = Bin(c["tag"], l, w, h, weight)
-        print(f"packer.add_bin(Bin('{c['tag']}', {l}, {w}, {h}, {weight}))")
+        weight = c["weight_max"] * 454  # pounds -->
+        tag = " ".join([c["courier"], c["method"], c["container"]])
+        bin = Bin(tag, l, w, h, weight)
+        print(f"packer.add_bin(Bin('{tag}', {l}, {w}, {h}, {weight}))")
         packer.add_bin(bin)
 
     items_ = []
