@@ -37,11 +37,6 @@ address_from = {
 }
 
 
-def GET_countries(request):
-    pg_result = psql("SELECT * FROM get_countries_states()")
-    return Response(data=pg_result.rows)
-
-
 def POST_shipping_esimates(request):
     body = request.json
     # user_id = body["user_id"]

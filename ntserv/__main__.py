@@ -25,7 +25,6 @@ from .accounts import (
 )
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
-    GET_countries,
     GET_products,
     GET_products__product_id__reviews,
     PATCH_orders_admin,
@@ -134,11 +133,6 @@ def get_calc_lblimits():
 # -------------------------
 # Shop functions
 # -------------------------
-@app.route("/countries")
-def get_countries():
-    return Request(GET_countries, request)
-
-
 @app.route("/shipping/estimates", methods=["POST"])
 def post_shipping_methods():
     return Request(POST_shipping_esimates, request)
