@@ -2,7 +2,6 @@ bcrypt==3.1.7
 Flask_Cors==3.0.8
 Flask==1.1.2
 gunicorn==20.0.4
-InvoiceGenerator==1.1.0
 psycopg2==2.8.5
 py3dbp==1.1
 PyJWT==1.7.1
