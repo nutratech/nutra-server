@@ -25,6 +25,7 @@ from .accounts import (
 )
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
+    GET_orders__id,
     GET_products,
     GET_products__product_id__reviews,
     PATCH_orders_admin,
@@ -32,10 +33,7 @@ from .shop import (
     POST_products_reviews,
     POST_shipping_esimates,
 )
-from .usda import (
-    GET_calc_bodyfat,
-    GET_calc_lblimits,
-)
+from .usda import GET_calc_bodyfat, GET_calc_lblimits
 from .utils.cache import reload
 
 # Load SQL cache in-memory
@@ -146,6 +144,11 @@ def get_products():
 @app.route("/orders", methods=["POST"])
 def post_orders():
     return Request(POST_orders, request)
+
+
+@app.route("/orders/<id>",)
+def get_orders__id(id):
+    return Request(GET_orders__id, request)
 
 
 @app.route("/orders/admin", methods=["PATCH"])

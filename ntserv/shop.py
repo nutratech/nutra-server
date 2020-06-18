@@ -3,7 +3,7 @@ from datetime import datetime
 import shippo
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
-from usps import USPSApi
+from usps import Address, USPSApi
 
 from .libserver import Response
 from .postgres import psql
@@ -46,9 +46,6 @@ def POST_shipping_esimates(request):
     # Query DB for products, shipping methods and containers
     pg_result = psql("SELECT * FROM variants")
     variants = {r["id"]: r for r in pg_result.rows}
-    # TODO - reduce down to subset of shipping options (more user-friendly?)
-    # pg_result = psql("SELECT * FROM shipping_methods WHERE is_physical=TRUE")
-    # methods = pg_result.rows
     pg_result = psql("SELECT * FROM shipping_containers")
     containers = pg_result.rows
 
@@ -112,6 +109,7 @@ def POST_shipping_esimates(request):
         asynchronous=False,
     )
 
+    # TODO - reduce down to subset of shipping options (more user-friendly?)
     return Response(data=shipment)
 
 
@@ -168,6 +166,16 @@ def POST_orders(request):
             [order_id, variant_id, quantity, price],
         )
     return Response(data={"order_id": order_id})
+
+
+# @auth
+def GET_orders__id(request):
+    id = int(request.view_args["id"])
+
+    pg_result = psql("SELECT * FROM orders WHERE id=$1", [id])
+    order = pg_result.row
+
+    return Response(data=order)
 
 
 @auth
