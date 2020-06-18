@@ -22,6 +22,8 @@ print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
 
 def psql(query, params=None):
 
+    # TODO: revamp this, tighten ship, make more versatile for DB import, and decide on mandatory RETURNING for INSERTs
+
     cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     # Print query
@@ -58,7 +60,8 @@ def psql(query, params=None):
         result.set_rows(cur.fetchall())
         con.commit()
         cur.close()
-    except:
+    except Exception as e:
+        print(e)
         con.rollback()
         cur.close()
 

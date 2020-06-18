@@ -1,14 +1,13 @@
-import json
 from datetime import datetime
 
 import shippo
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
+from usps import USPSApi
 
 from .libserver import Response
 from .postgres import psql
-from .settings import SHIPPO_API_KEY
-from .utils.account import user_id_from_username_or_email
+from .settings import SHIPPO_API_KEY, USPS_API_KEY
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_FULL_ADMIN,
@@ -19,6 +18,9 @@ from .utils.auth import (
 
 # Set Shippo API key
 shippo.config.api_key = SHIPPO_API_KEY
+
+# Set USPS API key
+usps = USPSApi(USPS_API_KEY)
 
 address_from = {
     # "name": "Post Office",
@@ -40,31 +42,6 @@ def GET_countries(request):
     return Response(data=pg_result.rows)
 
 
-def POST_validate_addresses(request):
-    addresses_ = request.json
-
-    addresses = []
-    for address_ in addresses_:
-        try:
-            address = shippo.Address.create(
-                name=address_.get("name"),
-                company=address_.get("company"),
-                street1=address_["street1"],
-                street2=address_.get("street2"),
-                city=address_["city"],
-                state=address_["state"],
-                zip=address_.get("zip"),
-                country=address_["country"],
-                validate=True,
-            )
-        except Exception as e:
-            # TODO: better bundle exceptions
-            address = json.loads(json.dumps(e, default=lambda x: x.__dict__))
-        addresses.append(address)
-
-    return Response(data=addresses)
-
-
 def POST_shipping_esimates(request):
     body = request.json
     # user_id = body["user_id"]
@@ -84,13 +61,16 @@ def POST_shipping_esimates(request):
     # 3D bin-pack
     packer = Packer()
 
+    # TODO: DHL box standards for international shipments
+
     for c in containers:
         l = c["dimensions"][0] * 2.54  # inches --> cm
         w = c["dimensions"][1] * 2.54
         h = c["dimensions"][2] * 2.54
-        weight = c["weight_max"] * 454  # pounds --> grams
-        bin = Bin(c["tag"], l, w, h, weight)
-        print(f"packer.add_bin(Bin('{c['tag']}', {l}, {w}, {h}, {weight}))")
+        weight = c["weight_max"] * 454  # pounds -->
+        tag = " ".join([c["courier"], c["method"], c["container"]])
+        bin = Bin(tag, l, w, h, weight)
+        print(f"packer.add_bin(Bin('{tag}', {l}, {w}, {h}, {weight}))")
         packer.add_bin(bin)
 
     items_ = []
@@ -118,14 +98,14 @@ def POST_shipping_esimates(request):
     for bin in bins:
         parcel = {
             "name": bin.name,
-            "length": bin.width,
-            "width": bin.height,
-            "height": bin.depth,
+            "length": float(bin.width),
+            "width": float(bin.height),
+            "height": float(bin.depth),
             "distance_unit": "cm",
             # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
             # currently we are just assuming one package == sum( all items' weights )
             # "weight": sum([i.weight for i in bin.items]),
-            "weight": round(sum([i.weight for i in items_]), 4),
+            "weight": float(round(sum([i.weight for i in items_]), 4)),
             "mass_unit": "g",
         }
         parcels.append(parcel)
@@ -138,11 +118,6 @@ def POST_shipping_esimates(request):
     )
 
     return Response(data=shipment)
-
-
-def GET_products_ratings(request):
-    pg_result = psql("SELECT * FROM get_products_ratings()")
-    return Response(data=pg_result.rows)
 
 
 def GET_products(request):
@@ -210,7 +185,7 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
         "updated": int(datetime.now().timestamp()),
     }
     for k in body.keys():
-        if not k in patcher and not (k == "order_id" or k == "email"):
+        if k not in patcher and not (k == "order_id" or k == "email"):
             patcher[k] = body[k]
 
     # Parameterize SQL and UPDATE
