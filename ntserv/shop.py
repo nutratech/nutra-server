@@ -168,14 +168,13 @@ def POST_orders(request):
     return Response(data={"order_id": order_id})
 
 
-# @auth
-def GET_orders__id(request):
-    id = int(request.view_args["id"])
+@auth
+def GET_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    # id = int(request.view_args["id"])
 
-    pg_result = psql("SELECT * FROM orders WHERE id=$1", [id])
-    order = pg_result.row
+    pg_result = psql("SELECT * FROM get_orders(%s)", [user_id])
 
-    return Response(data=order)
+    return Response(data=pg_result.rows)
 
 
 @auth

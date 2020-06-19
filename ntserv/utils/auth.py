@@ -100,7 +100,11 @@ def check_token(token):
 
     try:
         token = jwt.decode(token, JWT_SECRET, algorithm="HS256")
-        return AuthResult(token), None
+        auth_result = AuthResult(token)
+        error = None
+        if auth_result.expired:
+            error = "LOGIN_TOKEN_EXPIRED"
+        return auth_result, error
     except Exception as e:
         return None, repr(e)
 

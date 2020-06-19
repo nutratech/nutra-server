@@ -25,7 +25,7 @@ from .accounts import (
 )
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
-    GET_orders__id,
+    GET_orders,
     GET_products,
     GET_products__product_id__reviews,
     PATCH_orders_admin,
@@ -146,9 +146,9 @@ def post_orders():
     return Request(POST_orders, request)
 
 
-@app.route("/orders/<id>",)
-def get_orders__id(id):
-    return Request(GET_orders__id, request)
+@app.route("/orders",)
+def get_orders():
+    return Request(GET_orders, request)
 
 
 @app.route("/orders/admin", methods=["PATCH"])
