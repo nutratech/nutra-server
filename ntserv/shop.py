@@ -14,6 +14,7 @@ from .utils.auth import (
     auth,
     check_request,
 )
+from .utils.cache import get_shipping_containers, get_variants
 
 # Set USPS API key
 usps = USPSApi(USPS_API_KEY)
@@ -36,22 +37,18 @@ address_from = {
 def POST_shipping_esimates(request):
     body = request.json
     # user_id = body["user_id"]
-    address = body["address"]
+    # address = body["address"]
     items = body["items"]
-
-    # Query DB for products, shipping methods and containers
-    pg_result = psql("SELECT * FROM variants")
-    variants = {r["id"]: r for r in pg_result.rows}
-    pg_result = psql("SELECT * FROM shipping_containers")
-    containers = pg_result.rows
 
     #############
     # 3D bin-pack
     packer = Packer()
 
     # TODO: DHL box standards for international shipments
+    containers = get_shipping_containers()
+    variants = get_variants()
 
-    for c in containers:
+    for c in containers.values():
         l = c["dimensions"][0] * 2.54  # inches --> cm
         w = c["dimensions"][1] * 2.54
         h = c["dimensions"][2] * 2.54
@@ -76,41 +73,30 @@ def POST_shipping_esimates(request):
         items_.append(item)
         packer.add_item(item)
 
-    packer.pack()
+    packer.pack(bigger_first=True)
 
-    bins = [bin for bin in packer.bins if bin.items]
+    bins = [bin for bin in packer.bins if not bin.unfitted_items]
 
-    # ########
-    # # SHIPPO
-    # parcels = []
-    # for bin in bins:
-    #     parcel = {
-    #         "name": bin.name,
-    #         "length": float(bin.width),
-    #         "width": float(bin.height),
-    #         "height": float(bin.depth),
-    #         "distance_unit": "cm",
-    #         # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
-    #         # currently we are just assuming one package == sum( all items' weights )
-    #         # "weight": sum([i.weight for i in bin.items]),
-    #         "weight": float(round(sum([i.weight for i in items_]), 4)),
-    #         "mass_unit": "g",
-    #     }
-    #     parcels.append(parcel)
+    # Make solution customer friendly
+    # TODO: less simplistic handling than min(volume), e.g. international, different shippint speeds, costs.
+    smallest_bin = min(bins, key=lambda b: b.depth * b.height * b.width)
+    solution = next(
+        (
+            # Gets the smallest_bin by matching name (a string)
+            c
+            for c in containers.values()
+            if " ".join([c["courier"], c["method"], c["container"]])
+            == smallest_bin.name
+        ),
+        None,
+    )
 
-    # shipment = shippo.Shipment.create(
-    #     address_from=address_from,
-    #     address_to=address,
-    #     parcels=parcels,
-    #     asynchronous=False,
-    # )
-
-    shipment = None
-
-    # TODO - reduce down to subset of shipping options (more user-friendly?)
-    return Response(data=shipment)
+    return Response(data=solution)
 
 
+# TODO: generic endpoint for get_function_name() or select_table_name()
+# the front end can then pass in a query or route param, and
+# we reduce dozens of separate endpoints here to just 2 or 3 generic functions
 def GET_pcategories(request):
     pg_result = psql("SELECT * FROM get_pcategories()")
     return Response(data=pg_result.rows)
