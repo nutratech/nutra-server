@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 load_dotenv(verbose=True)
 
 
-# Shippo token
-SHIPPO_API_KEY = os.getenv("SHIPPO_TOKEN")
-
 # USPS API key
 USPS_API_KEY = os.getenv("USPS_API_KEY")
 

@@ -1,13 +1,12 @@
 from datetime import datetime
 
-import shippo
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
 from usps import Address, USPSApi
 
 from .libserver import Response
 from .postgres import psql
-from .settings import SHIPPO_API_KEY, USPS_API_KEY
+from .settings import USPS_API_KEY
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_FULL_ADMIN,
@@ -15,9 +14,6 @@ from .utils.auth import (
     auth,
     check_request,
 )
-
-# Set Shippo API key
-shippo.config.api_key = SHIPPO_API_KEY
 
 # Set USPS API key
 usps = USPSApi(USPS_API_KEY)
@@ -84,30 +80,32 @@ def POST_shipping_esimates(request):
 
     bins = [bin for bin in packer.bins if bin.items]
 
-    ########
-    # SHIPPO
-    parcels = []
-    for bin in bins:
-        parcel = {
-            "name": bin.name,
-            "length": float(bin.width),
-            "width": float(bin.height),
-            "height": float(bin.depth),
-            "distance_unit": "cm",
-            # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
-            # currently we are just assuming one package == sum( all items' weights )
-            # "weight": sum([i.weight for i in bin.items]),
-            "weight": float(round(sum([i.weight for i in items_]), 4)),
-            "mass_unit": "g",
-        }
-        parcels.append(parcel)
+    # ########
+    # # SHIPPO
+    # parcels = []
+    # for bin in bins:
+    #     parcel = {
+    #         "name": bin.name,
+    #         "length": float(bin.width),
+    #         "width": float(bin.height),
+    #         "height": float(bin.depth),
+    #         "distance_unit": "cm",
+    #         # TODO resolve issue ( https://github.com/enzoruiz/3dbinpacking/issues/2 )
+    #         # currently we are just assuming one package == sum( all items' weights )
+    #         # "weight": sum([i.weight for i in bin.items]),
+    #         "weight": float(round(sum([i.weight for i in items_]), 4)),
+    #         "mass_unit": "g",
+    #     }
+    #     parcels.append(parcel)
 
-    shipment = shippo.Shipment.create(
-        address_from=address_from,
-        address_to=address,
-        parcels=parcels,
-        asynchronous=False,
-    )
+    # shipment = shippo.Shipment.create(
+    #     address_from=address_from,
+    #     address_to=address,
+    #     parcels=parcels,
+    #     asynchronous=False,
+    # )
+
+    shipment = None
 
     # TODO - reduce down to subset of shipping options (more user-friendly?)
     return Response(data=shipment)
