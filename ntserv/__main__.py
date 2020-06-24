@@ -33,6 +33,7 @@ from .shop import (
     POST_orders,
     POST_products_reviews,
     POST_shipping_esimates,
+    POST_validate_addresses,
 )
 from .usda import GET_calc_bodyfat, GET_calc_lblimits
 from .utils.cache import reload
@@ -132,6 +133,11 @@ def get_calc_lblimits():
 # -------------------------
 # Shop functions
 # -------------------------
+@app.route("/validate/addresses", methods=["POST"])
+def post_validate_addresses():
+    return Request(POST_validate_addresses, request)
+
+
 @app.route("/shipping/estimates", methods=["POST"])
 def post_shipping_methods():
     return Request(POST_shipping_esimates, request)

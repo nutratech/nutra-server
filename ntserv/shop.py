@@ -34,6 +34,34 @@ address_from = {
 }
 
 
+def POST_validate_addresses(request):
+    addresses = list(request.json)
+
+    validations = []
+    for a in addresses:
+        if not a["country"] == "US":
+            return Response(
+                data={"error": "Sorry, only support shipping to U.S. for now :["},
+                code=400,
+            )
+
+        address = Address(
+            a["name"],
+            a["street1"],
+            a["city"],
+            a["state"],
+            str(a["zip"]),
+            zipcode_ext=a.get("zipcode_ext", ""),
+            company=a.get("company", ""),
+            address_2=a.get("address_2", ""),
+            phone=a.get("phone", ""),
+        )
+        validation = usps.validate_address(address)
+        validations.append(validation.result["AddressValidateResponse"])
+
+    return Response(data=validations)
+
+
 def POST_shipping_esimates(request):
     body = request.json
     # user_id = body["user_id"]
