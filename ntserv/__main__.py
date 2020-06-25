@@ -26,9 +26,10 @@ from .accounts import (
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
     GET_orders,
-    GET_pcategories,
+    GET_categories,
     GET_products,
     GET_products__product_id__reviews,
+    GET_products_profits,
     PATCH_orders_admin,
     POST_orders,
     POST_products_reviews,
@@ -143,9 +144,9 @@ def post_shipping_methods():
     return Request(POST_shipping_esimates, request)
 
 
-@app.route("/pcategories")
-def get_pcategories():
-    return Request(GET_pcategories, request)
+@app.route("/categories")
+def get_categories():
+    return Request(GET_categories, request)
 
 
 @app.route("/products")
@@ -163,11 +164,6 @@ def get_orders():
     return Request(GET_orders, request)
 
 
-@app.route("/orders/admin", methods=["PATCH"])
-def patch_orders_admin():
-    return Request(PATCH_orders_admin, request)
-
-
 @app.route("/products/<id>/reviews")
 def get_products__product_id__reviews(id):
     return Request(GET_products__product_id__reviews, request)
@@ -181,3 +177,16 @@ def post_products_reviews():
 @app.route("/report", methods=["POST"])
 def post_report():
     return Request(POST_report, request)
+
+
+# -------------------------
+# Admin functions
+# -------------------------
+@app.route("/products/profits")
+def get_products_profits():
+    return Request(GET_products_profits, request)
+
+
+@app.route("/orders/admin", methods=["PATCH"])
+def patch_orders_admin():
+    return Request(PATCH_orders_admin, request)

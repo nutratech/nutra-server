@@ -2,6 +2,7 @@ from datetime import datetime
 
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
+from tabulate import tabulate
 from usps import Address, USPSApi
 
 from .libserver import Response
@@ -125,8 +126,8 @@ def POST_shipping_esimates(request):
 # TODO: generic endpoint for get_function_name() or select_table_name()
 # the front end can then pass in a query or route param, and
 # we reduce dozens of separate endpoints here to just 2 or 3 generic functions
-def GET_pcategories(request):
-    pg_result = psql("SELECT * FROM get_pcategories()")
+def GET_categories(request):
+    pg_result = psql("SELECT * FROM get_categories()")
     return Response(data=pg_result.rows)
 
 
@@ -192,6 +193,72 @@ def GET_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     pg_result = psql("SELECT * FROM get_orders(%s)", [user_id])
 
     return Response(data=pg_result.rows)
+
+
+@auth
+def GET_products_profits(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
+
+    pg_result = psql("SELECT id, name FROM products WHERE shippable=TRUE")
+    products = pg_result.rows
+
+    pg_result = psql("SELECT id, product_id, grams, denomination, price FROM variants")
+    variants = {}
+    for r in pg_result.rows:
+        id = r["product_id"]
+        if id not in variants:
+            variants[id] = []
+        variants[id].append(r)
+
+    pg_result = psql("SELECT * FROM ingredients")
+    ingredients = {r["id"]: r for r in pg_result.rows}
+
+    pg_result = psql("SELECT * FROM product_ingredients")
+    product_ingredients = {}
+    for entry in pg_result.rows:
+        id = entry["product_id"]
+        if id not in product_ingredients:
+            product_ingredients[id] = []
+        product_ingredients[id].append(
+            {"ingredient_id": entry["ingredient_id"], "mg": entry["mg"]}
+        )
+
+    ###################
+    # Calculate costs
+    for p in products:
+        id = p["id"]
+        if id not in product_ingredients:
+            print(f"no ingredients for {p['name']}")
+            p["cost_per_kg"] = None
+            continue
+        ingreds = product_ingredients[id]
+        tot_weight = sum(i["mg"] for i in ingreds)
+        for i in ingreds:
+            i["relative_perc"] = i["mg"] / tot_weight
+
+        p["cost_per_kg"] = sum(
+            i["relative_perc"] * ingredients[i["ingredient_id"]]["cost_per_kg"]
+            for i in ingreds
+        )
+        # Revenue per variant per kg
+        for v in variants[id]:
+            kg = v["grams"] / 1000
+            print(v)
+            p[v["denomination"]] = v["price"] / kg
+
+    table = tabulate(products, headers="keys")
+    print(table)
+
+    return f"""<pre>
+{table}
+</pre>
+"""
+    return Response(
+        data={
+            "products": products,
+            "ingredients": ingredients,
+            "product_ingredients": product_ingredients,
+        }
+    )
 
 
 @auth
