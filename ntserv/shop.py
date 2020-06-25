@@ -195,7 +195,7 @@ def GET_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     return Response(data=pg_result.rows)
 
 
-@auth
+# @auth
 def GET_products_profits(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
 
     pg_result = psql("SELECT id, name FROM products WHERE shippable=TRUE")
