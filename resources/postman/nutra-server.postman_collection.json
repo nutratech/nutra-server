@@ -1338,7 +1338,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"kthprog\",\n    \"password\": \"101Problems!\"\n}",
+							"raw": "{\n    \"username\": \"gamesguru\",\n    \"password\": \"Testpw*\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1806,7 +1806,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n    {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"\",\n        \"state\": \"CA\",\n        \"zip\": 12260,\n        \"country\": \"US\"\n    }\n]",
+							"raw": "[\n    {\n        \"name\": \"John Smith\",\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    {\n        \"name\": \"Jane Doe\",\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"\",\n        \"state\": \"CA\",\n        \"zip\": 12260,\n        \"country\": \"US\"\n    }\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2005,6 +2005,40 @@
 					"name": "/orders",
 					"request": {
 						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/orders",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/orders",
+					"request": {
+						"auth": {
 							"type": "noauth"
 						},
 						"method": "POST",
@@ -2076,6 +2110,40 @@
 							"path": [
 								"orders",
 								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Admin functions",
+			"item": [
+				{
+					"name": "/products/profits",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/products/profits",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"products",
+								"profits"
 							]
 						}
 					},
