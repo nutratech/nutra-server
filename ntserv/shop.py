@@ -3,7 +3,15 @@ from datetime import datetime
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
 from tabulate import tabulate
-from usps import Address, USPSApi
+from usps import (
+    LABEL_ZPL,
+    SERVICE_FIRST_CLASS,
+    SERVICE_PARCEL_SELECT,
+    SERVICE_PRIORITY,
+    SERVICE_PRIORITY_EXPRESS,
+    Address,
+    USPSApi,
+)
 
 from .libserver import Response
 from .postgres import psql
@@ -20,19 +28,28 @@ from .utils.cache import get_shipping_containers, get_variants
 # Set USPS API key
 usps = USPSApi(USPS_API_KEY)
 
-address_from = {
-    # "name": "Post Office",
-    # "company": "USPS",
-    "street1": "100 Renaissance Center",
-    "street2": "Ste 1014",
-    "city": "Detroit",
-    "state": "MI",
-    "zip": 48243,
-    "country": "US",
-    # "phone": "+1 313 259 3219.",
-    # "email": "postalone@email.usps.gov",
-    # "metadata": "Neither snow nor rain nor heat nor gloom of night stays these couriers from the swift completion of their appointed rounds",
-}
+# address_from = {
+#     # "name": "Post Office",
+#     # "company": "USPS",
+#     "street1": "100 Renaissance Center",
+#     "street2": "Ste 1014",
+#     "city": "Detroit",
+#     "state": "MI",
+#     "zip": 48243,
+#     "country": "US",
+#     # "phone": "+1 313 259 3219.",
+#     # "email": "postalone@email.usps.gov",
+#     # "metadata": "Neither snow nor rain nor heat nor gloom of night stays these couriers from the swift completion of their appointed rounds",
+# }
+
+address_from = Address(
+    name="Post Office",
+    address_1="100 Renaissance Center",
+    address_2="Ste 1014",
+    city="Detroit",
+    state="MI",
+    zipcode="48243",
+)
 
 
 def POST_validate_addresses(request):
@@ -66,7 +83,7 @@ def POST_validate_addresses(request):
 def POST_shipping_esimates(request):
     body = request.json
     # user_id = body["user_id"]
-    # address = body["address"]
+    address_to = body["address"]
     items = body["items"]
 
     #############
@@ -119,6 +136,21 @@ def POST_shipping_esimates(request):
         ),
         None,
     )
+
+    # TODO: make real API call to shipping estimate
+    address_to = Address(
+        name=address_to["name"],
+        address_1=address_to["street1"],
+        address_2=address_to.get("street2"),
+        city=address_to["city"],
+        state=address_to["state"],
+        zipcode=str(address_to["zip"]),
+    )
+    weight = 12
+    label = usps.create_label(
+        address_to, address_from, weight, SERVICE_PRIORITY, LABEL_ZPL
+    )
+    print(label.result)
 
     return Response(data=solution)
 
@@ -252,13 +284,6 @@ def GET_products_profits(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
 {table}
 </pre>
 """
-    return Response(
-        data={
-            "products": products,
-            "ingredients": ingredients,
-            "product_ingredients": product_ingredients,
-        }
-    )
 
 
 @auth
