@@ -25,8 +25,8 @@ from .accounts import (
 )
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
-    GET_orders,
     GET_categories,
+    GET_orders,
     GET_products,
     GET_products__product_id__reviews,
     GET_products_profits,
@@ -36,7 +36,12 @@ from .shop import (
     POST_shipping_esimates,
     POST_validate_addresses,
 )
-from .usda import GET_calc_bodyfat, GET_calc_lblimits, GET_foods_search
+from .usda import (
+    GET_calc_bodyfat,
+    GET_calc_lblimits,
+    GET_foods_analyze,
+    GET_foods_search,
+)
 from .utils.cache import reload
 
 # Load SQL cache in-memory
@@ -134,6 +139,11 @@ def get_calc_lblimits():
 @app.route("/foods/search")
 def get_foods_search():
     return Request(GET_foods_search, request)
+
+
+@app.route("/foods/analyze")
+def get_foods_analyze():
+    return Request(GET_foods_analyze, request)
 
 
 # -------------------------

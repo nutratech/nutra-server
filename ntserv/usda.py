@@ -184,7 +184,7 @@ def GET_sort(request):
     return Response(data=pg_result.rows)
 
 
-def GET_analyze(request):
+def GET_foods_analyze(request):
 
     # TODO - handle recipe_ids also, see `db.js` old-code
     food_ids = request.args["food_ids"].split(",")
