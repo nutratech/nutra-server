@@ -33,10 +33,13 @@ def reload():
     # nut_data = {}
 
     pg_result = psql("SELECT * FROM usda.food_des")
-    food_des = {f["id"]: f for f in pg_result.rows}
+    if pg_result.rows:
+        food_des = {f["id"]: f for f in pg_result.rows}
 
     pg_result = psql("SELECT * FROM usda.fdgrp")
-    fdgrp = {g["id"]: g for g in pg_result.rows}
+    if pg_result.rows:
+        fdgrp = {g["id"]: g for g in pg_result.rows}
 
     pg_result = psql("SELECT * FROM usda.data_src")
-    data_src = {d["id"]: d for d in pg_result.rows}
+    if pg_result.rows:
+        data_src = {d["id"]: d for d in pg_result.rows}
