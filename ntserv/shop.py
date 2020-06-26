@@ -23,7 +23,7 @@ from .utils.auth import (
     auth,
     check_request,
 )
-from .utils.cache import get_shipping_containers, get_variants
+from .utils import cache
 
 # Set USPS API key
 usps = USPSApi(USPS_API_KEY)
@@ -91,10 +91,10 @@ def POST_shipping_esimates(request):
     packer = Packer()
 
     # TODO: DHL box standards for international shipments
-    containers = get_shipping_containers()
-    variants = get_variants()
+    # containers = get_shipping_containers()
+    # variants = get_variants()
 
-    for c in containers.values():
+    for c in cache.shipping_containers.values():
         l = c["dimensions"][0] * 2.54  # inches --> cm
         w = c["dimensions"][1] * 2.54
         h = c["dimensions"][2] * 2.54
@@ -107,7 +107,7 @@ def POST_shipping_esimates(request):
     items_ = []
     for i in items:
         # TODO - include stock/inventory check at this point, or earlier in shop
-        i = variants[i]
+        i = cache.variants[i]
         l = i["dimensions"][0]  # cm
         w = i["dimensions"][1]
         h = i["dimensions"][2]
@@ -130,7 +130,7 @@ def POST_shipping_esimates(request):
         (
             # Gets the smallest_bin by matching name (a string)
             c
-            for c in containers.values()
+            for c in cache.shipping_containers.values()
             if " ".join([c["courier"], c["method"], c["container"]])
             == smallest_bin.name
         ),

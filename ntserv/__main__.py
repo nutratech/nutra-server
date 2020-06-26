@@ -36,7 +36,7 @@ from .shop import (
     POST_shipping_esimates,
     POST_validate_addresses,
 )
-from .usda import GET_calc_bodyfat, GET_calc_lblimits
+from .usda import GET_calc_bodyfat, GET_calc_lblimits, GET_foods_search
 from .utils.cache import reload
 
 # Load SQL cache in-memory
@@ -129,6 +129,11 @@ def get_calc_bodyfat():
 @app.route("/calc/lblimits")
 def get_calc_lblimits():
     return Request(GET_calc_lblimits, request)
+
+
+@app.route("/foods/search")
+def get_foods_search():
+    return Request(GET_foods_search, request)
 
 
 # -------------------------
