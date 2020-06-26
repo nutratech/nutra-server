@@ -271,11 +271,11 @@ def GET_products_profits(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
             i["relative_perc"] * ingredients[i["ingredient_id"]]["cost_per_kg"]
             for i in ingreds
         )
-        # Revenue per variant per kg
+        # Profit per variant per kg
         for v in variants[id]:
             kg = v["grams"] / 1000
             print(v)
-            p[v["denomination"]] = v["price"] / kg
+            p[v["denomination"]] = v["price"] / kg - p["cost_per_kg"]
 
     table = tabulate(products, headers="keys")
     print(table)
