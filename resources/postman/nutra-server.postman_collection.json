@@ -211,46 +211,6 @@
 							"_postman_isSubFolder": true
 						},
 						{
-							"name": "/search",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/search?terms=mushrooms,ultraviolet",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"search"
-									],
-									"query": [
-										{
-											"key": "terms",
-											"value": "mushrooms,ultraviolet"
-										},
-										{
-											"key": "fdgrp_ids",
-											"value": "1100",
-											"disabled": true
-										},
-										{
-											"key": "data_src_ids",
-											"value": "1",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "/analyze",
 							"request": {
 								"method": "GET",
@@ -1718,6 +1678,47 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "/foods/search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/foods/search?terms=mushrooms,ultraviolet",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"foods",
+								"search"
+							],
+							"query": [
+								{
+									"key": "terms",
+									"value": "mushrooms,ultraviolet"
+								},
+								{
+									"key": "fdgrp_ids",
+									"value": "1100",
+									"disabled": true
+								},
+								{
+									"key": "data_src_ids",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -1840,7 +1841,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address\": {\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"items\": [\n        2,\n        2,\n        3,\n        4\n    ]\n}",
+							"raw": "{\n    \"address\": {\n        \"name\": \"John Smith\",\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"items\": [\n        2,\n        2,\n        3,\n        4\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2125,14 +2126,7 @@
 					"name": "/products/profits",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
