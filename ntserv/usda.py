@@ -163,13 +163,15 @@ def GET_foods_search(request):
         item = cache.food_des[id]
         fdgrp_id = item["fdgrp_id"]
         data_src_id = item["data_src_id"]
+        len_nutrients = len(cache.nut_data[id])
         result = {
             "food_id": id,
             "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
-            # "len_nutrients": len_nutrients,
+            "kcal_per_100g": kcal_per_100g,
+            "len_nutrients": len_nutrients,
         }
         # Add result to list
         results.append(result)
