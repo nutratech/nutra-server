@@ -28,7 +28,6 @@ from .shop import (
     GET_categories,
     GET_orders,
     GET_products,
-    GET_products__product_id__reviews,
     GET_products_profits,
     PATCH_orders_admin,
     POST_orders,
@@ -177,11 +176,6 @@ def post_orders():
 @app.route("/orders",)
 def get_orders():
     return Request(GET_orders, request)
-
-
-@app.route("/products/<id>/reviews")
-def get_products__product_id__reviews(id):
-    return Request(GET_products__product_id__reviews, request)
 
 
 @app.route("/products/reviews", methods=["POST"])

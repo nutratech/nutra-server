@@ -317,6 +317,8 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
 @auth
 def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
 
+    # TODO: attach whole `pg_result` object, in case of generic errors. e.g. missing function?
+
     # Parse incoming request
     body = request.json
     rating = body["rating"]
@@ -334,15 +336,5 @@ def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
     # ERRORs
     if pg_result.err_msg:
         return pg_result.Response
-
-    return Response(data=pg_result.rows)
-
-
-def GET_products__product_id__reviews(request):
-
-    # TODO: attach whole `pg_result` object, in case of generic errors. e.g. missing function?
-
-    product_id = int(request.view_args["id"])
-    pg_result = psql("SELECT * FROM get_product_reviews(%s)", [product_id])
 
     return Response(data=pg_result.rows)
