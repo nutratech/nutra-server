@@ -40,7 +40,7 @@ PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 
 # Other
 JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
-TOKEN_EXPIRY = timedelta(days=1)
+TOKEN_EXPIRY = timedelta(weeks=520)
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
 SEARCH_LIMIT = 100
 CUSTOM_FOOD_DATA_SRC_ID = 6
