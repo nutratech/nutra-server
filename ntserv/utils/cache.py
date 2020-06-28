@@ -29,9 +29,9 @@ def reload():
     pg_result = psql("SELECT * FROM variants")
     variants = {v["id"]: v for v in pg_result.rows}
 
-    pg_result = psql("SELECT * FROM usda.nut_data")
-    if pg_result.rows:
-        nut_data = {d["id"]: d for d in pg_result.rows}
+    # pg_result = psql("SELECT * FROM usda.nut_data")
+    # if pg_result.rows:
+    #     nut_data = {d["food_id"]: d for d in pg_result.rows}
 
     pg_result = psql("SELECT * FROM usda.food_des")
     if pg_result.rows:

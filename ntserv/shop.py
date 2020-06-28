@@ -111,10 +111,14 @@ def POST_shipping_esimates(request):
         l = i["dimensions"][0]  # cm
         w = i["dimensions"][1]
         h = i["dimensions"][2]
-        weight = i["weight"]  # grams
-        item = Item(i["denomination"], l, w, h, weight)
+        if i["unit"] == "g":
+            weight = i["quantity"]  # grams
+        else:
+            weight = i["grams"]
+        denomination = f"{i['quantity']}{i['unit']} [{i['exemplification']}]"
+        item = Item(denomination, l, w, h, weight)
         print(
-            f"packer.add_item(Item('{i['denomination']}', {round(l, 3)}, {round(w, 3)}, {round(h, 3)}, {round(weight, 3)}))"
+            f"packer.add_item(Item('{denomination}', {round(l, 3)}, {round(w, 3)}, {round(h, 3)}, {round(weight, 3)}))"
         )
         items_.append(item)
         packer.add_item(item)
@@ -138,19 +142,19 @@ def POST_shipping_esimates(request):
     )
 
     # TODO: make real API call to shipping estimate
-    address_to = Address(
-        name=address_to["name"],
-        address_1=address_to["street1"],
-        address_2=address_to.get("street2"),
-        city=address_to["city"],
-        state=address_to["state"],
-        zipcode=str(address_to["zip"]),
-    )
-    weight = 12
-    label = usps.create_label(
-        address_to, address_from, weight, SERVICE_PRIORITY, LABEL_ZPL
-    )
-    print(label.result)
+    # address_to = Address(
+    #     name=address_to["name"],
+    #     address_1=address_to["street1"],
+    #     address_2=address_to.get("street2"),
+    #     city=address_to["city"],
+    #     state=address_to["state"],
+    #     zipcode=str(address_to["zip"]),
+    # )
+    # weight = 12
+    # label = usps.create_label(
+    #     address_to, address_from, weight, SERVICE_PRIORITY, LABEL_ZPL
+    # )
+    # print(label.result)
 
     return Response(data=solution)
 
