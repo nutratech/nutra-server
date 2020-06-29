@@ -153,44 +153,27 @@ def GET_foods_search(request):
         for f in cache.food_des.values()
     }
     scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:SEARCH_LIMIT]
+    ids = [s[0] for s in scores]
+    pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [ids])
+    nut_data = {nd["food_id"]: nd for nd in pg_result.rows}
 
     results = []
     for score in scores:
         # Tally each score
-        id = score[0]
+        food_id = score[0]
 
         score = score[1]
-        item = cache.food_des[id]
+        item = cache.food_des[food_id]
         fdgrp_id = item["fdgrp_id"]
         data_src_id = item["data_src_id"]
-        # len_nutrients = len(cache.nut_data[id])
-        nutrients = []
-        for nd in cache.nut_data[id]:
-            nutr_id = nd[0]
-            nutr_val = nd[1]
-            long_desc = cache.nutr_def[nutr_id]["nutr_desc"]
-            tagname = cache.nutr_def[nutr_id]["tagname"]
-            rda = cache.nutr_def[nutr_id]["rda"]
-            units = cache.nutr_def[nutr_id]["units"]
-            nutrients.append(
-                {
-                    "nutr_id": nutr_id,
-                    "nutr_val": nutr_val,
-                    "long_desc": long_desc,
-                    "tagname": tagname,
-                    "rda": rda,
-                    "units": units,
-                }
-            )
+
         result = {
-            "food_id": id,
+            "food_id": food_id,
             "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
-            "nutrients": nutrients,
-            # "kcal_per_100g": kcal_per_100g,
-            # "len_nutrients": len_nutrients,
+            "nutrients": nut_data[food_id],
         }
         # Add result to list
         results.append(result)
