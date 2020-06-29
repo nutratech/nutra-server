@@ -112,34 +112,34 @@ def GET_calc_lblimits(request):
 # USDA Food functions
 # ---------------------------------
 def GET_data_src(request):
-    pg_result = psql("SELECT * FROM usda.data_src")
+    pg_result = psql("SELECT * FROM data_src")
     return Response(data=pg_result.rows)
 
 
 def GET_fdgrp(request):
-    pg_result = psql("SELECT * FROM usda.fdgrp")
+    pg_result = psql("SELECT * FROM fdgrp")
     return Response(data=pg_result.rows)
 
 
 def GET_serving_sizes(request):
 
     id = request.args["food_id"]
-    pg_result = psql("SELECT * FROM usda.get_food_servings(%s)", [id])
+    pg_result = psql("SELECT * FROM get_food_servings(%s)", [id])
     return Response(data=pg_result.rows)
 
 
 def GET_nutrients(request):
-    pg_result = psql("SELECT * FROM usda.nutr_def")
+    pg_result = psql("SELECT * FROM nutr_def")
     return Response(data=pg_result.rows)
 
 
 # def GET_exercises(request):
-#     pg_result = psql("SELECT * FROM usda.exercises")
+#     pg_result = psql("SELECT * FROM exercises")
 #     return Response(data=pg_result.rows)
 
 
 # def GET_biometrics(request):
-#     pg_result = psql("SELECT * FROM usda.biometrics")
+#     pg_result = psql("SELECT * FROM biometrics")
 #     return Response(data=pg_result.rows)
 
 
@@ -163,15 +163,34 @@ def GET_foods_search(request):
         item = cache.food_des[id]
         fdgrp_id = item["fdgrp_id"]
         data_src_id = item["data_src_id"]
-        len_nutrients = len(cache.nut_data[id])
+        # len_nutrients = len(cache.nut_data[id])
+        nutrients = []
+        for nd in cache.nut_data[id]:
+            nutr_id = nd[0]
+            nutr_val = nd[1]
+            long_desc = cache.nutr_def[nutr_id]["nutr_desc"]
+            tagname = cache.nutr_def[nutr_id]["tagname"]
+            rda = cache.nutr_def[nutr_id]["rda"]
+            units = cache.nutr_def[nutr_id]["units"]
+            nutrients.append(
+                {
+                    "nutr_id": nutr_id,
+                    "nutr_val": nutr_val,
+                    "long_desc": long_desc,
+                    "tagname": tagname,
+                    "rda": rda,
+                    "units": units,
+                }
+            )
         result = {
             "food_id": id,
             "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
-            "kcal_per_100g": kcal_per_100g,
-            "len_nutrients": len_nutrients,
+            "nutrients": nutrients,
+            # "kcal_per_100g": kcal_per_100g,
+            # "len_nutrients": len_nutrients,
         }
         # Add result to list
         results.append(result)
@@ -182,7 +201,7 @@ def GET_foods_search(request):
 def GET_sort(request):
     id = request.args["nutr_id"]
     # TODO - filter by food group?  Makes more sense here than /search
-    pg_result = psql("SELECT * FROM usda.sort_foods_by_nutrient_id(%s)", [id])
+    pg_result = psql("SELECT * FROM sort_foods_by_nutrient_id(%s)", [id])
     return Response(data=pg_result.rows)
 
 
@@ -192,7 +211,7 @@ def GET_foods_analyze(request):
     food_ids = request.args["food_ids"].split(",")
     food_ids = list(map(lambda x: int(x), food_ids))
 
-    pg_result = psql("SELECT * FROM usda.get_nutrients_by_food_ids(%s)", [food_ids])
+    pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [food_ids])
 
     return Response(data=pg_result.rows)
 
