@@ -155,7 +155,7 @@ def GET_foods_search(request):
     scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:SEARCH_LIMIT]
     ids = [s[0] for s in scores]
     pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [ids])
-    nut_data = {nd["food_id"]: nd for nd in pg_result.rows}
+    nut_data = {nd["food_id"]: nd["nutrients"] for nd in pg_result.rows}
 
     results = []
     for score in scores:
@@ -167,13 +167,15 @@ def GET_foods_search(request):
         fdgrp_id = item["fdgrp_id"]
         data_src_id = item["data_src_id"]
 
+        nutrients = {nd["nutr_id"]: nd for nd in nut_data[food_id]}
+
         result = {
             "food_id": food_id,
             "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
             "score": score,
-            "nutrients": nut_data[food_id],
+            "nutrients": nutrients,
         }
         # Add result to list
         results.append(result)
