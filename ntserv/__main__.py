@@ -38,6 +38,7 @@ from .shop import (
 from .usda import (
     GET_calc_bodyfat,
     GET_calc_lblimits,
+    GET_nutrients,
     GET_foods_analyze,
     GET_foods_search,
 )
@@ -133,6 +134,11 @@ def get_calc_bodyfat():
 @app.route("/calc/lblimits")
 def get_calc_lblimits():
     return Request(GET_calc_lblimits, request)
+
+
+@app.route("/nutrients")
+def get_nutrients():
+    return Request(GET_nutrients, request)
 
 
 @app.route("/foods/search")
