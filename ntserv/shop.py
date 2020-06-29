@@ -113,6 +113,8 @@ def POST_shipping_esimates(request):
         h = i["dimensions"][2]
         if i["unit"] == "g":
             weight = i["quantity"]  # grams
+        elif i["unit"] == "ct":
+            weight = i["quantity"] * 1000 * i["mg_per_ct"] + 100  # grams
         else:
             weight = i["grams"]
         denomination = f"{i['quantity']}{i['unit']} [{i['exemplification']}]"
