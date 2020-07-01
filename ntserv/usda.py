@@ -171,6 +171,7 @@ def GET_foods_search(request):
 
         result = {
             "food_id": food_id,
+            "fdgrp_id": fdgrp_id,
             "fdgrp_desc": cache.fdgrp[fdgrp_id]["fdgrp_desc"],
             "data_src": cache.data_src[data_src_id]["name"],
             "long_desc": item["long_desc"],
