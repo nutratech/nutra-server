@@ -1,10 +1,11 @@
 import math
 
 from fuzzywuzzy import fuzz
+from tabulate import tabulate
 
 from .libserver import Response
 from .postgres import psql
-from .settings import SEARCH_LIMIT
+from .settings import NUTR_ID_KCAL, NUTR_IDS_AMINOS, NUTR_IDS_FLAVONES, SEARCH_LIMIT
 from .utils import cache
 
 
@@ -128,9 +129,14 @@ def GET_serving_sizes(request):
     return Response(data=pg_result.rows)
 
 
-def GET_nutrients(request):
+def GET_nutrients(request, response_type="JSON"):
     pg_result = psql("SELECT * FROM nutr_def")
-    return Response(data=pg_result.rows)
+
+    if response_type == "JSON":
+        return Response(data=pg_result.rows)
+    else:  # HTML
+        table = tabulate(pg_result.rows, headers="keys", tablefmt="orgtbl")
+        return f"<pre>{table}</pre>"
 
 
 # def GET_exercises(request):
@@ -143,7 +149,7 @@ def GET_nutrients(request):
 #     return Response(data=pg_result.rows)
 
 
-def GET_foods_search(request):
+def GET_foods_search(request, response_type="JSON"):
 
     terms = request.args["terms"].split(",")
     query = " ".join(terms)
@@ -181,17 +187,75 @@ def GET_foods_search(request):
         # Add result to list
         results.append(result)
 
-    return Response(data=results)
+    if response_type == "JSON":
+        return Response(data=results)
+    else:  # HTML
+
+        def tabulate_results():
+            """ Copied from CLI repo to package up results, TODO: make into separate core util """
+            headers = [
+                "food_id",
+                "food_name",
+                "kcal",
+                "# nutrients",
+                "Aminos",
+                "Flavones",
+                "fdgrp_desc",
+            ]
+            rows = []
+            for i, r in enumerate(results):
+                food_id = r["food_id"]
+                food_name = r["long_desc"][:45]
+                fdgrp_desc = r["fdgrp_desc"]
+
+                nutrients = r["nutrients"]
+                kcal = nutrients.get(str(NUTR_ID_KCAL))
+                kcal = kcal["nutr_val"] if kcal else None
+                len_aminos = len(
+                    [
+                        nutrients[n_id]
+                        for n_id in nutrients
+                        if int(n_id) in NUTR_IDS_AMINOS
+                    ]
+                )
+                len_flavones = len(
+                    [
+                        nutrients[n_id]
+                        for n_id in nutrients
+                        if int(n_id) in NUTR_IDS_FLAVONES
+                    ]
+                )
+
+                row = [
+                    food_id,
+                    food_name,
+                    kcal,
+                    len(nutrients),
+                    len_aminos,
+                    len_flavones,
+                    fdgrp_desc,
+                ]
+                rows.append(row)
+            return tabulate(rows, headers=headers, tablefmt="orgtbl")
+
+        # table = tabulate(results, headers="keys", tablefmt="orgtbl")
+        table = tabulate_results()
+        return f"<pre>{table}</pre>"
 
 
-def GET_sort(request):
+def GET_foods_sort(request, response_type="JSON"):
     id = request.args["nutr_id"]
     # TODO - filter by food group?  Makes more sense here than /search
     pg_result = psql("SELECT * FROM sort_foods_by_nutrient_id(%s)", [id])
-    return Response(data=pg_result.rows)
+
+    if response_type == "JSON":
+        return Response(data=pg_result.rows)
+    else:  # HTML
+        table = tabulate(pg_result.rows, headers="keys", tablefmt="orgtbl")
+        return f"<pre>{table}</pre>"
 
 
-def GET_foods_analyze(request):
+def GET_foods_analyze(request, response_type="JSON"):
 
     # TODO - handle recipe_ids also, see `db.js` old-code
     food_ids = request.args["food_ids"].split(",")
@@ -199,7 +263,46 @@ def GET_foods_analyze(request):
 
     pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [food_ids])
 
-    return Response(data=pg_result.rows)
+    if response_type == "JSON":
+        return Response(data=pg_result.rows)
+    else:  # HTML
+
+        def tabulate_results():
+            """ Copied from CLI repo to package up results, TODO: make into separate core util """
+            # Get analysis
+            analyses = pg_result.rows
+            # Get RDAs
+            rdas = cache.nutr_def
+
+            # Gather analyses
+            tables = []
+            for food in analyses:
+                table = str(
+                    "\n======================================\n"
+                    f"==> {food['long_desc']} ({food['food_id']})\n"
+                    "======================================\n",
+                )
+                headers = ["nutrient", "amount", "units", "rda"]
+                rows = []
+                food_nutes = {x["nutr_id"]: x for x in food["nutrients"]}
+                for id, nute in food_nutes.items():
+                    if not rdas[id]["rda"]:
+                        continue
+
+                    amount = food_nutes[id]["nutr_val"]
+                    if not amount:
+                        continue
+                    rda_ratio = round(amount / rdas[id]["rda"] * 100, 1)
+                    rows.append(
+                        [nute["nutr_desc"], amount, rdas[id]["units"], f"{rda_ratio}%"]
+                    )
+                table += tabulate(rows, headers=headers, tablefmt="orgtbl")
+                tables.append(table)
+            return tables
+
+        results = tabulate_results()
+        text = "\n".join(results)
+        return f"<pre>{text}</pre>"
 
 
 # def GET_foods(request):

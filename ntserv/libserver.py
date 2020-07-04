@@ -11,10 +11,13 @@ __version__ = "0.0.1"
 __release__ = 1
 
 
-def Request(func, req):
+def Request(func, req, response_type="JSON"):
     """ Makes a request and handles global exceptions, always returning a `Response()` """
     try:
-        return func(request=req)
+        if response_type == "JSON":
+            return func(request=req)
+        else:  # HTML
+            return func(request=req, response_type=response_type)
     except Exception as e:
         # Prepare error messages
         trace = "\n".join(traceback.format_tb(e.__traceback__))
