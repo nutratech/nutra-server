@@ -262,15 +262,17 @@ def GET_foods_analyze(request, response_type="JSON"):
     food_ids = list(map(lambda x: int(x), food_ids))
 
     pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [food_ids])
+    analyses = pg_result.rows
+    pg_result = psql("SELECT * FROM get_foods_servings(%s)", [food_ids])
+    servings = pg_result.rows
 
     if response_type == "JSON":
-        return Response(data=pg_result.rows)
+        return Response(data={"analyses": analyses, "servings": servings})
     else:  # HTML
 
         def tabulate_results():
             """ Copied from CLI repo to package up results, TODO: make into separate core util """
-            # Get analysis
-            analyses = pg_result.rows
+
             # Get RDAs
             rdas = cache.nutr_def
 
@@ -282,6 +284,8 @@ def GET_foods_analyze(request, response_type="JSON"):
                     f"==> {food['long_desc']} ({food['food_id']})\n"
                     "======================================\n",
                 )
+                # TODO: include servings table as separate info above
+
                 headers = ["nutrient", "amount", "units", "rda"]
                 rows = []
                 food_nutes = {x["nutr_id"]: x for x in food["nutrients"]}
