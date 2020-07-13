@@ -334,7 +334,27 @@ def GET_foods_analyze_csv(request):
     # {nutr_id: rda_val}
     rda_pairs = {int(x["id"]): float(x["rda"]) for x in rdas}
 
-    return Response(data={"foods_amounts": foods_amounts, "rdas": rda_pairs})
+    # Analyze foods
+    pg_result = psql(
+        "SELECT * FROM get_nutrients_by_food_ids(%s)", [list(foods_amounts.keys())]
+    )
+    foods_nutrients = {x["food_id"]: x["nutrients"] for x in pg_result.rows}
+    nutrient_totals = {}
+    for food_nutrients in foods_nutrients.values():
+        for food_nutrient in food_nutrients:
+            id = food_nutrient["nutr_id"]
+            if id not in nutrient_totals:
+                nutrient_totals[id] = 0
+            nutrient_totals[id] += food_nutrient["nutr_val"]
+
+    return Response(
+        data={
+            "foods_amounts": foods_amounts,
+            "rdas": rda_pairs,
+            "food_nutrients": food_nutrients,
+            "nutrient_totals": nutrient_totals,
+        }
+    )
 
 
 # def GET_foods(request):
