@@ -314,36 +314,27 @@ def GET_foods_analyze(request, response_type="JSON"):
 def GET_foods_analyze_csv(request):
 
     # Get CSV file bytes off request
-    csv_file = io.TextIOWrapper(request.files["input.csv"])
+    food_log_csv_file = io.TextIOWrapper(request.files["input.csv"])
+    rda_csv_file = io.TextIOWrapper(request.files["rdas.csv"])
 
-    # Parse CSV file
-    csv_input = csv.reader(csv_file)
-    rows = []
-    for i, row in enumerate(csv_input):
-        if i == 0:
-            headers = {}
-            for i, h in enumerate(row):
-                headers[h.lower()] = i
-        else:
-            rows.append(row)
+    food_log_csv_input = csv.DictReader(food_log_csv_file)
+    rda_csv_input = csv.DictReader(rda_csv_file)
 
-    # Reset reader
-    csv_file.seek(0)
+    # Parse CSV files
+    food_log = []
+    rdas = []
+    for row in food_log_csv_input:
+        food_log.append(row)
+    for row in rda_csv_input:
+        rdas.append(row)
 
     # Extract data
-    foods = {}  # {food_id: grams}
-    for row in rows:
-        try:
-            id = int(row[headers["id"]])
-        except Exception as e:
-            # TODO: error logging, on Slack lol no
-            print(e)
-            continue
-        grams = headers["grams"]
-        foods[id] = float(row[grams])
-        # {"id": row[headers["id"]], "grams": row[headers["grams"]]}
+    # {food_id: grams}
+    foods_amounts = {int(x["id"]): float(x["grams"]) for x in food_log if x["id"]}
+    # {nutr_id: rda_val}
+    rda_pairs = {int(x["id"]): float(x["rda"]) for x in rdas}
 
-    return Response(data=foods)
+    return Response(data={"foods_amounts": foods_amounts, "rdas": rda_pairs})
 
 
 # def GET_foods(request):
