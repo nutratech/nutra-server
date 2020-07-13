@@ -40,6 +40,7 @@ from .usda import (
     GET_calc_lblimits,
     GET_nutrients,
     GET_foods_analyze,
+    GET_foods_analyze_csv,
     GET_foods_search,
     GET_foods_sort,
 )
@@ -157,6 +158,11 @@ def get_foods_sort():
 @app.route("/foods/analyze")
 def get_foods_analyze():
     return Request(GET_foods_analyze, request)
+
+
+@app.route("/foods/analyze/csv", methods=["POST"])
+def get_foods_analyze_csv():
+    return Request(GET_foods_analyze_csv, request)
 
 
 ################################

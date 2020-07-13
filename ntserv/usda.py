@@ -1,3 +1,5 @@
+import csv
+import io
 import math
 
 from fuzzywuzzy import fuzz
@@ -307,6 +309,41 @@ def GET_foods_analyze(request, response_type="JSON"):
         results = tabulate_results()
         text = "\n".join(results)
         return f"<pre>{text}</pre>"
+
+
+def GET_foods_analyze_csv(request):
+
+    # Get CSV file bytes off request
+    csv_file = io.TextIOWrapper(request.files["input.csv"])
+
+    # Parse CSV file
+    csv_input = csv.reader(csv_file)
+    rows = []
+    for i, row in enumerate(csv_input):
+        if i == 0:
+            headers = {}
+            for i, h in enumerate(row):
+                headers[h.lower()] = i
+        else:
+            rows.append(row)
+
+    # Reset reader
+    csv_file.seek(0)
+
+    # Extract data
+    foods = {}  # {food_id: grams}
+    for row in rows:
+        try:
+            id = int(row[headers["id"]])
+        except Exception as e:
+            # TODO: error logging, on Slack lol no
+            print(e)
+            continue
+        grams = headers["grams"]
+        foods[id] = float(row[grams])
+        # {"id": row[headers["id"]], "grams": row[headers["grams"]]}
+
+    return Response(data=foods)
 
 
 # def GET_foods(request):
