@@ -275,9 +275,12 @@ def GET_foods_analyze(request, response_type="JSON"):
     analyses = pg_result.rows
     pg_result = psql("SELECT * FROM get_foods_servings(%s)", [food_ids])
     servings = pg_result.rows
+    food_des = [x for x in cache.food_des.values() if x["id"] in food_ids]
 
     if response_type == "JSON":
-        return Response(data={"analyses": analyses, "servings": servings})
+        return Response(
+            data={"analyses": analyses, "servings": servings, "food_des": food_des}
+        )
     else:  # HTML
 
         def tabulate_results():
