@@ -1629,7 +1629,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"male\",\n\t\"age\": 27,\n\t\"height\": 179,\n\t\"waist\": 81,\n\t\"neck\": 39,\n\t\"chest\": 12,\n\t\"ab\": 19,\n\t\"thigh\": 16,\n\t\"tricep\": 13,\n\t\"sub\": 10,\n\t\"sup\": 9,\n\t\"mid\": 13\n}",
+							"raw": "{\n\t\"gender\": \"male\",\n\t\"age\": 27,\n\t\"height\": 177,\n\t\"waist\": 79,\n\t\"neck\": 38,\n\t\"chest\": 10,\n\t\"ab\": 15,\n\t\"thigh\": 14,\n\t\"tricep\": 12,\n\t\"sub\": 10,\n\t\"sup\": 9,\n\t\"mid\": 13\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1659,7 +1659,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"male\",\n\t\"height\": 176.5,\n\t\"desired-bf\": 12,\n\t\"wrist\": 17.2,\n\t\"ankle\": 22.5\n}",
+							"raw": "{\n\t\"gender\": \"male\",\n\t\"height\": 177,\n\t\"desired-bf\": 11,\n\t\"wrist\": 17.2,\n\t\"ankle\": 22.5\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1715,6 +1715,122 @@
 									"value": "1",
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/foods/sort",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/foods/sort?nutr_id=304",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"foods",
+								"sort"
+							],
+							"query": [
+								{
+									"key": "fdgrp_ids",
+									"value": "1100",
+									"disabled": true
+								},
+								{
+									"key": "data_src_ids",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "nutr_id",
+									"value": "304"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/nutrients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/nutrients",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"nutrients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/foods/analyze",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/foods/analyze?food_ids=1001,1002,1003",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"foods",
+								"analyze"
+							],
+							"query": [
+								{
+									"key": "food_ids",
+									"value": "1001,1002,1003"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/foods/analyze/csv",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "input.csv",
+									"type": "file",
+									"src": "/home/shane/.nutra/rocky.csv"
+								},
+								{
+									"key": "rdas.csv",
+									"type": "file",
+									"src": "/home/shane/.nutra/dog-rdas-18lbs.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/foods/analyze/csv",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"foods",
+								"analyze",
+								"csv"
 							]
 						}
 					},
