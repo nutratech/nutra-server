@@ -145,7 +145,7 @@ def GET_nutrients(request, response_type="JSON"):
     if response_type == "JSON":
         return Response(data=pg_result.rows)
     else:  # HTML
-        table = tabulate(pg_result.rows, headers="keys", tablefmt="orgtbl")
+        table = tabulate(pg_result.rows, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
 
 
@@ -246,9 +246,9 @@ def GET_foods_search(request, response_type="JSON"):
                     fdgrp_desc,
                 ]
                 rows.append(row)
-            return tabulate(rows, headers=headers, tablefmt="orgtbl")
+            return tabulate(rows, headers=headers, tablefmt="presto")
 
-        # table = tabulate(results, headers="keys", tablefmt="orgtbl")
+        # table = tabulate(results, headers="keys", tablefmt="presto")
         table = tabulate_results()
         return f"<pre>{table}</pre>"
 
@@ -261,7 +261,7 @@ def GET_foods_sort(request, response_type="JSON"):
     if response_type == "JSON":
         return Response(data=pg_result.rows)
     else:  # HTML
-        table = tabulate(pg_result.rows, headers="keys", tablefmt="orgtbl")
+        table = tabulate(pg_result.rows, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
 
 
@@ -313,7 +313,7 @@ def GET_foods_analyze(request, response_type="JSON"):
                     rows.append(
                         [nute["nutr_desc"], amount, rdas[id]["units"], f"{rda_ratio}%"]
                     )
-                table += tabulate(rows, headers=headers, tablefmt="orgtbl")
+                table += tabulate(rows, headers=headers, tablefmt="presto")
                 tables.append(table)
             return tables
 
