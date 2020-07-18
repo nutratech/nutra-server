@@ -51,6 +51,7 @@ reload()
 
 # Export the Flask server for gunicorn
 app = Flask(__name__)
+app.config["JSON_SORT_KEYS"] = False
 CORS(app)
 
 

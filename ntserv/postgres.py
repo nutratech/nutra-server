@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import psycopg2
 import psycopg2.extras
 
@@ -96,14 +98,15 @@ class PgResult:
         self.rows = []
 
         if len(fetchall):
-            rdict = {v: k for k, v in fetchall[0]._index.items()}
+            keys = list(fetchall[0]._index.keys())
 
-            # Put list --> dict format
-            for _row in fetchall:
+            # Build dict from named tuple
+            for entry in fetchall:
                 row = {}
-                # Add each value with a dict key
-                for i, el in enumerate(_row):
-                    row[rdict[i]] = el
+                for i, element in enumerate(entry):
+                    key = keys[i]
+                    row[key] = element
                 self.rows.append(row)
 
+            # Set first row
             self.row = self.rows[0]
