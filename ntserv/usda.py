@@ -140,7 +140,7 @@ def GET_serving_sizes(request):
 
 
 def GET_nutrients(request, response_type="JSON"):
-    pg_result = psql("SELECT * FROM nutr_def")
+    pg_result = psql("SELECT * FROM get_nutrients_overview()")
 
     if response_type == "JSON":
         return Response(data=pg_result.rows)
