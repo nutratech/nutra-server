@@ -29,6 +29,7 @@ from .shop import (
     GET_orders,
     GET_products,
     GET_products_profits,
+    OPT_addresses,
     PATCH_orders_admin,
     POST_orders,
     POST_products_reviews,
@@ -199,6 +200,11 @@ def post_validate_addresses():
 @app.route("/shipping/estimates", methods=["POST"])
 def post_shipping_methods():
     return Request(POST_shipping_esimates, request)
+
+
+@app.route("/addresses", methods=["GET", "POST", "DELETE"])
+def opt_addresses():
+    return Request(OPT_addresses, request)
 
 
 @app.route("/categories")

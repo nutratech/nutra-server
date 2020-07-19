@@ -161,6 +161,66 @@ def POST_shipping_esimates(request):
     return Response(data=solution)
 
 
+@auth
+def OPT_addresses(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    """ Used to POST and GET a user's saved billing/shipping addies """
+
+    method = request.environ["REQUEST_METHOD"]
+
+    if method == "GET":
+        pg_result = psql("SELECT * FROM addresses WHERE user_id=%s", [user_id])
+        return Response(data=pg_result.rows)
+
+    # Add address
+    elif method == "POST":
+        body = request.json
+
+        company_name = body.get("company_name")
+        street_address = body["street_address"]
+        apartment_unit = body.get("apartment_unit")
+
+        country_id = body["country_id"]
+        state_id = body.get("state_id")
+        zip = body.get("zip")
+
+        name_first = body["name_first"]
+        name_last = body["name_last"]
+        phone = body.get("phone")
+        email = body.get("email")
+
+        pg_result = psql(
+            """
+INSERT INTO addresses (user_id, company_name, street_address, apartment_unit, country_id, state_id, zip, name_first, name_last, phone, email)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+RETURNING
+    id""",
+            [
+                user_id,
+                company_name,
+                street_address,
+                apartment_unit,
+                country_id,
+                state_id,
+                zip,
+                name_first,
+                name_last,
+                phone,
+                email,
+            ],
+        )
+        id = pg_result.row["id"]
+        return Response(data={"id": id})
+
+    # Remove address
+    elif method == "DELETE":
+        addy_id = request.json["id"]
+        pg_result = psql(
+            "DELETE FROM addresses WHERE user_id=%s AND id=%s RETURNING user_id",
+            [user_id, addy_id],
+        )
+        return Response(data={"msg": pg_result.msg, "rows": pg_result.rows})
+
+
 # TODO: generic endpoint for get_function_name() or select_table_name()
 # the front end can then pass in a query or route param, and
 # we reduce dozens of separate endpoints here to just 2 or 3 generic functions

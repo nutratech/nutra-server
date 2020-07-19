@@ -2231,6 +2231,138 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "/addresses",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"email\": \"hi\",\n    \"paypal_id\": \"4XJ52194CG0464404\",\n    \"shipping_method\": \"usps_first\",\n    \"shipping_price\": 0,\n    \"items\": [\n        7\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/addresses",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/addresses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name_first\": \"Test\",\n    \"name_last\": \"Monkey\",\n    \"street_address\": \"1234 Crapo St\",\n    \"country_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/addresses",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/addresses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/addresses",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"addresses"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
