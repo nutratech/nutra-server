@@ -134,14 +134,15 @@ def self_route_rules(app):
 
     rules = []
 
-    for r in app.url_map._rules:
+    map_rules = app.url_map._rules
+    map_rules.sort(key=lambda x: x.rule)
+
+    for r in map_rules:
         methods = set(r.methods)
         # Remove unsightly ones
         for method in ["HEAD", "OPTIONS"]:
-            try:
+            if method in methods:
                 methods.remove(method)
-            except:
-                pass
         # More filtering
         if str(r) != "/static/<path:filename>":
             rule = r.rule.replace("<", "&lt").replace(">", "&gt")
