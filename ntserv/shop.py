@@ -285,12 +285,64 @@ def POST_orders(request):
 
 
 @auth
-def GET_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     # id = int(request.view_args["id"])
 
-    pg_result = psql("SELECT * FROM orders(%s)", [user_id])
+    method = request.environ["REQUEST_METHOD"]
 
-    return Response(data=pg_result.rows)
+    if method == "GET":
+        pg_result = psql("SELECT * FROM orders(%s)", [user_id])
+        return Response(data=pg_result.rows)
+
+    # Add address
+    elif method == "POST":
+        body = request.json
+
+        email = body.get("email")
+
+        address_bill = body["address_bill"]
+        address_ship = body.get("address_ship")
+
+        shipping_method = body["shipping_method"]
+        shipping_price = float(body["shipping_price"])
+
+        items = body["items"]
+
+        if not email:
+            # Check authorization
+            authr, error = check_request(request)
+            if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
+                return Response(data={"error": error}, code=401)
+            # Set user_id
+            user_id = authr.id
+        else:
+            user_id = None
+
+        # Insert order
+        pg_result = psql(
+            "INSERT INTO orders (user_id, email, address_bill, address_ship, shipping_method, shipping_price) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+            [
+                user_id,
+                email,
+                Json(address_bill),
+                Json(address_ship),
+                shipping_method,
+                shipping_price,
+            ],
+        )
+        # Insert items
+        order_id = pg_result.row["id"]
+        for variant_id in set(items):
+            quantity = items.count(variant_id)
+            price = psql("SELECT price FROM variants WHERE id=%s", [variant_id]).row[
+                "price"
+            ]
+            # TODO: handle error, for example change quantity to quanity and see how it fails silently
+            pg_result = psql(
+                "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
+                [order_id, variant_id, quantity, price],
+            )
+        return Response(data={"order_id": order_id})
 
 
 # @auth

@@ -26,10 +26,9 @@ from .accounts import (
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
     GET_categories,
-    GET_orders,
-    GET_products,
     GET_products_profits,
     OPT_addresses,
+    OPT_orders,
     PATCH_orders_admin,
     POST_orders,
     POST_products_reviews,
@@ -217,14 +216,9 @@ def get_products():
     return Request(GET_products, request)
 
 
-@app.route("/orders", methods=["POST"])
+@app.route("/orders", methods=["GET", "POST"])
 def post_orders():
-    return Request(POST_orders, request)
-
-
-@app.route("/orders")
-def get_orders():
-    return Request(GET_orders, request)
+    return Request(OPT_orders, request)
 
 
 @app.route("/products/reviews", methods=["POST"])

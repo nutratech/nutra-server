@@ -99,8 +99,8 @@ def POST_register(request):
     user_id = pg_result.row["id"]
     # Insert emails
     pg_result = psql(
-        "INSERT INTO emails (user_id, email) VALUES (%s, %s) RETURNING email",
-        [user_id, email],
+        "INSERT INTO emails (user_id, email, main) VALUES (%s, %s, %s) RETURNING email",
+        [user_id, email, True],
     )
     # ERRORs
     if pg_result.err_msg:

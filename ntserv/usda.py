@@ -135,6 +135,7 @@ def GET_fdgrp(request):
 def GET_serving_sizes(request):
 
     id = request.args["food_id"]
+    # TODO: use cache
     pg_result = psql("SELECT * FROM servings(%s)", [id])
     return Response(data=pg_result.rows)
 
@@ -273,6 +274,7 @@ def GET_foods_analyze(request, response_type="JSON"):
 
     pg_result = psql("SELECT * FROM analyze_foods(%s)", [food_ids])
     analyses = pg_result.rows
+    # TODO: use cache
     pg_result = psql("SELECT * FROM servings(%s)", [food_ids])
     servings = pg_result.rows
     food_des = [x for x in cache.food_des.values() if x["id"] in food_ids]

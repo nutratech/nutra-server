@@ -53,6 +53,7 @@ def email(recipient, subject, body):
     """ Sends an email to ourselves """
 
     port = 465  # For SSL
+    # port_g = 587 # For Gmail
 
     msg = EmailMessage()
     msg["From"] = PROD_EMAIL
@@ -63,9 +64,12 @@ def email(recipient, subject, body):
 
     # Create a secure SSL context
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("johnny.heliohost.org", port, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+        # with smtplib.SMTP_SSL("gameguru.heliohost.org", port, context=context) as server:
         # Login and send
-        server.login("_mainaccount@nutra.heliohost.org", PROD_EMAIL_PASS)
+        server.login(PROD_EMAIL, PROD_EMAIL_PASS)
+        # server.login("_mainaccount@gameguru.heliohost.org", PROD_EMAIL_PASS)
+        # server.login("nutra@gameguru.heliohost.org", PROD_EMAIL_PASS)
         server.send_message(msg)
 
 

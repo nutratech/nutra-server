@@ -2156,7 +2156,14 @@
 					"name": "/orders",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
@@ -2169,7 +2176,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"email\": \"hi\",\n    \"paypal_id\": \"4XJ52194CG0464404\",\n    \"shipping_method\": \"usps_first\",\n    \"shipping_price\": 0,\n    \"items\": [\n        7\n    ]\n}",
+							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"4002 Harrison Shores\",\n        \"street2\": \"Apt. 047\",\n        \"city\": \"Blairbury,\",\n        \"state\": \"ND\",\n        \"zip\": \"25795\",\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"4002 Harrison Shores\",\n        \"street2\": \"Apt. 047\",\n        \"city\": \"Blairbury,\",\n        \"state\": \"ND\",\n        \"zip\": \"25795\",\n        \"country\": \"US\"\n    },\n    \"email\": \"hi\",\n    \"paypal_id\": \"4XJ52194CG0464404\",\n    \"shipping_method\": \"usps_first\",\n    \"shipping_price\": 0,\n    \"items\": [\n        7\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2259,7 +2266,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"18471 Meier St\",\n        \"street2\": \"\",\n        \"city\": \"Roseville\",\n        \"state\": \"MI\",\n        \"zip\": \"48066\",\n        \"country\": \"US\"\n    },\n    \"email\": \"hi\",\n    \"paypal_id\": \"4XJ52194CG0464404\",\n    \"shipping_method\": \"usps_first\",\n    \"shipping_price\": 0,\n    \"items\": [\n        7\n    ]\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2386,6 +2393,27 @@
 							"path": [
 								"products",
 								"profits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/identity/generate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.fungenerators.com/identity/person",
+							"protocol": "https",
+							"host": [
+								"api",
+								"fungenerators",
+								"com"
+							],
+							"path": [
+								"identity",
+								"person"
 							]
 						}
 					},
