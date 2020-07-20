@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 import psycopg2
 import psycopg2.extras
 

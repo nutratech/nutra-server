@@ -225,12 +225,12 @@ RETURNING
 # the front end can then pass in a query or route param, and
 # we reduce dozens of separate endpoints here to just 2 or 3 generic functions
 def GET_categories(request):
-    pg_result = psql("SELECT * FROM get_categories()")
+    pg_result = psql("SELECT * FROM categories()")
     return Response(data=pg_result.rows)
 
 
 def GET_products(request):
-    pg_result = psql("SELECT * FROM get_products()")
+    pg_result = psql("SELECT * FROM products()")
     return Response(data=pg_result.rows)
 
 
@@ -288,7 +288,7 @@ def POST_orders(request):
 def GET_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     # id = int(request.view_args["id"])
 
-    pg_result = psql("SELECT * FROM get_orders(%s)", [user_id])
+    pg_result = psql("SELECT * FROM orders(%s)", [user_id])
 
     return Response(data=pg_result.rows)
 

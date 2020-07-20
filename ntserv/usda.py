@@ -135,12 +135,12 @@ def GET_fdgrp(request):
 def GET_serving_sizes(request):
 
     id = request.args["food_id"]
-    pg_result = psql("SELECT * FROM get_food_servings(%s)", [id])
+    pg_result = psql("SELECT * FROM food_servings(%s)", [id])
     return Response(data=pg_result.rows)
 
 
 def GET_nutrients(request, response_type="JSON"):
-    pg_result = psql("SELECT * FROM get_nutrients_overview()")
+    pg_result = psql("SELECT * FROM nutrients_overview()")
 
     if response_type == "JSON":
         return Response(data=pg_result.rows)
@@ -170,7 +170,7 @@ def GET_foods_search(request, response_type="JSON"):
     }
     scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:SEARCH_LIMIT]
     ids = [s[0] for s in scores]
-    pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [ids])
+    pg_result = psql("SELECT * FROM analyze_food_ids(%s)", [ids])
     nut_data = {nd["food_id"]: nd["nutrients"] for nd in pg_result.rows}
 
     results = []
@@ -256,7 +256,7 @@ def GET_foods_search(request, response_type="JSON"):
 def GET_foods_sort(request, response_type="JSON"):
     id = request.args["nutr_id"]
     # TODO - filter by food group?  Makes more sense here than /search
-    pg_result = psql("SELECT * FROM sort_foods_by_nutrient_id(%s)", [id])
+    pg_result = psql("SELECT * FROM sort_foods_by_nutr_id(%s)", [id])
 
     if response_type == "JSON":
         return Response(data=pg_result.rows)
@@ -271,9 +271,9 @@ def GET_foods_analyze(request, response_type="JSON"):
     food_ids = request.args["food_ids"].split(",")
     food_ids = list(map(lambda x: int(x), food_ids))
 
-    pg_result = psql("SELECT * FROM get_nutrients_by_food_ids(%s)", [food_ids])
+    pg_result = psql("SELECT * FROM analyze_food_ids(%s)", [food_ids])
     analyses = pg_result.rows
-    pg_result = psql("SELECT * FROM get_foods_servings(%s)", [food_ids])
+    pg_result = psql("SELECT * FROM foods_servings(%s)", [food_ids])
     servings = pg_result.rows
     food_des = [x for x in cache.food_des.values() if x["id"] in food_ids]
 
@@ -346,9 +346,7 @@ def GET_foods_analyze_csv(request):
     rda_pairs = {int(x["id"]): float(x["rda"]) for x in rdas}
 
     # Analyze foods
-    pg_result = psql(
-        "SELECT * FROM get_nutrients_by_food_ids(%s)", [list(foods_amounts.keys())]
-    )
+    pg_result = psql("SELECT * FROM analyze_food_ids(%s)", [list(foods_amounts.keys())])
     foods_nutrients = {x["food_id"]: x["nutrients"] for x in pg_result.rows}
     nutrient_totals = {}
     for food_nutrients in foods_nutrients.values():
