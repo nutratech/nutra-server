@@ -287,7 +287,7 @@ def GET_foods_analyze(request, response_type="JSON"):
             """ Copied from CLI repo to package up results, TODO: make into separate core util """
 
             # Get RDAs
-            rdas = cache.nutr_def
+            rdas = cache.nutrients
 
             # Gather analyses
             tables = []
