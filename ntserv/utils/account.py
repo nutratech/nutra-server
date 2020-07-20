@@ -12,7 +12,7 @@ from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 # get user_id funcs
 # ----------------------
 def user_id_from_username_or_email(identifier):
-    pg_result = psql("SELECT * FROM user_id_from_username_or_email(%s)", [identifier])
+    pg_result = psql("SELECT * FROM find_user(%s)", [identifier])
     if pg_result.err_msg or not pg_result.rows:
         return None
 

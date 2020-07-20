@@ -156,6 +156,7 @@ def POST_login(request):
 
 @auth
 def GET_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+    # TODO: if not user_id: return err
     pg_result = psql("SELECT * FROM users(%s)", [user_id])
     return Response(data=pg_result.row)
 

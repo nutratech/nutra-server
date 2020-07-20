@@ -222,7 +222,7 @@ def post_orders():
     return Request(POST_orders, request)
 
 
-@app.route("/orders",)
+@app.route("/orders")
 def get_orders():
     return Request(GET_orders, request)
 
