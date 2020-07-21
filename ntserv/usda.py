@@ -324,22 +324,25 @@ def GET_foods_analyze(request, response_type="JSON"):
         return f"<pre>{text}</pre>"
 
 
-def GET_foods_analyze_csv(request):
+def POST_day_analyze(request):
 
     # Get CSV file bytes off request
-    food_log_csv_file = io.TextIOWrapper(request.files["input.csv"])
-    rda_csv_file = io.TextIOWrapper(request.files["rdas.csv"])
+    log = request.json["log"]
+    rda = request.json.get("rda")
 
-    food_log_csv_input = csv.DictReader(food_log_csv_file)
-    rda_csv_input = csv.DictReader(rda_csv_file)
+    # food_log_csv_file = io.TextIOWrapper(request.files["input.csv"])
+    # rda_csv_file = io.TextIOWrapper(request.files["rdas.csv"])
 
-    # Parse CSV files
-    food_log = []
-    rdas = []
-    for row in food_log_csv_input:
-        food_log.append(row)
-    for row in rda_csv_input:
-        rdas.append(row)
+    # food_log_csv_input = csv.DictReader(food_log_csv_file)
+    # rda_csv_input = csv.DictReader(rda_csv_file)
+
+    # # Parse CSV files
+    # food_log = []
+    # rdas = []
+    # for row in food_log_csv_input:
+    #     food_log.append(row)
+    # for row in rda_csv_input:
+    #     rdas.append(row)
 
     # Extract data
     # {food_id: grams}
