@@ -346,9 +346,10 @@ def POST_day_analyze(request):
 
     # Extract data
     # {food_id: grams}
-    foods_amounts = {int(x["id"]): float(x["grams"]) for x in food_log if x["id"]}
+    foods_amounts = {int(x["id"]): float(x["grams"]) for x in log if x["id"]}
+
     # {nutr_id: rda_val}
-    rda_pairs = {int(x["id"]): float(x["rda"]) for x in rdas}
+    rda_pairs = {int(x["id"]): float(x["rda"]) for x in rda} if rda else None
 
     # Analyze foods
     food_ids = list(foods_amounts.keys())
