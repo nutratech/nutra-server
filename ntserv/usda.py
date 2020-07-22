@@ -257,10 +257,18 @@ def GET_foods_search(request, response_type="JSON"):
 def GET_foods_sort(request, response_type="JSON"):
     id = request.args["nutr_id"]
     # TODO - filter by food group?  Makes more sense here than /search
+    # TODO: include nutrient previews (# nutes, flavones, aminos, etc)
     pg_result = psql("SELECT * FROM sort_foods_by_nutr_id(%s)", [id])
+    sorted_foods = pg_result.rows
 
     if response_type == "JSON":
-        return Response(data=pg_result.rows)
+        return Response(
+            data={
+                "sorted_foods": sorted_foods,
+                "nutrients": cache.nutrients,
+                "fdgrp": cache.fdgrp,
+            }
+        )
     else:  # HTML
         table = tabulate(pg_result.rows, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
@@ -329,20 +337,6 @@ def POST_day_analyze(request):
     # Get CSV file bytes off request
     log = request.json["log"]
     rda = request.json.get("rda")
-
-    # food_log_csv_file = io.TextIOWrapper(request.files["input.csv"])
-    # rda_csv_file = io.TextIOWrapper(request.files["rdas.csv"])
-
-    # food_log_csv_input = csv.DictReader(food_log_csv_file)
-    # rda_csv_input = csv.DictReader(rda_csv_file)
-
-    # # Parse CSV files
-    # food_log = []
-    # rdas = []
-    # for row in food_log_csv_input:
-    #     food_log.append(row)
-    # for row in rda_csv_input:
-    #     rdas.append(row)
 
     # Extract data
     # {food_id: grams}

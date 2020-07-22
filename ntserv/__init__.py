@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 __title__ = "nutra-server"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __author__ = "gamesguru"
 __license__ = "GPL v3"
 __copyright__ = "Copyright 2019-2020 Shane Jaroch"
