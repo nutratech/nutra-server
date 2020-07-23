@@ -5,10 +5,8 @@ from datetime import datetime
 
 import requests
 
+from . import __heroku__, __version__
 from .settings import SLACK_TOKEN
-
-__version__ = "0.0.1"
-__release__ = 1
 
 
 def Request(func, req, response_type="JSON"):
@@ -37,7 +35,7 @@ def Response(data={}, code=200, status="OK"):
         {
             "program": "nutra-server",
             "version": __version__,
-            "release": __release__,
+            "release": int(__heroku__[0][1:]),
             "datetime": datetime.now().strftime("%c").strip(),
             "timestamp": int(time.time() * 1000),
             "status": status if code < 400 else "Failure",
@@ -91,7 +89,8 @@ def home_page_text(url_map):
     licsn_link = f'<a href="https://www.gnu.org/licenses" target="_blank" >https://www.gnu.org/licenses</a>'
     return f"""
 Welcome to nutra-server (v{__version__})
-================================
+heroku {__heroku__[0]}, commit {__heroku__[1]} [{__heroku__[2]}]
+=======================================================
 
 An open-sourced health and fitness app from Nutra, LLC.
 Track obscure nutrients and stay healthy with Python and PostgreSQL!
