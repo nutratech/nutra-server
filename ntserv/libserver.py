@@ -35,7 +35,7 @@ def Response(data={}, code=200, status="OK"):
         {
             "program": "nutra-server",
             "version": __version__,
-            "release": int(__heroku__[0][1:]),
+            "release": int(__heroku__[0][1:]) if __heroku__[0] else __heroku__[0],
             "datetime": datetime.now().strftime("%c").strip(),
             "timestamp": int(time.time() * 1000),
             "status": status if code < 400 else "Failure",

@@ -141,12 +141,12 @@ def GET_serving_sizes(request):
 
 
 def GET_nutrients(request, response_type="JSON"):
-    pg_result = psql("SELECT * FROM nutrients()")
+    nutrients = list(cache.nutrients.values())
 
     if response_type == "JSON":
-        return Response(data=pg_result.rows)
+        return Response(data=nutrients)
     else:  # HTML
-        table = tabulate(pg_result.rows, headers="keys", tablefmt="presto")
+        table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
 
 
