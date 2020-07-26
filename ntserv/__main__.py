@@ -202,7 +202,7 @@ def post_shipping_methods():
     return Request(POST_shipping_esimates, request)
 
 
-@app.route("/addresses", methods=["GET", "POST", "DELETE"])
+@app.route("/addresses", methods=["GET", "POST", "PATCH", "DELETE"])
 def opt_addresses():
     return Request(OPT_addresses, request)
 

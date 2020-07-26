@@ -171,6 +171,7 @@ def OPT_addresses(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
         pg_result = psql("SELECT * FROM addresses WHERE user_id=%s", [user_id])
         return Response(data=pg_result.rows)
 
+    #############
     # Add address
     elif method == "POST":
         body = request.json
@@ -211,6 +212,28 @@ RETURNING
         id = pg_result.row["id"]
         return Response(data={"id": id})
 
+    ################
+    # Update address
+    elif method == "PATCH":
+        addy_id = request.json["id"]
+        params = request.json["SQL_PARAMS"]
+        # Can't change id or user_id
+        UNAUTHED_COLS = ["id", "user_id"]
+        unauthed = [x for x in params if x in UNAUTHED_COLS]
+        if unauthed:
+            return Response(
+                data={"error": f"Can't change column(s): {unauthed}"}, code=401
+            )
+
+        assignments = ", ".join(f"{k}={v}" for k, v in params.items())
+
+        pg_result = psql(
+            "UPDATE addresses SET (%s) WHERE id=%s AND user_id=%s RETURNING id",
+            [assignments, addy_id, user_id],
+        )
+        return Response(data={pg_result.row})
+
+    ################
     # Remove address
     elif method == "DELETE":
         addy_id = request.json["id"]

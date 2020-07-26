@@ -258,7 +258,11 @@ def GET_foods_sort(request, response_type="JSON"):
     id = request.args["nutr_id"]
     # TODO - filter by food group?  Makes more sense here than /search
     # TODO: include nutrient previews (# nutes, flavones, aminos, etc)
-    pg_result = psql("SELECT * FROM sort_foods_by_nutr_id(%s)", [id])
+    by_kcal = request.args.get("by_kcal")
+    if by_kcal:
+        pg_result = psql("SELECT * FROM sort_foods_by_kcal_nutr_id(%s)", [id])
+    else:
+        pg_result = psql("SELECT * FROM sort_foods_by_nutr_id(%s)", [id])
     sorted_foods = pg_result.rows
 
     if response_type == "JSON":
