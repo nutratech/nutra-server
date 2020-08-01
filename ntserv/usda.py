@@ -339,29 +339,49 @@ def GET_foods_analyze(request, response_type="JSON"):
 def POST_day_analyze(request):
 
     # Get CSV file bytes off request
-    log = request.json["log"]
+    logs = request.json["logs"]
+    rda_user = request.json.get("rda")
 
-    # Extract data
-    # {food_id: grams}
-    foods_amounts = {int(x["id"]): float(x["grams"]) for x in log if x.get("id")}
+    # Get RDA values ready
+    # {nutr_id: rda_val}
+    rda = {x["id"]: x["rda"] for x in cache.nutrients.values() if x["rda"]}
+    # TODO: print('NOTE: overwriting n RDAs with custom values!')
+    for r in rda_user:
+        if r["rda"]:
+            rda[r["id"]] = float(r["rda"])
 
-    # Analyze foods
-    food_ids = list(foods_amounts.keys())
-    pg_result = psql("SELECT * FROM analyze_foods(%s)", [food_ids])
-    foods_nutrients = {x["food_id"]: x["nutrients"] for x in pg_result.rows}
-    nutrient_totals = {}
-    for food_nutrients in foods_nutrients.values():
-        for food_nutrient in food_nutrients:
-            id = food_nutrient["nutr_id"]
-            if id not in nutrient_totals:
-                nutrient_totals[id] = 0
-            nutrient_totals[id] += food_nutrient["nutr_val"]
+    # Analyze food logs
+    foods_amounts = []
+    foods_nutrients = []
+    nutrients_totals = []
+    for log in logs:
+        # {food_id: grams}
+        # TODO: for duplicate ID entries in same log .. tally totals, rather than overwrite key
+        foods_amount = {int(x["id"]): float(x["grams"]) for x in log if x.get("id")}
+        foods_amounts.append(foods_amount)
+
+        # Analyze foods
+        food_ids = list(foods_amount.keys())
+        pg_result = psql("SELECT * FROM analyze_foods(%s)", [food_ids])
+        foods_nutrient = {x["food_id"]: x["nutrients"] for x in pg_result.rows}
+        foods_nutrients.append(foods_nutrient)
+        nutrient_totals = {}
+        for food_id, food_nutrients in foods_nutrient.items():
+            for food_nutrient in food_nutrients:
+                id = food_nutrient["nutr_id"]
+                if id not in nutrient_totals:
+                    nutrient_totals[id] = 0
+                nutrient_totals[id] += food_nutrient["nutr_val"] * (
+                    foods_amount[food_id] / 100
+                )
+        nutrients_totals.append(nutrient_totals)
 
     return Response(
         data={
             "foods_amounts": foods_amounts,
             "foods_nutrients": foods_nutrients,
-            "nutrient_totals": nutrient_totals,
+            "nutrients_totals": nutrients_totals,
+            "rda": rda,
         }
     )
 
