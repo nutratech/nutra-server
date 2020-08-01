@@ -340,14 +340,10 @@ def POST_day_analyze(request):
 
     # Get CSV file bytes off request
     log = request.json["log"]
-    rda = request.json.get("rda")
 
     # Extract data
     # {food_id: grams}
     foods_amounts = {int(x["id"]): float(x["grams"]) for x in log if x.get("id")}
-
-    # {nutr_id: rda_val}
-    rda_pairs = {int(x["id"]): float(x["rda"]) for x in rda} if rda else None
 
     # Analyze foods
     food_ids = list(foods_amounts.keys())
@@ -364,7 +360,6 @@ def POST_day_analyze(request):
     return Response(
         data={
             "foods_amounts": foods_amounts,
-            "rdas": rda_pairs,
             "foods_nutrients": foods_nutrients,
             "nutrient_totals": nutrient_totals,
         }
