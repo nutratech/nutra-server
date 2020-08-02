@@ -1,5 +1,4 @@
-import csv
-import io
+import copy
 import math
 
 from fuzzywuzzy import fuzz
@@ -342,13 +341,14 @@ def POST_day_analyze(request):
     logs = request.json["logs"]
     rda_user = request.json.get("rda")
 
-    # Get RDA values ready
-    # {nutr_id: rda_val}
-    rda = {x["id"]: x["rda"] for x in cache.nutrients.values() if x["rda"]}
+    # Get nutrient info & RDA values
+    # {nutr_id: { nutr_desc, rda_val... } }
+    nutrients = copy.deepcopy(cache.nutrients)
     # TODO: print('NOTE: overwriting n RDAs with custom values!')
     for r in rda_user:
         if r["rda"]:
-            rda[r["id"]] = float(r["rda"])
+            id = int(r["id"])
+            nutrients[id]["rda"] = float(r["rda"])
 
     # Analyze food logs
     foods_amounts = []
@@ -381,7 +381,7 @@ def POST_day_analyze(request):
             "foods_amounts": foods_amounts,
             "foods_nutrients": foods_nutrients,
             "nutrients_totals": nutrients_totals,
-            "rda": rda,
+            "nutrients": nutrients,
         }
     )
 
