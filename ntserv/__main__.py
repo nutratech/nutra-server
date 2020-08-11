@@ -23,6 +23,16 @@ from .accounts import (
     POST_report,
     POST_username_forgot,
 )
+from .calculate import (
+    GET_calc_bmr,
+    GET_calc_bmr_cunningham,
+    GET_calc_bmr_harris_benedict,
+    GET_calc_bmr_katch_mcardle,
+    GET_calc_bmr_mifflin_st_jeor,
+    GET_calc_bodyfat,
+    GET_calc_lblimits,
+    GET_nutrients,
+)
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
     GET_categories,
@@ -35,11 +45,6 @@ from .shop import (
     POST_products_reviews,
     POST_shipping_esimates,
     POST_validate_addresses,
-)
-from .calculate import (
-    GET_calc_bodyfat,
-    GET_calc_lblimits,
-    GET_nutrients,
 )
 from .utils.cache import reload
 
@@ -134,6 +139,31 @@ def get_calc_bodyfat():
 @app.route("/calc/lblimits")
 def get_calc_lblimits():
     return Request(GET_calc_lblimits, request)
+
+
+@app.route("/calc/bmr")
+def get_calc_bmr():
+    return Request(GET_calc_bmr, request)
+
+
+@app.route("/calc/bmr/katch_mcardle")
+def get_calc_bmr_katch_mcardle():
+    return Request(GET_calc_bmr_katch_mcardle, request)
+
+
+@app.route("/calc/bmr/cunningham")
+def get_calc_bmr_cunningham():
+    return Request(GET_calc_bmr_cunningham, request)
+
+
+@app.route("/calc/bmr/mifflin_st_jeor")
+def get_calc_bmr_mifflin_st_jeor():
+    return Request(GET_calc_bmr_mifflin_st_jeor, request)
+
+
+@app.route("/calc/bmr/harris_benedict")
+def get_calc_bmr_harris_benedict():
+    return Request(GET_calc_bmr_harris_benedict, request)
 
 
 ###################################

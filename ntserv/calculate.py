@@ -26,6 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import math
+from datetime import datetime
 
 from tabulate import tabulate
 
@@ -41,6 +42,119 @@ def GET_nutrients(request, response_type="JSON"):
     else:  # HTML
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
+
+
+def GET_calc_bmr_katch_mcardle(request):
+    """
+    BMR = 370 + (21.6 x Lean Body Mass(kg) )
+    Source: <https://www.calculatorpro.com/calculator/katch-mcardle-bmr-calculator/>
+    Source: <https://tdeecalculator.net/about.php>
+    """
+    body = request.json
+
+    activity_factor = float(body["activity_factor"])  # ??
+
+    lbm = body.get("lbm")
+    if lbm:
+        lbm = float(lbm)
+    else:
+        weight = float(body["weight"])
+        bf = float(body["bodyfat"])
+        lbm = weight * (1 - bf)
+
+    bmr = 370 + (21.6 * lbm)
+    tdee = bmr * (1 + activity_factor)
+
+    tdee = bmr * (1 + activity_factor)
+    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+
+
+def GET_calc_bmr_cunningham(request):
+    """Source:  <https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture>"""
+    body = request.json
+
+    # {'LIGHT': 0.3, 'MODERATE': 0.4, 'HEAVY': 0.5}
+    activity_factor = float(body["activity_factor"])
+
+    lbm = body.get("lbm")
+    if lbm:
+        lbm = float(lbm)
+    else:
+        weight = float(body["weight"])
+        bf = float(body["bodyfat"])
+        lbm = weight * (1 - bf)
+
+    bmr = 500 + 22 * lbm
+    tdee = bmr * (1 + activity_factor)
+
+    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+
+
+def GET_calc_bmr_mifflin_st_jeor(request):
+    """
+    Activity Factor
+    ---------------
+    0.200 = sedentary (little or no exercise)
+    0.375 = lightly active (light exercise/sports 1-3 days/week, approx. 590 Cal/day)
+    0.550 = moderately active (moderate exercise/sports 3-5 days/week, approx. 870 Cal/day)
+    0.725 = very active (hard exercise/sports 6-7 days a week, approx. 1150 Cal/day)
+    0.900 = extra active (very hard exercise/sports and physical job, approx. 1580 Cal/day)
+
+    Source: <http://www.myfeetinmotion.com/mifflin-st-jeor-equation/>
+    """
+    body = request.json
+
+    activity_factor = float(body["activity_factor"])
+
+    gender = body["gender"]  # ['MALE', 'FEMALE']
+    weight = float(body["weight"])  # kg
+    height = float(body["height"])  # cm
+
+    dob = int(body["dob"])  # unix (epoch) timestamp
+    now = datetime.now().timestamp()
+    age = (now - dob) / (365 * 24 * 3600)
+
+    _bmr = 10 * weight + 6.25 + 6.25 * height - 5 * age
+    if gender == "MALE":
+        bmr = _bmr + 5
+    elif gender == "FEMALE":
+        bmr = _bmr - 161
+
+    tdee = bmr * (1 + activity_factor)
+    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+
+
+def GET_calc_bmr_harris_benedict(request):
+    """
+    Harris-Benedict = (13.397m + 4.799h - 5.677a) + 88.362 (MEN)
+    Harris-Benedict = (9.247m + 3.098h - 4.330a) + 447.593 (WOMEN)
+
+    m is mass in kg, h is height in cm, a is age in years
+    Source: <https://tdeecalculator.net/about.php>
+    """
+    body = request.json
+
+    activity_factor = float(body["activity_factor"])
+
+    gender = body["gender"]  # ['MALE', 'FEMALE']
+    weight = float(body["weight"])  # kg
+    height = float(body["height"])  # cm
+
+    dob = int(body["dob"])  # unix (epoch) timestamp
+    now = datetime.now().timestamp()
+    age = (now - dob) / (365 * 24 * 3600)
+
+    if gender == "MALE":
+        bmr = (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362
+    elif gender == "FEMALE":
+        bmr = (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593
+
+    tdee = bmr * (1 + activity_factor)
+    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+
+
+def GET_calc_bmr(request):
+    return Response(code=501)
 
 
 def GET_calc_bodyfat(request):
