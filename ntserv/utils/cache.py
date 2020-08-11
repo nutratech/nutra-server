@@ -31,23 +31,5 @@ def reload():
     pg_result = psql("SELECT * FROM products()")
     products = {x["id"]: x for x in pg_result.rows}
 
-    pg_result = psql("SELECT * FROM nutrients()")
+    pg_result = psql("SELECT * FROM nutr_def")
     nutrients = {n["id"]: n for n in pg_result.rows}
-
-    pg_result = psql("SELECT * FROM food_des")
-    food_des = {f["id"]: f for f in pg_result.rows}
-
-    pg_result = psql("SELECT * FROM servings()")
-    servings = {x["msre_id"]: x for x in pg_result.rows}
-    servings_food = {}
-    for x in pg_result.rows:
-        food_id = x["food_id"]
-        if food_id not in servings_food:
-            servings_food[food_id] = []
-        servings_food[food_id].append(x)
-
-    pg_result = psql("SELECT * FROM fdgrp")
-    fdgrp = {g["id"]: g for g in pg_result.rows}
-
-    pg_result = psql("SELECT * FROM data_src")
-    data_src = {d["id"]: d for d in pg_result.rows}
