@@ -36,14 +36,10 @@ from .shop import (
     POST_shipping_esimates,
     POST_validate_addresses,
 )
-from .usda import (
+from .calculate import (
     GET_calc_bodyfat,
     GET_calc_lblimits,
     GET_nutrients,
-    GET_foods_analyze,
-    GET_foods_search,
-    GET_foods_sort,
-    POST_day_analyze,
 )
 from .utils.cache import reload
 
@@ -147,46 +143,11 @@ def get_nutrients():
     return Request(GET_nutrients, request)
 
 
-@app.route("/foods/search")
-def get_foods_search():
-    return Request(GET_foods_search, request)
-
-
-@app.route("/foods/sort")
-def get_foods_sort():
-    return Request(GET_foods_sort, request)
-
-
-@app.route("/foods/analyze")
-def get_foods_analyze():
-    return Request(GET_foods_analyze, request)
-
-
-@app.route("/day/analyze", methods=["POST"])
-def post_day_analyze():
-    return Request(POST_day_analyze, request)
-
-
 ################################
 # HTML routes for same functions
 @app.route("/html/nutrients")
 def get_html_nutrients():
     return Request(GET_nutrients, request, response_type="HTML")
-
-
-@app.route("/html/foods/search")
-def get_html_foods_search():
-    return Request(GET_foods_search, request, response_type="HTML")
-
-
-@app.route("/html/foods/sort")
-def get_html_foods_sort():
-    return Request(GET_foods_sort, request, response_type="HTML")
-
-
-@app.route("/html/foods/analyze")
-def get_html_foods_analyze():
-    return Request(GET_foods_analyze, request, response_type="HTML")
 
 
 # -------------------------
