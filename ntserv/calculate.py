@@ -30,8 +30,14 @@ from datetime import datetime
 
 from tabulate import tabulate
 
-from .utils import cache
 from .libserver import Response
+from .services.calculate import (
+    bmr_cunningham,
+    bmr_harris_benedict,
+    bmr_katch_mcardle,
+    bmr_mifflin_st_jeor,
+)
+from .utils import cache
 
 
 def GET_nutrients(request, response_type="JSON"):
@@ -42,6 +48,38 @@ def GET_nutrients(request, response_type="JSON"):
     else:  # HTML
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
+
+
+def GET_calc_bmr(request):
+    """Calculates all types of BMR for comparison"""
+    body = request.json
+
+    activity_factor = float(body["activity_factor"])  # TODO: int, float, or string?
+    weight = float(body["weight"])  # kg
+    height = float(body["height"])  # cm
+    gender = body["gender"]  # ['MALE', 'FEMALE']
+    dob = int(body["dob"])  # unix (epoch) timestamp
+
+    lbm = body.get("lbm")
+    if lbm:
+        lbm = float(lbm)
+    else:
+        bf = float(body["bodyfat"])
+        lbm = weight * (1 - bf)
+
+    katch_mcardle = bmr_katch_mcardle(lbm, activity_factor)
+    cunningham = bmr_cunningham(lbm, activity_factor)
+    mifflin_st_jeor = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
+    harris_benedict = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
+
+    return Response(
+        data={
+            "Katch-McArdle": katch_mcardle,
+            "Cunningham": cunningham,
+            "Mifflin-St-Jeor": mifflin_st_jeor,
+            "Harris-Benedict": harris_benedict,
+        }
+    )
 
 
 def GET_calc_bmr_katch_mcardle(request):
@@ -62,10 +100,7 @@ def GET_calc_bmr_katch_mcardle(request):
         bf = float(body["bodyfat"])
         lbm = weight * (1 - bf)
 
-    bmr = 370 + (21.6 * lbm)
-    tdee = bmr * (1 + activity_factor)
-
-    tdee = bmr * (1 + activity_factor)
+    bmr, tdee = bmr_katch_mcardle(lbm, activity_factor)
     return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
@@ -84,9 +119,7 @@ def GET_calc_bmr_cunningham(request):
         bf = float(body["bodyfat"])
         lbm = weight * (1 - bf)
 
-    bmr = 500 + 22 * lbm
-    tdee = bmr * (1 + activity_factor)
-
+    bmr, tdee = bmr_cunningham(lbm, activity_factor)
     return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
@@ -105,22 +138,12 @@ def GET_calc_bmr_mifflin_st_jeor(request):
     body = request.json
 
     activity_factor = float(body["activity_factor"])
-
-    gender = body["gender"]  # ['MALE', 'FEMALE']
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
-
+    gender = body["gender"]  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
-    now = datetime.now().timestamp()
-    age = (now - dob) / (365 * 24 * 3600)
 
-    _bmr = 10 * weight + 6.25 + 6.25 * height - 5 * age
-    if gender == "MALE":
-        bmr = _bmr + 5
-    elif gender == "FEMALE":
-        bmr = _bmr - 161
-
-    tdee = bmr * (1 + activity_factor)
+    bmr, tdee = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
     return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
@@ -135,26 +158,14 @@ def GET_calc_bmr_harris_benedict(request):
     body = request.json
 
     activity_factor = float(body["activity_factor"])
-
-    gender = body["gender"]  # ['MALE', 'FEMALE']
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
-
+    gender = body["gender"]  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
-    now = datetime.now().timestamp()
-    age = (now - dob) / (365 * 24 * 3600)
 
-    if gender == "MALE":
-        bmr = (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362
-    elif gender == "FEMALE":
-        bmr = (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593
+    bmr, tdee = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
 
-    tdee = bmr * (1 + activity_factor)
     return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr(request):
-    return Response(code=501)
 
 
 def GET_calc_bodyfat(request):
@@ -166,7 +177,7 @@ def GET_calc_bodyfat(request):
 
     # Navy measurements
     waist = body.get("waist")
-    if gender == "female":
+    if gender == "FEMALE":
         hip = body.get("hip")
     neck = body.get("neck")
 
@@ -181,12 +192,14 @@ def GET_calc_bodyfat(request):
     sup = body.get("sup")
     mid = body.get("mid")
 
+    # ----------------
     # Navy test
-    if gender == "male":
+    # ----------------
+    if gender == "MALE":
         denom = (
             1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
         )
-    elif gender == "female":
+    elif gender == "FEMALE":
         denom = (
             1.29579
             - 0.35004 * math.log10(waist + hip - neck)
@@ -196,21 +209,25 @@ def GET_calc_bodyfat(request):
         denom = 1
     navy = round(495 / denom - 450, 2)
 
+    # ----------------
     # 3-site test
+    # ----------------
     s3 = chest + ab + thigh
-    if gender == "male":
+    if gender == "MALE":
         denom = 1.10938 - 0.0008267 * s3 + 0.0000016 * s3 * s3 - 0.0002574 * age
-    elif gender == "female":
+    elif gender == "FEMALE":
         denom = 1.089733 - 0.0009245 * s3 + 0.0000025 * s3 * s3 - 0.0000979 * age
     else:
         denom = 1
     three_site = round(495 / denom - 450, 2)
 
+    # ----------------
     # 7-site test
+    # ----------------
     s7 = chest + ab + thigh + tricep + sub + sup + mid
-    if gender == "male":
+    if gender == "MALE":
         denom = 1.112 - 0.00043499 * s7 + 0.00000055 * s7 * s7 - 0.00028826 * age
-    elif gender == "female":
+    elif gender == "FEMALE":
         denom = 1.097 - 0.00046971 * s7 + 0.00000056 * s7 * s7 - 0.00012828 * age
     else:
         denom = 1
@@ -230,17 +247,23 @@ def GET_calc_lblimits(request):
     wrist = body.get("wrist")
     ankle = body.get("ankle")
 
+    # ----------------
     # Martin Berkhan
+    # ----------------
     min = round((height - 102) * 2.205, 1)
     max = round((height - 98) * 2.205, 1)
     mb = {"notes": "Contest shape (5-6%)", "weight": f"{min} ~ {max} lbs"}
 
+    # ----------------
     # Eric Helms
+    # ----------------
     min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
     max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
     eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
 
+    # ----------------
     # Casey Butt, PhD
+    # ----------------
     h = height / 2.54
     w = wrist / 2.54
     a = ankle / 2.54
