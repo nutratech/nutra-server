@@ -3,7 +3,7 @@ import uuid
 
 import bcrypt
 
-from .libserver import Response
+from .libserver import Response, slack_msg
 from .postgres import psql
 from .utils.account import (
     cmp_pass,
@@ -26,6 +26,7 @@ def POST_register(request):
     # Parse incoming request
     body = request.json
     email = body["email"]
+    slack_msg(f"USER REGISTER: {email}")
 
     username = body.get("username")
     password = body.get("password")
@@ -129,6 +130,7 @@ def POST_login(request):
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
+    slack_msg(f"USER LOGIN: {username}")
 
     #
     # See if user exists
@@ -167,6 +169,7 @@ def GET_confirm_email(request):
 
     email = request.args["email"]
     token = request.args["token"]
+    slack_msg(f"USER ACTIVATE: {email}")
 
     user_id = user_id_from_unver_email(email)
     if not user_id:

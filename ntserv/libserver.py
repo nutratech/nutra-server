@@ -58,7 +58,7 @@ Helper functions
 
 
 def slack_msg(msg):
-    """ Sends a slack alert message to simteam-extras channel """
+    """ Sends a slack alert message to nutra1 prod-alerts channel """
 
     # Print
     print(msg)
