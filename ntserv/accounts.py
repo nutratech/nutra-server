@@ -142,7 +142,7 @@ def POST_login(request):
                 "auth-level": AUTH_LEVEL_READ_ONLY,
                 "error": f"No user found: {username}",
             },
-            code=202,
+            code=400,
         )
 
     #
@@ -152,7 +152,7 @@ def POST_login(request):
         return Response(data={"token": token, "auth-level": auth_level})
     else:
         return Response(
-            data={"token": None, "auth-level": auth_level, "error": error}, code=202
+            data={"token": None, "auth-level": auth_level, "error": error}, code=400
         )
 
 
