@@ -6,6 +6,7 @@ from ..postgres import psql
 users = {}
 shipping_containers = {}
 products = {}
+variants = {}
 
 nutrients = {}
 nut_data = {}
@@ -20,7 +21,7 @@ data_src = {}
 # Reload
 # ---------------
 def reload():
-    global users, shipping_containers, products, nutrients, food_des, servings, servings_food, fdgrp, data_src
+    global users, shipping_containers, products, variants, nutrients, food_des, servings, servings_food, fdgrp, data_src
 
     pg_result = psql("SELECT * FROM users()")
     users = {u["id"]: u for u in pg_result.rows}
@@ -30,6 +31,9 @@ def reload():
 
     pg_result = psql("SELECT * FROM products()")
     products = {x["id"]: x for x in pg_result.rows}
+
+    pg_result = psql("SELECT * FROM variants")
+    variants = {x["id"]: x for x in pg_result.rows}
 
     pg_result = psql("SELECT * FROM nutr_def")
     nutrients = {n["id"]: n for n in pg_result.rows}
