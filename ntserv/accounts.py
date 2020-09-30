@@ -10,10 +10,12 @@ from .utils.account import (
     send_activation_email,
     user_id_from_unver_email,
     user_id_from_username,
+    user_id_from_username_or_email,
 )
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_READ_ONLY,
+    AUTH_LEVEL_UNAUTHED,
     AUTH_LEVEL_UNCONFIRMED,
     auth,
     issue_token,
@@ -128,19 +130,19 @@ def POST_register(request):
 def POST_login(request):
 
     # Parse incoming request
-    username = request.json["username"]
+    email = request.json["email"]
     password = request.json["password"]
-    slack_msg(f"USER LOGIN: {username}")
+    slack_msg(f"USER LOGIN: {email}")
 
     #
     # See if user exists
-    user_id = user_id_from_username(username)
+    user_id = user_id_from_username_or_email(email)
     if not user_id:
         return Response(
             data={
                 "token": None,
-                "auth-level": AUTH_LEVEL_READ_ONLY,
-                "error": f"No user found: {username}",
+                "auth-level": AUTH_LEVEL_UNAUTHED,
+                "error": f"No user found: {email}",
             },
             code=400,
         )
