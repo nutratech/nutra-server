@@ -18,7 +18,7 @@ from .utils.auth import (
     AUTH_LEVEL_UNAUTHED,
     AUTH_LEVEL_UNCONFIRMED,
     auth,
-    issue_token,
+    issue_jwt_token,
     jwt_token,
 )
 
@@ -130,9 +130,45 @@ def POST_register(request):
 def POST_login(request):
 
     # Parse incoming request
+    username = request.json["username"]
+    password = request.json["password"]
+    slack_msg(f"USER LOGIN: {username}")
+
+    #
+    # See if user exists
+    user_id = user_id_from_username_or_email(username)
+    if not user_id:
+        return Response(
+            data={
+                "token": None,
+                "auth-level": AUTH_LEVEL_UNAUTHED,
+                "error": f"No user found: {username}",
+            },
+            code=400,
+        )
+
+    #
+    # Get auth level and return JWT (token)
+    token, auth_level, error = issue_jwt_token(user_id, password)
+    if token:
+        return Response(data={"token": token, "auth-level": auth_level})
+    else:
+        return Response(
+            data={"token": None, "auth-level": auth_level, "error": error}, code=400
+        )
+
+
+def POST_v2_login(request):
+
     email = request.json["email"]
     password = request.json["password"]
-    slack_msg(f"USER LOGIN: {email}")
+
+    user_agent = request.user_agent.string
+    oper_sys = request.json["os"]
+    username = request.json.get("username")
+    hostname = request.json.get("hostname")
+
+    device_id = f"{oper_sys} {username}@{hostname} {user_agent}"
 
     #
     # See if user exists
@@ -149,7 +185,7 @@ def POST_login(request):
 
     #
     # Get auth level and return JWT (token)
-    token, auth_level, error = issue_token(user_id, password)
+    token, auth_level, error = issue_oauth_token(user_id, password, device_id)
     if token:
         return Response(data={"token": token, "auth-level": auth_level})
     else:

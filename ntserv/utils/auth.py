@@ -20,7 +20,7 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 # -----------------------------
 
 
-def issue_token(user_id, password):
+def issue_jwt_token(user_id, password):
     """ Returns tuple: (token, auth_level, error) """
 
     # Get hash

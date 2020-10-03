@@ -22,6 +22,7 @@ from .accounts import (
     POST_register,
     POST_report,
     POST_username_forgot,
+    POST_v2_login,
 )
 from .calculate import (
     GET_calc_bmr,
@@ -96,6 +97,11 @@ def post_register():
 @app.route("/login", methods=["POST"])
 def post_login():
     return Request(POST_login, request)
+
+
+@app.route("/v2/login", methods=["POST"])
+def post_v2_login():
+    return Request(POST_v2_login, request)
 
 
 @app.route("/email/confirm")
