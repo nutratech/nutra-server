@@ -47,6 +47,7 @@ from .shop import (
     POST_shipping_esimates,
     POST_validate_addresses,
 )
+from .controllers.sync import OPT_sync
 from .utils.cache import reload
 
 # Load SQL cache in-memory
@@ -132,6 +133,14 @@ def post_password_new_request():
 @app.route("/password/new/reset")
 def post_password_new_reset():
     return Request(POST_password_new_reset, request)
+
+
+# -------------------------
+# Sync functions
+# -------------------------
+@app.route("/sync", methods=["GET", "POST"])
+def post_sync():
+    return Request(OPT_sync, request)
 
 
 # -------------------------
