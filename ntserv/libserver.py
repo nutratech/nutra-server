@@ -29,7 +29,7 @@ def Request(func, req, response_type="JSON"):
         )
 
 
-def Response(data={}, code=200, status="OK"):
+def Response(data={}, code=200):
     """ Creates a response object for the client """
 
     return (
@@ -38,8 +38,8 @@ def Response(data={}, code=200, status="OK"):
             "version": __version__,
             "release": int(__heroku__[0][1:]) if __heroku__[0] else __heroku__[0],
             "datetime": datetime.now().strftime("%c").strip(),
-            "timestamp": int(time.time() * 1000),
-            "status": status if code < 400 else "Failure",
+            "timestamp": round(time.time() * 1000),
+            "status": "OK" if code < 400 else "Failure",
             "code": code,
             "data": data,
         },
@@ -86,8 +86,8 @@ def slack_msg(msg):
 def home_page_text(url_map):
     """ Renders <pre></pre> compatible HTML home-page text """
 
-    email_link = f'<a href="mailto:nutratracker@gmail.com" target="_blank" rel="noopener">nutratracker@gmail.com</a>'
-    licsn_link = f'<a href="https://www.gnu.org/licenses" target="_blank" >https://www.gnu.org/licenses</a>'
+    email_link = '<a href="mailto:nutratracker@gmail.com" target="_blank" rel="noopener">nutratracker@gmail.com</a>'
+    licsn_link = '<a href="https://www.gnu.org/licenses" target="_blank" >https://www.gnu.org/licenses</a>'
     return f"""
 Welcome to nutra-server (v{__version__})
 heroku {__heroku__[0]}, commit {__heroku__[1]} [{__heroku__[2]}]
@@ -132,25 +132,25 @@ URL map (auto-generated)
 def self_route_rules(app):
     """ Gets human friendly url_map """
 
-    rules = []
-
     map_rules = app.url_map._rules
     map_rules.sort(key=lambda x: x.rule)
 
+    rules = []
+
     for r in map_rules:
         methods = set(r.methods)
-        # Remove unsightly ones
+
+        # Remove default methods
         for method in ["HEAD", "OPTIONS"]:
             if method in methods:
                 methods.remove(method)
+
         # More filtering
         if str(r) != "/static/<path:filename>":
             rule = r.rule.replace("<", "&lt").replace(">", "&gt")
             rule = (str(methods), rule)
             rules.append(rule)
-            # rules.append(f"{str(methods).ljust(30)} {rule}")
 
     # Return string
     table = tabulate(rules, headers=["methods", "route"])
     return table
-    # return "\n".join(rules)
