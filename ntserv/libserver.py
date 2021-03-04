@@ -4,6 +4,7 @@ import traceback
 from datetime import datetime
 
 import requests
+from tabulate import tabulate
 
 from . import __heroku__, __version__
 from .settings import SLACK_TOKEN
@@ -145,7 +146,11 @@ def self_route_rules(app):
         # More filtering
         if str(r) != "/static/<path:filename>":
             rule = r.rule.replace("<", "&lt").replace(">", "&gt")
-            rules.append(f"{str(methods).ljust(30)} {rule}")
+            rule = (str(methods), rule)
+            rules.append(rule)
+            # rules.append(f"{str(methods).ljust(30)} {rule}")
 
     # Return string
-    return "\n".join(rules)
+    table = tabulate(rules, headers=["methods", "route"])
+    return table
+    # return "\n".join(rules)
