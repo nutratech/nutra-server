@@ -5,6 +5,7 @@ from datetime import datetime
 
 import requests
 from tabulate import tabulate
+from werkzeug.exceptions import BadRequestKeyError
 
 from . import __heroku__, __version__
 from .settings import SLACK_TOKEN
@@ -12,20 +13,28 @@ from .settings import SLACK_TOKEN
 
 def Request(func, req, response_type="JSON"):
     """ Makes a request and handles global exceptions, always returning a `Response()` """
+
+    def friendly_stack(e):
+        trace = "\n".join(traceback.format_tb(e.__traceback__))
+        stack_msg = f"{repr(e)}\n\n{trace}"
+        return stack_msg
+
     try:
         if response_type == "JSON":
             return func(request=req)
         else:  # HTML
             return func(request=req, response_type=response_type)
+
+    except BadRequestKeyError as e:
+        error_msg = f"{e.name}: Missing arguments: {e.args}"
+        return Response(data={"error": error_msg}, code=400)
+
     except Exception as e:
-        # Prepare error messages
-        trace = "\n".join(traceback.format_tb(e.__traceback__))
-        stack_msg = f"{repr(e)}\n\n{trace}"
-        request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
-        # Slack msg
-        slack_msg(f"Application Error\n\n{request}\n\n{stack_msg}")
+        stack_trace = friendly_stack(e)
+        # request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
+        # slack_msg(f"Application Error\n\n{request}\n\n{stack_trace}")
         return Response(
-            data={"error": "General server error", "stack": stack_msg}, code=500
+            data={"error": "General server error", "stack": stack_trace}, code=500
         )
 
 
