@@ -33,7 +33,7 @@ def issue_jwt_token(user_id, password):
 
     # Invalid password
     if not result:
-        return None, AUTH_LEVEL_UNAUTHED, "Invalid password/username combination"
+        return None, AUTH_LEVEL_UNAUTHED, "Invalid password and username combination"
 
     #
     # Create token

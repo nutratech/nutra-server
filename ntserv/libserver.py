@@ -22,15 +22,18 @@ def Request(func, req, response_type="JSON"):
 
     except BadRequestKeyError as e:
         error_msg = f"{e.name}: Missing arguments: {e.args}"
-        return BadRequestResponse(error_msg=error_msg)
+        return BadRequestResponse(error_msg)
 
     except Exception as e:
         return ServerErrorResponse(e, req)
 
 
 class Response:
-    def __new__(self, data={}, code=200):
+    def __new__(self, message=None, data={}, code=200):
         """ Creates a response object for the client """
+
+        if message:
+            data["message"] = message
 
         return (
             {
@@ -47,6 +50,11 @@ class Response:
         )
 
 
+class SuccessResponse(Response):
+    def __new__(self, message=None, data={}):
+        return super().__new__(self, message, data)
+
+
 class BadRequestResponse(Response):
     def __new__(self, error_msg):
         return super().__new__(self, data={"error": error_msg}, code=400)
@@ -54,21 +62,32 @@ class BadRequestResponse(Response):
 
 class ServerErrorResponse(Response):
     def __new__(self, exception, request):
-        stack_trace = self.friendly_stack(self, exception, request)
-        return super().__new__(
-            self, data={"error": "General server error", "stack": stack_trace}, code=500
-        )
-
-    def dispatch_slack_msg(self, req, stack_trace):
-        request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
-        slack_msg(f"Application Error\n\n{request}\n\n{stack_trace}")
-
-    def friendly_stack(self, exception, request):
-        trace = "\n".join(traceback.format_tb(exception.__traceback__))
-        stack_msg = f"{repr(exception)}\n\n{trace}"
+        # trace = self.friendly_stack(self, exception)
         # TODO: rethink slack workflow
         # self.dispatch_slack_msg(self, request, trace)
-        return stack_msg
+        return super().__new__(
+            # TODO: rethink structure of 500 response? include exception type?
+            self,
+            data={
+                "error": "General server error",
+                "exception": repr(exception),
+                # "stack": None,
+            },
+            code=500,
+        )
+
+    def friendly_stack(self, exception):
+        trace = "\n".join(traceback.format_tb(exception.__traceback__))
+        return repr(exception) + "\n\n" + trace
+
+    def dispatch_slack_msg(self, req, trace):
+        request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
+        slack_msg(f"Application Error\n\n{request}\n\n{trace}")
+
+
+class NotImplementedResponse(Response):
+    def __new__(self, message="Not implemented", data={}):
+        return super().__new__(self, message, data, code=501)
 
 
 def Text(text=None):
