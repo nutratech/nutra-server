@@ -14,11 +14,6 @@ from .settings import SLACK_TOKEN
 def Request(func, req, response_type="JSON"):
     """ Makes a request and handles global exceptions, always returning a `Response()` """
 
-    def friendly_stack(e):
-        trace = "\n".join(traceback.format_tb(e.__traceback__))
-        stack_msg = f"{repr(e)}\n\n{trace}"
-        return stack_msg
-
     try:
         if response_type == "JSON":
             return func(request=req)
@@ -27,33 +22,53 @@ def Request(func, req, response_type="JSON"):
 
     except BadRequestKeyError as e:
         error_msg = f"{e.name}: Missing arguments: {e.args}"
-        return Response(data={"error": error_msg}, code=400)
+        return BadRequestResponse(error_msg=error_msg)
 
     except Exception as e:
-        stack_trace = friendly_stack(e)
-        # request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
-        # slack_msg(f"Application Error\n\n{request}\n\n{stack_trace}")
-        return Response(
-            data={"error": "General server error", "stack": stack_trace}, code=500
+        return ServerErrorResponse(e, req)
+
+
+class Response:
+    def __new__(self, data={}, code=200):
+        """ Creates a response object for the client """
+
+        return (
+            {
+                "program": "nutra-server",
+                "version": __version__,
+                "release": int(__heroku__[0][1:]) if __heroku__[0] else __heroku__[0],
+                "datetime": datetime.now().strftime("%c").strip(),
+                "timestamp": round(time.time() * 1000),
+                "status": "OK" if code < 400 else "Failure",
+                "code": code,
+                "data": data,
+            },
+            code,
         )
 
 
-def Response(data={}, code=200):
-    """ Creates a response object for the client """
+class BadRequestResponse(Response):
+    def __new__(self, error_msg):
+        return super().__new__(self, data={"error": error_msg}, code=400)
 
-    return (
-        {
-            "program": "nutra-server",
-            "version": __version__,
-            "release": int(__heroku__[0][1:]) if __heroku__[0] else __heroku__[0],
-            "datetime": datetime.now().strftime("%c").strip(),
-            "timestamp": round(time.time() * 1000),
-            "status": "OK" if code < 400 else "Failure",
-            "code": code,
-            "data": data,
-        },
-        code,
-    )
+
+class ServerErrorResponse(Response):
+    def __new__(self, exception, request):
+        stack_trace = self.friendly_stack(self, exception, request)
+        return super().__new__(
+            self, data={"error": "General server error", "stack": stack_trace}, code=500
+        )
+
+    def dispatch_slack_msg(self, req, stack_trace):
+        request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
+        slack_msg(f"Application Error\n\n{request}\n\n{stack_trace}")
+
+    def friendly_stack(self, exception, request):
+        trace = "\n".join(traceback.format_tb(exception.__traceback__))
+        stack_msg = f"{repr(exception)}\n\n{trace}"
+        # TODO: rethink slack workflow
+        # self.dispatch_slack_msg(self, request, trace)
+        return stack_msg
 
 
 def Text(text=None):

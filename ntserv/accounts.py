@@ -3,7 +3,7 @@ import uuid
 
 import bcrypt
 
-from .libserver import Response, slack_msg
+from .libserver import BadRequestResponse, Response, slack_msg
 from .postgres import psql
 from .utils.account import (
     cmp_pass,
@@ -46,7 +46,8 @@ def POST_register(request):
         r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
         email,
     ):
-        return Response(data={"error": "Email address not recognizable"}, code=400)
+        return BadRequestResponse(error_msg="Email address not recognizable")
+        # return Response(data={"error": "Email address not recognizable"}, code=400)
     # Allow "guest" registration with email only
     # Email exists already?
     pg_result = psql("SELECT user_id FROM emails WHERE email=%s", [email])
