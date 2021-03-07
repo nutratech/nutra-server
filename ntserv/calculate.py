@@ -30,7 +30,7 @@ from datetime import datetime
 
 from tabulate import tabulate
 
-from .libserver import Response
+from .libserver import Success200Response
 from .services.calculate import (
     bmr_cunningham,
     bmr_harris_benedict,
@@ -44,7 +44,7 @@ def GET_nutrients(request, response_type="JSON"):
     nutrients = list(cache.nutrients.values())
 
     if response_type == "JSON":
-        return Response(data=nutrients)
+        return Success200Response(data=nutrients)
     else:  # HTML
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return f"<pre>{table}</pre>"
@@ -72,7 +72,7 @@ def GET_calc_bmr(request):
     mifflin_st_jeor = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
     harris_benedict = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
 
-    return Response(
+    return Success200Response(
         data={
             "Katch-McArdle": katch_mcardle,
             "Cunningham": cunningham,
@@ -101,7 +101,7 @@ def GET_calc_bmr_katch_mcardle(request):
         lbm = weight * (1 - bf)
 
     bmr, tdee = bmr_katch_mcardle(lbm, activity_factor)
-    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
 def GET_calc_bmr_cunningham(request):
@@ -120,7 +120,7 @@ def GET_calc_bmr_cunningham(request):
         lbm = weight * (1 - bf)
 
     bmr, tdee = bmr_cunningham(lbm, activity_factor)
-    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
 def GET_calc_bmr_mifflin_st_jeor(request):
@@ -144,7 +144,7 @@ def GET_calc_bmr_mifflin_st_jeor(request):
     dob = int(body["dob"])  # unix (epoch) timestamp
 
     bmr, tdee = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
-    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
 def GET_calc_bmr_harris_benedict(request):
@@ -165,7 +165,7 @@ def GET_calc_bmr_harris_benedict(request):
 
     bmr, tdee = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
 
-    return Response(data={"bmr": round(bmr), "tdee": round(tdee)})
+    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
 def GET_calc_bodyfat(request):
@@ -233,7 +233,7 @@ def GET_calc_bodyfat(request):
         denom = 1
     seven_site = round(495 / denom - 450, 2)
 
-    return Response(
+    return Success200Response(
         data={"navy": navy, "three-site": three_site, "seven-site": seven_site}
     )
 
@@ -285,4 +285,6 @@ def GET_calc_lblimits(request):
         "thigh": round(1.3868 * a + 0.1805 * h, 2),
         "calf": round(0.9298 * a + 0.1210 * h, 2),
     }
-    return Response(data={"martin-berkhan": mb, "eric-helms": eh, "casey-butt": cb})
+    return Success200Response(
+        data={"martin-berkhan": mb, "eric-helms": eh, "casey-butt": cb}
+    )

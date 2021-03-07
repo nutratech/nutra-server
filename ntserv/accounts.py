@@ -4,10 +4,12 @@ import uuid
 import bcrypt
 
 from .libserver import (
-    BadRequestResponse,
-    NotImplementedResponse,
+    BadRequest400Response,
+    MultiStatus207Response,
+    NotImplemented501Response,
     Response,
-    SuccessResponse,
+    Success200Response,
+    Unauthenticated401Response,
     slack_msg,
 )
 from .postgres import psql
@@ -52,12 +54,12 @@ def POST_register(request):
         r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
         email,
     ):
-        return BadRequestResponse("Email address not recognizable")
+        return BadRequest400Response("Email address not recognizable")
     # Allow "guest" registration with email only
     # Email exists already?
     pg_result = psql("SELECT user_id FROM emails WHERE email=%s", [email])
     if pg_result.rows:
-        return Response(data={"user_id": pg_result.row["user_id"]}, code=207)
+        return MultiStatus207Response(data={"user_id": pg_result.row["user_id"]})
     ##########
     # Username
     elif username and (
@@ -65,13 +67,13 @@ def POST_register(request):
         or len(username) > 18
         or not re.match("^[0-9a-z_]+$", username)
     ):
-        return BadRequestResponse(
+        return BadRequest400Response(
             "Username must be 6-18 chars, and contain only lowercase letters, numbers, and underscores"
         )
     ##########
     # Password
     elif password and password_confirm != password:
-        return BadRequestResponse("Passwords do NOT match")
+        return BadRequest400Response("Passwords do NOT match")
     elif password and (
         len(password) < 6
         or len(password) > 40
@@ -79,7 +81,7 @@ def POST_register(request):
         or not re.findall("[a-z]", password)
         or not re.findall("[A-Z]", password)
     ):
-        return BadRequestResponse(
+        return BadRequest400Response(
             "Password must be 6-40 chars long, and contain an uppercase, a lowercase, and a special character"
         )
 
@@ -125,7 +127,7 @@ def POST_register(request):
     send_activation_email(email, token)
 
     # TODO: rethink "message"?
-    return SuccessResponse("Successfully registered", data={"id": user_id})
+    return Success200Response("Successfully registered", data={"id": user_id})
 
 
 def POST_login(request):
@@ -138,14 +140,16 @@ def POST_login(request):
     # See if user exists
     user_id = user_id_from_username_or_email(username)
     if not user_id:
-        return BadRequestResponse(f"No user found: {username}")
+        return BadRequest400Response(f"No user found: {username}")
 
     # Get auth level and return JWT (token)
     token, auth_level, error = issue_jwt_token(user_id, password)
     if token:
-        return SuccessResponse("Logged in", {"token": token, "auth-level": auth_level})
+        return Success200Response(
+            "Logged in", {"token": token, "auth-level": auth_level}
+        )
     else:
-        return BadRequestResponse(error)
+        return BadRequest400Response(error)
 
 
 def POST_v2_login(request):
@@ -164,24 +168,24 @@ def POST_v2_login(request):
     # See if user exists
     user_id = user_id_from_username_or_email(email)
     if not user_id:
-        return BadRequestResponse(f"No user found: {email}")
+        return BadRequest400Response(f"No user found: {email}")
 
     #
     # Get auth level and return JWT (token)
     token, auth_level, error = issue_oauth_token(user_id, password, device_id)
     if token:
-        return SuccessResponse(
+        return Success200Response(
             "Logged in", data={"token": token, "auth-level": auth_level}
         )
     else:
-        BadRequestResponse(error)
+        BadRequest400Response(error)
 
 
 @auth
 def GET_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     # TODO: if not user_id: return err
     pg_result = psql("SELECT * FROM users(%s)", [user_id])
-    return SuccessResponse(data=pg_result.row)
+    return Success200Response(data=pg_result.row)
 
 
 def GET_confirm_email(request):
@@ -194,7 +198,7 @@ def GET_confirm_email(request):
 
     user_id = user_id_from_unver_email(email)
     if not user_id:
-        return BadRequestResponse("No such user")
+        return BadRequest400Response("No such user")
 
     # Grab token(s)
     pg_result = psql(
@@ -202,11 +206,11 @@ def GET_confirm_email(request):
         [user_id],
     )
     if pg_result.err_msg or not pg_result.rows:
-        return BadRequestResponse("No token for you")
+        return BadRequest400Response("No token for you")
     # Compare token(s)
     valid = any(r["token"] == token for r in pg_result.rows)
     if not valid:
-        return Response(data={"error": "Wrong"}, code=401)
+        return Unauthenticated401Response("Wrong token")
     # ---------------------
     # Update info
     # ---------------------
@@ -220,7 +224,7 @@ def GET_confirm_email(request):
         [user_id],
     )
     # TODO: send welcome email?
-    return SuccessResponse("Successfully activated")
+    return Success200Response("Successfully activated")
 
 
 @auth
@@ -230,10 +234,10 @@ def GET_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
     # Require additional password check
     if not cmp_pass(user_id, password):
-        return Response(data={"error": "Invalid password"}, code=401)
+        return Unauthenticated401Response("Invalid password")
 
     # TODO: implement
-    return NotImplementedResponse(data={"email": email})
+    return NotImplemented501Response(data={"email": email})
 
 
 @auth
@@ -245,10 +249,10 @@ def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
     # Require additional password check
     if not cmp_pass(user_id, password_old):
-        return Response(data={"error": "Invalid password"}, code=401)
+        return Unauthenticated401Response("Invalid password")
     # Check matching passwords
     if password != password_confirm:
-        return BadRequestResponse("Passwords don't match")
+        return BadRequest400Response("Passwords don't match")
 
     # Update
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
@@ -258,19 +262,19 @@ def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     )
 
     # TODO: return a message?
-    return SuccessResponse()
+    return Success200Response()
 
 
 def POST_username_forgot(request):
-    return NotImplementedResponse()
+    return NotImplemented501Response()
 
 
 def POST_password_new_request(request):
-    return NotImplementedResponse()
+    return NotImplemented501Response()
 
 
 def POST_password_new_reset(request):
-    return NotImplementedResponse()
+    return NotImplemented501Response()
 
 
 # ---------------
@@ -286,4 +290,4 @@ def POST_report(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
         [user_id, report_type, report_message],
     )
 
-    return SuccessResponse()
+    return Success200Response()

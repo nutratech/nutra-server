@@ -13,7 +13,11 @@ from usps import (
     USPSApi,
 )
 
-from .libserver import Response
+from .libserver import (
+    BadRequest400Response,
+    Success200Response,
+    Unauthenticated401Response,
+)
 from .postgres import psql
 from .settings import USPS_API_KEY
 from .utils.auth import (
@@ -58,9 +62,8 @@ def POST_validate_addresses(request):
     validations = []
     for a in addresses:
         if not a["country"] == "US":
-            return Response(
-                data={"error": "Sorry, only support shipping to U.S. for now :["},
-                code=400,
+            return BadRequest400Response(
+                "Sorry, only support shipping to U.S. for now :["
             )
 
         address = Address(
@@ -77,7 +80,7 @@ def POST_validate_addresses(request):
         validation = usps.validate_address(address)
         validations.append(validation.result["AddressValidateResponse"])
 
-    return Response(data=validations)
+    return Success200Response(data=validations)
 
 
 def POST_shipping_esimates(request):
@@ -158,7 +161,7 @@ def POST_shipping_esimates(request):
     # )
     # print(label.result)
 
-    return Response(data=solution)
+    return Success200Response(data=solution)
 
 
 @auth
@@ -169,7 +172,7 @@ def OPT_addresses(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
     if method == "GET":
         pg_result = psql("SELECT * FROM addresses WHERE user_id=%s", [user_id])
-        return Response(data=pg_result.rows)
+        return Success200Response(data=pg_result.rows)
 
     #############
     # Add address
@@ -210,7 +213,7 @@ RETURNING
             ],
         )
         id = pg_result.row["id"]
-        return Response(data={"id": id})
+        return Success200Response(data={"id": id})
 
     ################
     # Update address
@@ -221,9 +224,7 @@ RETURNING
         UNAUTHED_COLS = ["id", "user_id"]
         unauthed = [x for x in params if x in UNAUTHED_COLS]
         if unauthed:
-            return Response(
-                data={"error": f"Can't change column(s): {unauthed}"}, code=401
-            )
+            return Unauthenticated401Response(f"Can't change column(s): {unauthed}")
 
         assignments = ", ".join(f"{k}={v}" for k, v in params.items())
 
@@ -231,7 +232,7 @@ RETURNING
             "UPDATE addresses SET (%s) WHERE id=%s AND user_id=%s RETURNING id",
             [assignments, addy_id, user_id],
         )
-        return Response(data={pg_result.row})
+        return Success200Response(data={pg_result.row})
 
     ################
     # Remove address
@@ -241,7 +242,7 @@ RETURNING
             "DELETE FROM addresses WHERE user_id=%s AND id=%s RETURNING user_id",
             [user_id, addy_id],
         )
-        return Response(data={"msg": pg_result.msg, "rows": pg_result.rows})
+        return Success200Response(message=pg_result.msg, data={"rows": pg_result.rows})
 
 
 # TODO: generic endpoint for get_function_name() or select_table_name()
@@ -249,12 +250,12 @@ RETURNING
 # we reduce dozens of separate endpoints here to just 2 or 3 generic functions
 def GET_categories(request):
     pg_result = psql("SELECT * FROM categories()")
-    return Response(data=pg_result.rows)
+    return Success200Response(data=pg_result.rows)
 
 
 def GET_products(request):
     pg_result = psql("SELECT * FROM products()")
-    return Response(data=pg_result.rows)
+    return Success200Response(data=pg_result.rows)
 
 
 def POST_orders(request):
@@ -272,9 +273,9 @@ def POST_orders(request):
 
     if not email:
         # Check authorization
-        authr, error = check_request(request)
+        authr, err_msg = check_request(request)
         if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-            return Response(data={"error": error}, code=401)
+            return Unauthenticated401Response(err_msg)
         # Set user_id
         user_id = authr.id
     else:
@@ -304,7 +305,7 @@ def POST_orders(request):
             "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
             [order_id, variant_id, quantity, price],
         )
-    return Response(data={"order_id": order_id})
+    return Success200Response(data={"order_id": order_id})
 
 
 @auth
@@ -315,7 +316,7 @@ def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
     if method == "GET":
         pg_result = psql("SELECT * FROM orders(%s)", [user_id])
-        return Response(data=pg_result.rows)
+        return Success200Response(data=pg_result.rows)
 
     # Add address
     elif method == "POST":
@@ -333,9 +334,9 @@ def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
         if not email:
             # Check authorization
-            authr, error = check_request(request)
+            authr, err_msg = check_request(request)
             if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-                return Response(data={"error": error}, code=401)
+                return Unauthenticated401Response(err_msg)
             # Set user_id
             user_id = authr.id
         else:
@@ -365,7 +366,7 @@ def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
                 "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
                 [order_id, variant_id, quantity, price],
             )
-        return Response(data={"order_id": order_id})
+        return Success200Response(data={"order_id": order_id})
 
 
 # @auth
@@ -452,7 +453,7 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
 
     # TODO: send confirmation email to both us (admins) and user
 
-    return Response(data=pg_result.row)
+    return Success200Response(data=pg_result.row)
 
 
 @auth
@@ -478,4 +479,4 @@ def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
     if pg_result.err_msg:
         return pg_result.Response
 
-    return Response(data=pg_result.rows)
+    return Success200Response(data=pg_result.rows)

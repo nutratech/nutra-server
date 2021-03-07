@@ -3,7 +3,7 @@ from datetime import datetime
 import bcrypt
 import jwt
 
-from ..libserver import Response
+from ..libserver import Unauthenticated401Response
 from ..postgres import psql
 from ..settings import JWT_SECRET, TOKEN_EXPIRY
 
@@ -137,9 +137,9 @@ def auth(og_func, level=None):
 
     def func(request):
         # Check authorization
-        authr, error = check_request(request)
+        authr, err_msg = check_request(request)
         if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-            return Response(data={"error": error}, code=401)
+            return Unauthenticated401Response(err_msg)
 
         # Execute original function
         return og_func(request, user_id=authr.id)

@@ -22,10 +22,10 @@ def Request(func, req, response_type="JSON"):
 
     except BadRequestKeyError as e:
         error_msg = f"{e.name}: Missing arguments: {e.args}"
-        return BadRequestResponse(error_msg)
+        return BadRequest400Response(error_msg)
 
     except Exception as e:
-        return ServerErrorResponse(e, req)
+        return ServerError500Response(e, req)
 
 
 class Response:
@@ -50,17 +50,27 @@ class Response:
         )
 
 
-class SuccessResponse(Response):
+class Success200Response(Response):
     def __new__(self, message=None, data={}):
         return super().__new__(self, message, data)
 
 
-class BadRequestResponse(Response):
+class MultiStatus207Response(Response):
+    def __new__(self, message=None, data={}):
+        return super().__new__(self, message, data, code=207)
+
+
+class BadRequest400Response(Response):
     def __new__(self, error_msg):
         return super().__new__(self, data={"error": error_msg}, code=400)
 
 
-class ServerErrorResponse(Response):
+class Unauthenticated401Response(Response):
+    def __new__(self, error_msg):
+        return super().__new__(self, data={"error": error_msg}, code=401)
+
+
+class ServerError500Response(Response):
     def __new__(self, exception, request):
         # trace = self.friendly_stack(self, exception)
         # TODO: rethink slack workflow
@@ -85,7 +95,7 @@ class ServerErrorResponse(Response):
         slack_msg(f"Application Error\n\n{request}\n\n{trace}")
 
 
-class NotImplementedResponse(Response):
+class NotImplemented501Response(Response):
     def __new__(self, message="Not implemented", data={}):
         return super().__new__(self, message, data, code=501)
 
