@@ -70,6 +70,11 @@ class Unauthenticated401Response(Response):
         return super().__new__(self, data={"error": error_msg}, code=401)
 
 
+class Forbidden403Response(Response):
+    def __new__(self, error_msg):
+        return super().__new__(self, data={"error": error_msg}, code=403)
+
+
 class ServerError500Response(Response):
     def __new__(self, exception, request):
         # trace = self.friendly_stack(self, exception)
@@ -132,7 +137,9 @@ def slack_msg(msg):
 
     # Make post
     requests.post(
-        "https://slack.com/api/chat.postMessage", headers=headers, json=body,
+        "https://slack.com/api/chat.postMessage",
+        headers=headers,
+        json=body,
     )
 
 
