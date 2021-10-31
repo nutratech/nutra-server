@@ -1,4 +1,5 @@
 from datetime import datetime
+import traceback
 
 import bcrypt
 import jwt
@@ -40,6 +41,7 @@ def issue_jwt_token(user_id, password):
     try:
         return auth_level(user_id)
     except Exception as e:
+        traceback.print_stack(e)
         return None, AUTH_LEVEL_READ_ONLY, repr(e)
 
 
