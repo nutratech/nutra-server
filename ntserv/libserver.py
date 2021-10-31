@@ -12,7 +12,7 @@ from .settings import SLACK_TOKEN
 
 
 def Request(func, req, response_type="JSON"):
-    """ Makes a request and handles global exceptions, always returning a `Response()` """
+    """Makes a request and handles global exceptions, always returning a `Response()`"""
 
     try:
         if response_type == "JSON":
@@ -30,7 +30,7 @@ def Request(func, req, response_type="JSON"):
 
 class Response:
     def __new__(self, message=None, data={}, code=200):
-        """ Creates a response object for the client """
+        """Creates a response object for the client"""
 
         if message:
             data["message"] = message
@@ -117,7 +117,7 @@ Helper functions
 
 
 def slack_msg(msg):
-    """ Sends a slack alert message to nutra1 prod-alerts channel """
+    """Sends a slack alert message to nutra1 prod-alerts channel"""
 
     # Print
     print(msg)
@@ -144,7 +144,7 @@ def slack_msg(msg):
 
 
 def home_page_text(url_map):
-    """ Renders <pre></pre> compatible HTML home-page text """
+    """Renders <pre></pre> compatible HTML home-page text"""
 
     email_link = '<a href="mailto:nutratracker@gmail.com" target="_blank" rel="noopener">nutratracker@gmail.com</a>'
     licsn_link = '<a href="https://www.gnu.org/licenses" target="_blank" >https://www.gnu.org/licenses</a>'
@@ -190,7 +190,7 @@ URL map (auto-generated)
 
 
 def self_route_rules(app):
-    """ Gets human friendly url_map """
+    """Gets human friendly url_map"""
 
     map_rules = app.url_map._rules
     map_rules.sort(key=lambda x: x.rule)

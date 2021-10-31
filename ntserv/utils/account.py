@@ -50,7 +50,7 @@ def cmp_pass(user_id, password):
 # Sending emails
 # ----------------------
 def email(recipient, subject, body):
-    """ Sends an email to ourselves """
+    """Sends an email to ourselves"""
 
     port = 465  # For SSL
     # port_g = 587 # For Gmail
@@ -74,7 +74,7 @@ def email(recipient, subject, body):
 
 
 def send_activation_email(recipient, token):
-    """ Sends an onboarding email """
+    """Sends an onboarding email"""
 
     email(
         recipient,

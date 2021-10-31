@@ -75,7 +75,7 @@ def psql(query, params=None):
 
 class PgResult:
     def __init__(self, query, rows=None, msg=None, err_msg=None):
-        """ Defines a convenient result from `psql()` """
+        """Defines a convenient result from `psql()`"""
 
         self.query = query
 
@@ -86,12 +86,12 @@ class PgResult:
 
     @property
     def Response(self):
-        """ Used ONLY for ERRORS """
+        """Used ONLY for ERRORS"""
 
         return _Response(data={"error": self.err_msg}, code=400)
 
     def set_rows(self, fetchall):
-        """ Sets the DictCursor rows based on cur.fetchall() """
+        """Sets the DictCursor rows based on cur.fetchall()"""
 
         self.rows = []
 

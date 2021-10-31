@@ -166,7 +166,7 @@ def POST_shipping_esimates(request):
 
 @auth
 def OPT_addresses(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    """ Used to POST and GET a user's saved billing/shipping addies """
+    """Used to POST and GET a user's saved billing/shipping addies"""
 
     method = request.environ["REQUEST_METHOD"]
 

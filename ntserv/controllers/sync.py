@@ -5,7 +5,7 @@ from ..utils.auth import auth, AUTH_LEVEL_BASIC
 
 @auth
 def OPT_sync(request, level=AUTH_LEVEL_BASIC, user_id=None):
-    """ Used to GET and POST local saved data to remote """
+    """Used to GET and POST local saved data to remote"""
 
     method = request.environ["REQUEST_METHOD"]
 

@@ -22,7 +22,7 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 
 
 def issue_jwt_token(user_id, password):
-    """ Returns tuple: (token, auth_level, error) """
+    """Returns tuple: (token, auth_level, error)"""
 
     # Get hash
     pg_result = psql("SELECT passwd FROM users WHERE id=%s", [user_id])
@@ -41,12 +41,12 @@ def issue_jwt_token(user_id, password):
     try:
         return auth_level(user_id)
     except Exception as e:
-        traceback.print_stack(e)
+        # traceback.print_stack(e)
         return None, AUTH_LEVEL_READ_ONLY, repr(e)
 
 
 def auth_level(user_id):
-    """ Returns same tuple: (token, auth_level, error) """
+    """Returns same tuple: (token, auth_level, error)"""
 
     auth_level = AUTH_LEVEL_UNCONFIRMED
 
@@ -81,7 +81,7 @@ def auth_level(user_id):
 
 
 def jwt_token(user_id, auth_level):
-    """ Creates a JWT (token) for subsequent authorized requests """
+    """Creates a JWT (token) for subsequent authorized requests"""
 
     expires_at = datetime.now() + TOKEN_EXPIRY
     token = jwt.encode(
@@ -98,7 +98,7 @@ def jwt_token(user_id, auth_level):
 
 
 def check_token(token):
-    """ Checks auth level from pre-issued token """
+    """Checks auth level from pre-issued token"""
 
     try:
         token = jwt.decode(token, JWT_SECRET, algorithm="HS256")
@@ -135,7 +135,7 @@ Auth Decorator
 
 
 def auth(og_func, level=None):
-    """ Auth decorator, use to send 401s """
+    """Auth decorator, use to send 401s"""
 
     def func(request):
         # Check authorization
