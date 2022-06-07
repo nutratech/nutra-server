@@ -8,3 +8,4 @@ fail-under=9.5
 disable=
     fixme,
     consider-using-f-string,
+    missing-module-docstring,
