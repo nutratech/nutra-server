@@ -1,6 +1,6 @@
 from ..libserver import Success200Response
-from ..services.psql.sync import sql_update_entities, sql_unsynced_rows
-from ..utils.auth import auth, AUTH_LEVEL_BASIC
+from ..services.psql.sync import sql_unsynced_rows, sql_update_entities
+from ..utils.auth import AUTH_LEVEL_BASIC, auth
 
 
 @auth

@@ -1,0 +1,11 @@
+[MASTER]
+
+fail-under=9.5
+
+
+[MESSAGES CONTROL]
+
+disable=
+    fixme,
+    consider-using-f-string,
+    missing-module-docstring,

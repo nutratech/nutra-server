@@ -1,4 +1,4 @@
-from ..postgres import psql
+from ntserv.postgres import build_con, psql
 
 # ---------------
 # Cache
@@ -22,6 +22,11 @@ data_src = {}
 # ---------------
 def reload():
     global users, shipping_containers, products, variants, nutrients, food_des, servings, servings_food, fdgrp, data_src
+
+    con = build_con()
+    if not con:
+        print("WARN: skipping reload cache, can't build Postgres connection")
+        return
 
     pg_result = psql("SELECT * FROM users()")
     users = {u["id"]: u for u in pg_result.rows}

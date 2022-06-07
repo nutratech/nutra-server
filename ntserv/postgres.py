@@ -4,27 +4,42 @@ import psycopg2.extras
 from .libserver import Response as _Response
 from .settings import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
 
-# Initialize connection
-con = psycopg2.connect(
-    database=PSQL_DATABASE,
-    user=PSQL_USER,
-    password=PSQL_PASSWORD,
-    host=PSQL_HOST,
-    port="5432",
-    options=f"-c search_path={PSQL_SCHEMA}",
-)
+_url = f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}"
 
-print(
-    f"[Connected to Postgre DB]    postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}",
-)
-print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
+
+def build_con():
+    # TODO: is this best?
+    try:
+        # Initialize connection
+        con = psycopg2.connect(
+            database=PSQL_DATABASE,
+            user=PSQL_USER,
+            password=PSQL_PASSWORD,
+            host=PSQL_HOST,
+            port="5432",
+            options=f"-c search_path={PSQL_SCHEMA}",
+            connect_timeout=8,
+        )
+
+        print(f"[Connected to Postgres DB]    ${_url}")
+        print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
+        return con
+    except psycopg2.OperationalError as err:
+        print(err)
+        return None
 
 
 def psql(query, params=None):
+    # TODO: revamp this, tighten ship, make more versatile for DB import,
+    #  and decide on mandatory RETURNING for INSERTS
 
-    # TODO: revamp this, tighten ship, make more versatile for DB import, and decide on mandatory RETURNING for INSERTs
-
-    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    con = build_con()
+    # TODO: is this best?
+    try:
+        cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    except AttributeError as err:
+        print(err)
+        return PgResult(query=query, rows=[])
 
     # Print query
     if params:

@@ -1,12 +1,11 @@
-dist: bionic
-sudo: true
+---
+dist: xenial
+os: ['linux']
 language: python
 python:
-- '3.6'
+  - '3.7'
 install:
-- pip install -r requirements.txt
+  - make _deps
 script:
-- pytest -s -v
-notifications:
-  slack:
-    secure: Y/CZmrgkMGI73gJIKhNq5v6u+hY4HEfiBrNAh8Tf2XRLR6uwuDczVl6cZY74x3+JLA+xgxlPRdIoP6izXMavIIQ58D2jZ8ZoTRrbCHe7ZNZF1uVpbcO8auGwOncMf+xYqR6NX68MrJ4KXpFNiunsbHkA9gE3jYD0ARVlwjYbnwwwPbF3uvaOyaT3BZ8JQAzVEUK2jakQNI716ZKwW+r1fv1ol+jzNnno+V6Vp0FTt20tJW+MH6mI1wQDzq5bAbeiqnOSkXTV18acHG95sUaxe+CodEmZL4kBRUumCF29Ys5DeYNWC7WN6rm29vt5TGnNXftIQkY0rvZCyJGtVfkSD/GFyGNAKrxkzaKeHFyqoORt5KocjJMmUJSNkgiTvIzW8Clz/HSMD8X6wyvNlznj/nuBlPmnwsyf8IcAeo3OVcJwfmEFsD9d8SZZDPoM83o8g0+5UAkWpUz3iJctULaW0KD3gOS1dvflxxJ6tSzILz7iNaFVn9y21s06U7NiJ9CSCiccMDb8ua6raGOVDWQ14ioET/AkuqWJJGOznQafIYiW11rVJGYCxCvMxzgX5QmVTBUlVJuQhL6DqsYrykYl6A5TqlcfkkoBxOGmaX3EXWcEySVTTXUMzx6YE4l9m/AKTtMsF3alJ7N47p5DfLLgKJOgJqNdacpJmDlcZGP39To=
+  - make _test
+  - make _lint
