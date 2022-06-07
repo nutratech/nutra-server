@@ -3,7 +3,7 @@ dist: xenial
 os: ['linux']
 language: python
 python:
-  - '3.6'
+  - '3.7'
 install:
   - make _deps
 script:
