@@ -36,9 +36,9 @@ def psql(query, params=None):
     # TODO: is this best?
     try:
         cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    except TypeError as err:
+    except AttributeError as err:
         print(err)
-        return None
+        return PgResult(query=query, rows=[])
 
     # Print query
     if params:
