@@ -25,6 +25,7 @@ def build_con():
         print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
         return con
     except psycopg2.OperationalError as err:
+        print(f"WARN: postgres error: ${repr(err)}")
         print(err)
         return None
 
@@ -38,7 +39,7 @@ def psql(query, params=None):
     try:
         cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
     except AttributeError as err:
-        print(err)
+        print(f"WARN: postgres error: ${repr(err)}")
         return PgResult(query=query, rows=[])
 
     # Print query
