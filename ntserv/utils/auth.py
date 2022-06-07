@@ -55,7 +55,8 @@ def auth_level(user_id):
         "SELECT email FROM emails WHERE user_id=%s AND activated='t'", [user_id]
     )
     try:
-        email = pg_result.row["email"]
+        # FIXME: this is unused, email
+        _ = pg_result.row["email"]
     except Exception as e:
         return jwt_token(user_id, auth_level), auth_level, repr(e)
     # pass: email active

@@ -146,6 +146,10 @@ def POST_login(request):
 
 
 def POST_v2_login(request):
+    def issue_oauth_token(*args):
+        # TODO: complete this in another module
+        return None, None, None
+
     email = request.json["email"]
     password = request.json["password"]
 
@@ -169,8 +173,7 @@ def POST_v2_login(request):
         return Success200Response(
             "Logged in", data={"token": token, "auth-level": auth_level}
         )
-    else:
-        BadRequest400Response(error)
+    return BadRequest400Response(error)
 
 
 @auth

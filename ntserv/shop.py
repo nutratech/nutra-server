@@ -79,7 +79,8 @@ def POST_validate_addresses(request):
 def POST_shipping_esimates(request):
     body = request.json
     # user_id = body["user_id"]
-    address_to = body["address"]
+    # FIXME: this is unused, address_to
+    _ = body["address"]
     items = body["items"]
 
     #############
