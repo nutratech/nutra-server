@@ -65,6 +65,11 @@ format:
 	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
 	black $(LINT_LOCS)
 
+
+# ---------------------------------------
+# Test
+# ---------------------------------------
+
 APP_HOME := ntserv/
 TEST_HOME := test_ntserv.py
 MIN_COV := 80
@@ -76,35 +81,6 @@ _test:
 .PHONY: test
 test: _venv _test   ## Run CLI unittests
 
-
-# ---------------------------------------
-# Python build stuff
-# ---------------------------------------
-
-.PHONY: py/_build
-py/_build:
-	python setup.py --quiet sdist
-
-.PHONY: py/build
-py/build: _venv py/_build clean	## Create sdist binary *.tar.gz
-
-.PHONY: py/_install
-py/_install:
-	python -m pip install wheel
-	python -m pip install .
-	python -m pip show nutra
-	- python -c 'import shutil; print(shutil.which("nutra"));'
-	nutra -v
-
-.PHONY: py/install
-py/install: _venv py/_install	## pip install nutra
-
-.PHONY: py/_uninstall
-py/_uninstall:
-	python -m pip uninstall -y nutra
-
-.PHONY: py/uninstall
-py/uninstall: _venv py/_uninstall	## pip uninstall nutra
 
 .PHONY: clean
 clean:	## Clean up __pycache__ and leftover bits
