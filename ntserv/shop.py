@@ -131,7 +131,7 @@ def POST_shipping_esimates(request):
             f"'{denomination}', {round(_l, 3)}, {round(_w, 3)},"
             f"{round(_h, 3)}, {round(weight, 3)}"
         )
-        print(f"packer.add_item(Item(${item_txt}))")
+        print(f"packer.add_item(Item({item_txt}))")
 
         items_.append(item)
         packer.add_item(item)

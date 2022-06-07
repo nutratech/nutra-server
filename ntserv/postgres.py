@@ -21,11 +21,11 @@ def build_con():
             connect_timeout=8,
         )
 
-        print(f"[Connected to Postgres DB]    ${_url}")
+        print(f"[Connected to Postgres DB]    {_url}")
         print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
         return con
     except psycopg2.OperationalError as err:
-        print(f"WARN: postgres error: ${repr(err)}")
+        print(f"WARN: postgres error: {repr(err)}")
         print(err)
         return None
 
@@ -39,7 +39,7 @@ def psql(query, params=None):
     try:
         cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
     except AttributeError as err:
-        print(f"WARN: postgres error: ${repr(err)}")
+        print(f"WARN: postgres error: {repr(err)}")
         return PgResult(query=query, rows=[])
 
     # Print query
