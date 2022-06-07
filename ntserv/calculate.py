@@ -41,7 +41,7 @@ from .utils import cache
 
 
 def GET_nutrients(request, response_type="JSON"):
-    nutrients = list(cache.nutrients.values())
+    nutrients = list(cache.NUTRIENTS.values())
 
     if response_type == "JSON":
         return Success200Response(data=nutrients)

@@ -98,7 +98,7 @@ def POST_shipping_esimates(request):
     # containers = get_shipping_containers()
     # variants = get_variants()
 
-    for c in cache.shipping_containers.values():
+    for c in cache.SHIPPING_CONTAINERS.values():
         _l = c["dimensions"][0] * 2.54  # inches --> cm
         _w = c["dimensions"][1] * 2.54
         _h = c["dimensions"][2] * 2.54
@@ -111,7 +111,7 @@ def POST_shipping_esimates(request):
     items_ = []
     for i in items:
         # TODO - include stock/inventory check at this point, or earlier in shop
-        i = cache.variants[i]
+        i = cache.VARIANTS[i]
 
         _l = i["dimensions"][0]  # cm
         _w = i["dimensions"][1]
@@ -148,7 +148,7 @@ def POST_shipping_esimates(request):
         (
             # Gets the smallest_bin by matching name (a string)
             c
-            for c in cache.shipping_containers.values()
+            for c in cache.SHIPPING_CONTAINERS.values()
             if " ".join([c["courier"], c["method"], c["container"]])
             == smallest_bin.name
         ),
