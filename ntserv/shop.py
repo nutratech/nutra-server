@@ -141,7 +141,7 @@ def POST_shipping_esimates(request):
             c
             for c in cache.shipping_containers.values()
             if " ".join([c["courier"], c["method"], c["container"]])
-            == smallest_bin.name
+               == smallest_bin.name
         ),
         None,
     )
@@ -371,7 +371,6 @@ def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 # @auth
 def GET_products_profits(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
-
     pg_result = psql("SELECT id, name FROM products WHERE shippable=TRUE")
     products = pg_result.rows
 
@@ -447,7 +446,7 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
     parameters = list(patcher.values())
     parameters.extend([order_id])
     pg_result = psql(
-        f"UPDATE orders SET {assignments} WHERE {conditions} RETURNING status",
+        f"UPDATE orders SET {assignments} WHERE {conditions} RETURNING status",  # nosec
         parameters,
     )
 
@@ -458,7 +457,6 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
 
 @auth
 def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
-
     # TODO: attach whole `pg_result` object, in case of generic errors. e.g. missing function?
 
     # Parse incoming request

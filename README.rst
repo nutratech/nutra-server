@@ -21,7 +21,8 @@ Initialize with:
 Initialize Database
 ###################
 
-These env vars can also be configured in a ``.env`` file inside the ``sql`` folder.
+These env vars can also be configured in a ``.env`` file
+inside the ``sql`` folder.
 
 A ``.env`` file is recommended in the ``server`` folder root as well.
 
@@ -80,6 +81,7 @@ TODO: update
 
     JWT_SECRET         =
     ON_HEROKU          = 1
+    ON_REMOTE          = 1
     PROD_EMAIL         = nutratracker@gmail.com
     PROD_EMAIL_PASS    =
     PSQL_DATABASE      = nutra
