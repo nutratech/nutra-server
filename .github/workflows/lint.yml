@@ -1,11 +1,11 @@
 ---
-name: test-python
+name: lint-python
 "on":
   pull_request: {}
   push: { branches: [master] }
 
 jobs:
-  test-python:
+  lint-python:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
