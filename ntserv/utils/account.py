@@ -65,7 +65,10 @@ def email(recipient, subject, body):
     # Create a secure SSL context
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        # with smtplib.SMTP_SSL("gameguru.heliohost.org", port, context=context) as server:
+        # with smtplib.SMTP_SSL(
+        #     "gameguru.heliohost.org", port, context=context
+        # ) as server:
+
         # Login and send
         server.login(PROD_EMAIL, PROD_EMAIL_PASS)
         # server.login("_mainaccount@gameguru.heliohost.org", PROD_EMAIL_PASS)
