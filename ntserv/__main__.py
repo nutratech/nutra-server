@@ -7,11 +7,11 @@ Created on Sat Jan  4 18:20:27 2020
 
 import os
 
-import gunicorn
+import gunicorn  # pylint: disable=unused-import
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 
-from .accounts import (
+from ntserv.accounts import (
     GET_confirm_email,
     GET_email_change,
     GET_password_change,
@@ -24,7 +24,7 @@ from .accounts import (
     POST_username_forgot,
     POST_v2_login,
 )
-from .calculate import (
+from ntserv.calculate import (
     GET_calc_bmr,
     GET_calc_bmr_cunningham,
     GET_calc_bmr_harris_benedict,
@@ -34,23 +34,22 @@ from .calculate import (
     GET_calc_lblimits,
     GET_nutrients,
 )
-from .controllers.sync import OPT_sync
-from .libserver import Request, home_page_text, self_route_rules
-from .shop import (
+from ntserv.controllers.sync import OPT_sync
+from ntserv.libserver import Request, home_page_text, self_route_rules
+from ntserv.shop import (
     GET_categories,
     GET_products,
     GET_products_profits,
     OPT_addresses,
     OPT_orders,
     PATCH_orders_admin,
-    POST_orders,
     POST_products_reviews,
     POST_shipping_esimates,
     POST_validate_addresses,
 )
-from .utils.cache import reload
+from ntserv.utils.cache import reload
 
-# Load SQL cache in-memory
+# Load SQL cache in-memory, if accessible
 reload()
 
 # Export the Flask server for gunicorn
@@ -59,12 +58,9 @@ app.config["JSON_SORT_KEYS"] = False
 CORS(app)
 
 
-"""
--------------------------
-Routes
--------------------------
-"""
-
+# -------------------------
+# Routes
+# -------------------------
 
 @app.route("/")
 def get_home_page():

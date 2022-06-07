@@ -4,8 +4,8 @@ from email.message import EmailMessage
 
 import bcrypt
 
-from ..postgres import psql
-from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
+from ntserv.postgres import psql
+from ntserv.settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 
 
 # ----------------------

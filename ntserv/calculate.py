@@ -26,18 +26,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import math
-from datetime import datetime
 
 from tabulate import tabulate
 
-from .libserver import Success200Response
-from .services.calculate import (
+from ntserv.libserver import Success200Response
+from ntserv.services.calculate import (
     bmr_cunningham,
     bmr_harris_benedict,
     bmr_katch_mcardle,
     bmr_mifflin_st_jeor,
 )
-from .utils import cache
+from ntserv.utils import cache
 
 
 def GET_nutrients(request, response_type="JSON"):

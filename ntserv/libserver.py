@@ -7,8 +7,8 @@ import requests
 from tabulate import tabulate
 from werkzeug.exceptions import BadRequestKeyError
 
-from . import __heroku__, __version__
-from .settings import SLACK_TOKEN
+from ntserv import __heroku__, __version__
+from ntserv.settings import SLACK_TOKEN
 
 
 def Request(func, req, response_type="JSON"):

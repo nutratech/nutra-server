@@ -8,6 +8,6 @@ def heroku():
             os.environ["HEROKU_SLUG_COMMIT"][:9],
             os.environ["HEROKU_RELEASE_CREATED_AT"],
         )
-    except Exception as e:
-        print(repr(e))
+    except KeyError as err:
+        print(repr(err))
         return None, None, None
