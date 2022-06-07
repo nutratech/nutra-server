@@ -2,7 +2,13 @@ import psycopg2
 import psycopg2.extras
 
 from ntserv.libserver import Response as _Response
-from ntserv.settings import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
+from ntserv.settings import (
+    PSQL_DATABASE,
+    PSQL_HOST,
+    PSQL_PASSWORD,
+    PSQL_SCHEMA,
+    PSQL_USER,
+)
 
 _url = f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}"
 

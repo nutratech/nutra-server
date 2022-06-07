@@ -62,6 +62,7 @@ CORS(app)
 # Routes
 # -------------------------
 
+
 @app.route("/")
 def get_home_page():
     url_map = self_route_rules(app)

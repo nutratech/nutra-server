@@ -3,10 +3,7 @@ from datetime import datetime
 from psycopg2.extras import Json
 from py3dbp.main import Bin, Item, Packer
 from tabulate import tabulate
-from usps import (
-    Address,
-    USPSApi,
-)
+from usps import Address, USPSApi
 
 from ntserv.libserver import (
     BadRequest400Response,

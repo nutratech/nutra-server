@@ -18,11 +18,7 @@ from ntserv.utils.account import (
     user_id_from_unver_email,
     user_id_from_username_or_email,
 )
-from ntserv.utils.auth import (
-    AUTH_LEVEL_UNCONFIRMED,
-    auth,
-    issue_jwt_token,
-)
+from ntserv.utils.auth import AUTH_LEVEL_UNCONFIRMED, auth, issue_jwt_token
 
 
 def POST_register(request):
