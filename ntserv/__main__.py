@@ -34,6 +34,7 @@ from .calculate import (
     GET_calc_lblimits,
     GET_nutrients,
 )
+from .controllers.sync import OPT_sync
 from .libserver import Request, home_page_text, self_route_rules
 from .shop import (
     GET_categories,
@@ -47,7 +48,6 @@ from .shop import (
     POST_shipping_esimates,
     POST_validate_addresses,
 )
-from .controllers.sync import OPT_sync
 from .utils.cache import reload
 
 # Load SQL cache in-memory

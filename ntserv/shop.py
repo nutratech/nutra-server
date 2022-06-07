@@ -20,6 +20,7 @@ from .libserver import (
 )
 from .postgres import psql
 from .settings import USPS_API_KEY
+from .utils import cache
 from .utils.auth import (
     AUTH_LEVEL_BASIC,
     AUTH_LEVEL_FULL_ADMIN,
@@ -27,7 +28,6 @@ from .utils.auth import (
     auth,
     check_request,
 )
-from .utils import cache
 
 # Set USPS API key
 usps = USPSApi(USPS_API_KEY)
@@ -141,7 +141,7 @@ def POST_shipping_esimates(request):
             c
             for c in cache.shipping_containers.values()
             if " ".join([c["courier"], c["method"], c["container"]])
-               == smallest_bin.name
+            == smallest_bin.name
         ),
         None,
     )

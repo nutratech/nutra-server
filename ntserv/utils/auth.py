@@ -1,5 +1,5 @@
-from datetime import datetime
 import traceback
+from datetime import datetime
 
 import bcrypt
 import jwt

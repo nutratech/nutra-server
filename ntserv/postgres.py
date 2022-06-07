@@ -18,6 +18,7 @@ def build_con():
             host=PSQL_HOST,
             port="5432",
             options=f"-c search_path={PSQL_SCHEMA}",
+            connect_timeout=8,
         )
 
         print(f"[Connected to Postgres DB]    ${_url}")
