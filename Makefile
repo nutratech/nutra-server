@@ -47,7 +47,7 @@ _lint:
 	isort --diff --check $(LINT_LOCS)
 	black --check $(LINT_LOCS)
 	# lint RST (last param is search term, NOT ignore)
-	doc8 --ignore-path *venv .mypy* *.rst
+	doc8 --quiet --ignore-path *venv .mypy* *.rst
 	# lint YAML
 	yamllint $(YAML_LOCS)
 	# lint Python
