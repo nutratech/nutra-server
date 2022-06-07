@@ -1,8 +1,14 @@
 import psycopg2
 import psycopg2.extras
 
-from .libserver import Response as _Response
-from .settings import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
+from ntserv.libserver import Response as _Response
+from ntserv.settings import (
+    PSQL_DATABASE,
+    PSQL_HOST,
+    PSQL_PASSWORD,
+    PSQL_SCHEMA,
+    PSQL_USER,
+)
 
 _url = f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}"
 
@@ -21,10 +27,11 @@ def build_con():
             connect_timeout=8,
         )
 
-        print(f"[Connected to Postgres DB]    ${_url}")
+        print(f"[Connected to Postgres DB]    {_url}")
         print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
         return con
     except psycopg2.OperationalError as err:
+        print(f"WARN: postgres error: {repr(err)}")
         print(err)
         return None
 
@@ -38,7 +45,7 @@ def psql(query, params=None):
     try:
         cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
     except AttributeError as err:
-        print(err)
+        print(f"WARN: postgres error: {repr(err)}")
         return PgResult(query=query, rows=[])
 
     # Print query

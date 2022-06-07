@@ -36,24 +36,23 @@ _deps:
 deps: _venv _deps	## Install requirements
 
 LINT_LOCS := ntserv/ server.py
-YAML_LOCS := .*.yml
-# NOTE: yamllint 	ntclient/ntsqlite/.travis.yml ? (submodule)
-# NOTE: doc8 		ntclient/ntsqlite/README.rst  ? (submodule)
+YAML_LOCS := .*.yml .github/
 .PHONY: _lint
 _lint:
 	# check formatting: Python
-	pycodestyle --max-line-length=99 --statistics $(LINT_LOCS)
+	pycodestyle --max-line-length=88 --statistics $(LINT_LOCS)
 	autopep8 --recursive --diff --max-line-length 88 --exit-code $(LINT_LOCS)
 	isort --diff --check $(LINT_LOCS)
 	black --check $(LINT_LOCS)
 	# lint RST (last param is search term, NOT ignore)
-	doc8 --ignore-path *venv .mypy* *.rst
+	doc8 --quiet --ignore-path *venv .mypy* *.rst
 	# lint YAML
 	yamllint $(YAML_LOCS)
 	# lint Python
 	bandit -q -c .banditrc -r $(LINT_LOCS)
 	mypy $(LINT_LOCS)
-	flake8 $(LINT_LOCS)
+	# failing lints, ignore errors for now
+	flake8 --statistics --doctests $(LINT_LOCS)
 	pylint $(LINT_LOCS)
 
 .PHONY: lint

@@ -1,6 +1,6 @@
-from ..libserver import Success200Response
-from ..services.psql.sync import sql_unsynced_rows, sql_update_entities
-from ..utils.auth import AUTH_LEVEL_BASIC, auth
+from ntserv.libserver import Success200Response
+from ntserv.services.psql.sync import sql_unsynced_rows, sql_update_entities
+from ntserv.utils.auth import AUTH_LEVEL_BASIC, auth
 
 
 @auth

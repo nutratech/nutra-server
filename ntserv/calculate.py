@@ -26,22 +26,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import math
-from datetime import datetime
 
 from tabulate import tabulate
 
-from .libserver import Success200Response
-from .services.calculate import (
+from ntserv.libserver import Success200Response
+from ntserv.services.calculate import (
     bmr_cunningham,
     bmr_harris_benedict,
     bmr_katch_mcardle,
     bmr_mifflin_st_jeor,
 )
-from .utils import cache
+from ntserv.utils import cache
 
 
 def GET_nutrients(request, response_type="JSON"):
-    nutrients = list(cache.nutrients.values())
+    nutrients = list(cache.NUTRIENTS.values())
 
     if response_type == "JSON":
         return Success200Response(data=nutrients)
@@ -105,7 +104,10 @@ def GET_calc_bmr_katch_mcardle(request):
 
 
 def GET_calc_bmr_cunningham(request):
-    """Source:  <https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture>"""
+    """
+    Source:
+        <https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture>
+    """
     body = request.json
 
     # {'LIGHT': 0.3, 'MODERATE': 0.4, 'HEAVY': 0.5}
@@ -128,12 +130,20 @@ def GET_calc_bmr_mifflin_st_jeor(request):
     Activity Factor
     ---------------
     0.200 = sedentary (little or no exercise)
-    0.375 = lightly active (light exercise/sports 1-3 days/week, approx. 590 Cal/day)
-    0.550 = moderately active (moderate exercise/sports 3-5 days/week, approx. 870 Cal/day)
-    0.725 = very active (hard exercise/sports 6-7 days a week, approx. 1150 Cal/day)
-    0.900 = extra active (very hard exercise/sports and physical job, approx. 1580 Cal/day)
 
-    Source: <http://www.myfeetinmotion.com/mifflin-st-jeor-equation/>
+    0.375 = lightly active
+        (light exercise/sports 1-3 days/week, approx. 590 Cal/day)
+
+    0.550 = moderately active
+        (moderate exercise/sports 3-5 days/week, approx. 870 Cal/day)
+
+    0.725 = very active
+        (hard exercise/sports 6-7 days a week, approx. 1150 Cal/day)
+
+    0.900 = extra active
+        (very hard exercise/sports and physical job, approx. 1580 Cal/day)
+
+    Source: <https://www.myfeetinmotion.com/mifflin-st-jeor-equation/>
     """
     body = request.json
 

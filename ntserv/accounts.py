@@ -3,36 +3,25 @@ import uuid
 
 import bcrypt
 
-from .libserver import (
+from ntserv.libserver import (
     BadRequest400Response,
     MultiStatus207Response,
     NotImplemented501Response,
-    Response,
     Success200Response,
     Unauthenticated401Response,
     slack_msg,
 )
-from .postgres import psql
-from .utils.account import (
+from ntserv.postgres import psql
+from ntserv.utils.account import (
     cmp_pass,
     send_activation_email,
     user_id_from_unver_email,
-    user_id_from_username,
     user_id_from_username_or_email,
 )
-from .utils.auth import (
-    AUTH_LEVEL_BASIC,
-    AUTH_LEVEL_READ_ONLY,
-    AUTH_LEVEL_UNAUTHED,
-    AUTH_LEVEL_UNCONFIRMED,
-    auth,
-    issue_jwt_token,
-    jwt_token,
-)
+from ntserv.utils.auth import AUTH_LEVEL_UNCONFIRMED, auth, issue_jwt_token
 
 
 def POST_register(request):
-
     # Parse incoming request
     body = request.json
     email = body["email"]
@@ -50,10 +39,13 @@ def POST_register(request):
 
     ##################
     # Email (required)
-    if not re.match(
-        r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$""",
-        email,
-    ):
+
+    regex = (
+        r"""^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[["""
+        r"""0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+["""
+        r"""a-zA-Z]{2,}))$"""
+    )
+    if not re.match(regex, email):
         return BadRequest400Response("Email address not recognizable")
     # Allow "guest" registration with email only
     # Email exists already?
@@ -68,7 +60,8 @@ def POST_register(request):
         or not re.match("^[0-9a-z_]+$", username)
     ):
         return BadRequest400Response(
-            "Username must be 6-18 chars, and contain only lowercase letters, numbers, and underscores"
+            "Username must be 6-18 chars, and contain "
+            "only lowercase letters, numbers, and underscores"
         )
     ##########
     # Password
@@ -82,7 +75,8 @@ def POST_register(request):
         or not re.findall("[A-Z]", password)
     ):
         return BadRequest400Response(
-            "Password must be 6-40 chars long, and contain an uppercase, a lowercase, and a special character"
+            "Password must be 6-40 chars long, and contain "
+            "an uppercase, a lowercase, and a special character"
         )
 
     # -------------------------------------
@@ -131,7 +125,6 @@ def POST_register(request):
 
 
 def POST_login(request):
-
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
@@ -153,6 +146,9 @@ def POST_login(request):
 
 
 def POST_v2_login(request):
+    def issue_oauth_token(*args):
+        # TODO: complete this in another module
+        return None, None, None
 
     email = request.json["email"]
     password = request.json["password"]
@@ -177,8 +173,7 @@ def POST_v2_login(request):
         return Success200Response(
             "Logged in", data={"token": token, "auth-level": auth_level}
         )
-    else:
-        BadRequest400Response(error)
+    return BadRequest400Response(error)
 
 
 @auth
@@ -189,7 +184,6 @@ def GET_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 
 def GET_confirm_email(request):
-
     # TODO: redirect code with user-friendly, non-JSON output
 
     email = request.args["email"]
@@ -216,11 +210,27 @@ def GET_confirm_email(request):
     # ---------------------
     # TODO: transactional `block()`
     pg_result = psql(
-        "UPDATE emails SET activated='t' WHERE user_id=%s AND activated='f' RETURNING user_id",
+        """
+UPDATE
+  emails
+SET
+  activated = 't'
+WHERE
+  user_id = %s
+  AND activated = 'f'
+RETURNING
+  user_id
+        """,
         [user_id],
     )
     pg_result = psql(
-        "DELETE FROM tokens WHERE user_id=%s AND type='EMAIL_TOKEN_ACTIVATE' RETURNING user_id",
+        """
+DELETE FROM tokens
+WHERE user_id = %s
+  AND TYPE = 'EMAIL_TOKEN_ACTIVATE'
+RETURNING
+  user_id
+        """,
         [user_id],
     )
     # TODO: send welcome email?
@@ -242,7 +252,6 @@ def GET_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 @auth
 def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-
     password_old = request.args["password_old"]
     password = request.args["password"]
     password_confirm = request.args["password_confirm"]
@@ -286,7 +295,12 @@ def POST_report(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     report_message = request.json["report_message"]
 
     psql(
-        "INSERT INTO reports (user_id, report_type, report_message) VALUES (%s, %s, %s) RETURNING user_id",
+        """
+INSERT INTO reports (user_id, report_type, report_message)
+  VALUES (%s, %s, %s)
+RETURNING
+  user_id
+        """,
         [user_id, report_type, report_message],
     )
 

@@ -4,8 +4,8 @@ from email.message import EmailMessage
 
 import bcrypt
 
-from ..postgres import psql
-from ..settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
+from ntserv.postgres import psql
+from ntserv.settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 
 
 # ----------------------
@@ -65,7 +65,10 @@ def email(recipient, subject, body):
     # Create a secure SSL context
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        # with smtplib.SMTP_SSL("gameguru.heliohost.org", port, context=context) as server:
+        # with smtplib.SMTP_SSL(
+        #     "gameguru.heliohost.org", port, context=context
+        # ) as server:
+
         # Login and send
         server.login(PROD_EMAIL, PROD_EMAIL_PASS)
         # server.login("_mainaccount@gameguru.heliohost.org", PROD_EMAIL_PASS)
@@ -74,10 +77,11 @@ def email(recipient, subject, body):
 
 
 def send_activation_email(recipient, token):
-    """Sends an onboarding email"""
+    """Sends an on-boarding email"""
 
     email(
         recipient,
         subject="Activate your Nutra account!",
-        body=f"Click the link to activate your account: {SERVER_HOST}/email/confirm?email={recipient}&token={token}",
+        body="Click the link to activate your account: "
+        f"{SERVER_HOST}/email/confirm?email={recipient}&token={token}",
     )

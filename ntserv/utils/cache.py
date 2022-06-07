@@ -3,25 +3,27 @@ from ntserv.postgres import build_con, psql
 # ---------------
 # Cache
 # ---------------
-users = {}
-shipping_containers = {}
-products = {}
-variants = {}
+USERS = {}
+SHIPPING_CONTAINERS = {}
+PRODUCTS = {}
+VARIANTS = {}
 
-nutrients = {}
-nut_data = {}
-food_des = {}
-servings = {}
-servings_food = {}
-fdgrp = {}
-data_src = {}
+NUTRIENTS = {}
 
 
-# ---------------
-# Reload
-# ---------------
+# nut_data = {}
+# food_des = {}
+# servings = {}
+# servings_food = {}
+# fdgrp = {}
+# data_src = {}
+
+
 def reload():
-    global users, shipping_containers, products, variants, nutrients, food_des, servings, servings_food, fdgrp, data_src
+    # pylint: disable=global-statement
+    global USERS, SHIPPING_CONTAINERS, PRODUCTS, VARIANTS, NUTRIENTS
+    # pylint: disable=global-statement
+    # global food_des, servings, servings_food, fdgrp, data_src
 
     con = build_con()
     if not con:
@@ -29,16 +31,16 @@ def reload():
         return
 
     pg_result = psql("SELECT * FROM users()")
-    users = {u["id"]: u for u in pg_result.rows}
+    USERS = {u["id"]: u for u in pg_result.rows}
 
     pg_result = psql("SELECT * FROM shipping_containers")
-    shipping_containers = {c["id"]: c for c in pg_result.rows}
+    SHIPPING_CONTAINERS = {c["id"]: c for c in pg_result.rows}
 
     pg_result = psql("SELECT * FROM products()")
-    products = {x["id"]: x for x in pg_result.rows}
+    PRODUCTS = {x["id"]: x for x in pg_result.rows}
 
     pg_result = psql("SELECT * FROM variants")
-    variants = {x["id"]: x for x in pg_result.rows}
+    VARIANTS = {x["id"]: x for x in pg_result.rows}
 
     pg_result = psql("SELECT * FROM nutr_def")
-    nutrients = {n["id"]: n for n in pg_result.rows}
+    NUTRIENTS = {n["id"]: n for n in pg_result.rows}

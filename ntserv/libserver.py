@@ -7,8 +7,8 @@ import requests
 from tabulate import tabulate
 from werkzeug.exceptions import BadRequestKeyError
 
-from . import __heroku__, __version__
-from .settings import SLACK_TOKEN
+from ntserv import __heroku__, __version__
+from ntserv.settings import SLACK_TOKEN
 
 
 def Request(func, req, response_type="JSON"):
@@ -109,11 +109,9 @@ def Text(text=None):
     return text
 
 
-"""
-------------------------
-Helper functions
-------------------------
-"""
+# ------------------------
+# Helper functions
+# ------------------------
 
 
 def slack_msg(msg):
@@ -146,8 +144,25 @@ def slack_msg(msg):
 def home_page_text(url_map):
     """Renders <pre></pre> compatible HTML home-page text"""
 
-    email_link = '<a href="mailto:nutratracker@gmail.com" target="_blank" rel="noopener">nutratracker@gmail.com</a>'
-    licsn_link = '<a href="https://www.gnu.org/licenses" target="_blank" >https://www.gnu.org/licenses</a>'
+    email_link = (
+        '<a href="mailto:nutratracker@gmail.com" '
+        'target="_blank" rel="noopener">nutratracker@gmail.com</a>'
+    )
+
+    licsn_link = (
+        '<a href="https://www.gnu.org/licenses" '
+        'target="_blank" >https://www.gnu.org/licenses</a>'
+    )
+
+    src_link = (
+        "<a href=https://github.com/gamesguru/nutra-server "
+        'target="blank">https://github.com/gamesguru/nutra-server</a>'
+    )
+    prod_app = (
+        "<a href=https://nutra-web.herokuapp.com "
+        'target="blank">https://nutra-web.herokuapp.com</a>'
+    )
+
     return f"""
 Welcome to nutra-server (v{__version__})
 heroku {__heroku__[0]}, commit {__heroku__[1]} [{__heroku__[2]}]
@@ -156,8 +171,8 @@ heroku {__heroku__[0]}, commit {__heroku__[1]} [{__heroku__[2]}]
 An open-sourced health and fitness app from Nutra, LLC.
 Track obscure nutrients and stay healthy with Python and PostgreSQL!
 
-Source code:    &lt<a href=https://github.com/gamesguru/nutra-server target="blank">https://github.com/gamesguru/nutra-server</a>&gt
-Production app: &lt<a href=https://nutra-web.herokuapp.com target="blank">https://nutra-web.herokuapp.com</a>&gt
+Source code:    &lt{src_link}&gt
+Production app: &lt{prod_app}&gt
 
 --------------------------------------------------------------------
 LICENSE & COPYING NOTICE
