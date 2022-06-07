@@ -30,7 +30,7 @@ WEB_HOST = (
 )
 
 # PostgreSQL
-PSQL_DATABASE = os.getenv("PSQL_DB_NAME", "nutra")
+PSQL_DATABASE = os.getenv("PSQL_DB_NAME", "nt")
 PSQL_SCHEMA = "nt"
 
 PSQL_USER = os.getenv("PSQL_USER", getpass.getuser())

@@ -19,7 +19,7 @@ NUTRIENTS = {}
 # data_src = {}
 
 
-def reload():
+def reload() -> None:
     # pylint: disable=global-statement
     global USERS, SHIPPING_CONTAINERS, PRODUCTS, VARIANTS, NUTRIENTS
     # pylint: disable=global-statement

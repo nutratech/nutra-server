@@ -5,15 +5,19 @@
 .DS_Store
 *.swp
 
-# Our files
+# IDE folders
 .vscode/
 .idea/
-Pipfile*
-tmp/
 
-####################
-## Python Ignores ##
-####################
+# Logging and other files
+tmp/
+*.out
+.env*
+
+
+# ------------------
+# Python Ignores
+# ------------------
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

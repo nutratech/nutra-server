@@ -1,21 +1,48 @@
 ---
-name: test-python
+name: test
 "on":
-  pull_request: {}
-  push: { branches: [master] }
+  push: {}
 
 jobs:
-  test-python:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Reload Cache / pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install requirements
         # NOTE: container lacks OS dist for testresources/launchpadlib
         run: |
           pip install testresources==2.0.1
           make _deps
+          pip install -r ntdb/requirements.txt
 
-      - name: Test
+      - name: Start database
+        run: |
+          sudo service postgresql start
+          sudo -u postgres psql -c 'CREATE DATABASE nt'
+          sudo -u postgres psql -c 'CREATE ROLE runner'
+          sudo -u postgres psql -c "ALTER USER runner PASSWORD 'password'"
+          sudo -u postgres psql -c 'ALTER USER runner WITH LOGIN SUPERUSER'
+          sudo -u postgres psql -c 'ALTER DATABASE nt OWNER TO runner'
+          psql -l
+          python ntdb/sql/pg.py r
+          # Select versions, not a pass/fail test but still viewable
+          # NOTE: default schema is NOT set during course of the GitHub action
+          psql -d nt -c 'SELECT * FROM nt.version'
+
+      - name: Run Tests
         run: make _test
+
+      - name: Run linters
+        run: make _lint

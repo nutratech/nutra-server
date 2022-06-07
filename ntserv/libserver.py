@@ -20,20 +20,24 @@ def Request(func, req, response_type="JSON"):
         else:  # HTML
             return func(request=req, response_type=response_type)
 
-    except BadRequestKeyError as e:
-        error_msg = f"{e.name}: Missing arguments: {e.args}"
+    except BadRequestKeyError as err_bad_req:
+        error_msg = f"{err_bad_req.name}: Missing arguments: {err_bad_req.args}"
         return BadRequest400Response(error_msg)
 
-    except Exception as e:
-        return ServerError500Response(e, req)
+    except Exception as err_generic:
+        return ServerError500Response(err_generic, req)
 
 
 class Response:
-    def __new__(self, message=None, data={}, code=200):
+    # TODO: resolve mypy error about __new__() Response not matching tuple
+    def __new__(cls, message=None, data=None, code=-1) -> tuple:  # type: ignore
         """Creates a response object for the client"""
 
         if message:
             data["message"] = message
+
+        if not data:
+            data = {}
 
         return (
             {
@@ -51,38 +55,38 @@ class Response:
 
 
 class Success200Response(Response):
-    def __new__(self, message=None, data={}):
-        return super().__new__(self, message, data)
+    def __new__(cls, message=None, data=None, code=-1):
+        return super().__new__(cls, message, data, code=200)
 
 
 class MultiStatus207Response(Response):
-    def __new__(self, message=None, data={}):
-        return super().__new__(self, message, data, code=207)
+    def __new__(cls, message=None, data=None, code=-1):
+        return super().__new__(cls, message, data, code=207)
 
 
 class BadRequest400Response(Response):
-    def __new__(self, error_msg):
-        return super().__new__(self, data={"error": error_msg}, code=400)
+    def __new__(cls, message=None, data=None, code=-1):
+        return super().__new__(cls, data={"error": message}, code=400)
 
 
 class Unauthenticated401Response(Response):
-    def __new__(self, error_msg):
-        return super().__new__(self, data={"error": error_msg}, code=401)
+    def __new__(cls, message=None, data=None, code=-1):
+        return super().__new__(cls, data={"error": message}, code=401)
 
 
 class Forbidden403Response(Response):
-    def __new__(self, error_msg):
-        return super().__new__(self, data={"error": error_msg}, code=403)
+    def __new__(cls, message=None, data=None, code=-1):
+        return super().__new__(cls, data={"error": message}, code=403)
 
 
 class ServerError500Response(Response):
-    def __new__(self, exception, request):
+    def __new__(cls, exception, request):
         # trace = self.friendly_stack(self, exception)
         # TODO: rethink slack workflow
         # self.dispatch_slack_msg(self, request, trace)
         return super().__new__(
             # TODO: rethink structure of 500 response? include exception type?
-            self,
+            cls,
             data={
                 "error": "General server error",
                 "exception": repr(exception),
@@ -101,8 +105,8 @@ class ServerError500Response(Response):
 
 
 class NotImplemented501Response(Response):
-    def __new__(self, message="Not implemented", data={}):
-        return super().__new__(self, message, data, code=501)
+    def __new__(cls, message=None, data=None, code=-1):
+        return super().__new__(cls, message="Not Implemented", data=data, code=501)
 
 
 def Text(text=None):
@@ -212,8 +216,8 @@ def self_route_rules(app):
 
     rules = []
 
-    for r in map_rules:
-        methods = set(r.methods)
+    for route in map_rules:
+        methods = set(route.methods)
 
         # Remove default methods
         for method in ["HEAD", "OPTIONS"]:
@@ -221,8 +225,8 @@ def self_route_rules(app):
                 methods.remove(method)
 
         # More filtering
-        if str(r) != "/static/<path:filename>":
-            rule = r.rule.replace("<", "&lt").replace(">", "&gt")
+        if str(route) != "/static/<path:filename>":
+            rule = route.rule.replace("<", "&lt").replace(">", "&gt")
             rule = (str(methods), rule)
             rules.append(rule)
 

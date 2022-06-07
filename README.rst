@@ -2,12 +2,32 @@
  nutra-server
 **************
 
-.. image:: https://api.travis-ci.com/gamesguru/nutra-server.svg?branch=master
-    :target: https://travis-ci.com/gamesguru/nutra-server
+.. image:: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml/badge.svg
+    :target: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml
+    :alt: Test status unknown|
+.. image:: https://github.com/gamesguru/nutra-server/actions/workflows/lint.yml/badge.svg
+    :target: https://github.com/gamesguru/nutra-server/actions/workflows/lint.yml
+    :alt: Lint status unknown|
+.. image:: https://badgen.net/badge/code%20style/black/000
+    :target: https://github.com/ambv/black
+    :alt: Code style: black|
+.. image:: https://badgen.net/pypi/license/nutra
+    :target: https://www.gnu.org/licenses/gpl-3.0.en.html
+    :alt: License GPL-3
 
-Backend server for `nutra` clients.
+Backend server for ``nutra`` clients.
 
 See database: https://github.com/gamesguru/ntdb
+
+See cli: https://github.com/nutratech/cli
+
+Dependencies
+############
+
+You will need to install the following, or newer.
+
+- Python 3.7.0
+- Postgres 12
 
 Initialize Server
 #################
@@ -16,17 +36,20 @@ Initialize with:
 
 .. code-block:: bash
 
-    pip3 install -r requirements.txt
+    make deps
 
 Initialize Database
 ###################
 
-These env vars can also be configured in a ``.env`` file
-inside the ``sql`` folder.
+**NOTE:** This is outdated.
+
+These env vars can also be configured in a ``.env`` file inside the
+``sql`` folder.
+
 
 A ``.env`` file is recommended in the ``server`` folder root as well.
 
-**Option 1** point to HelioHost via PostgreSQL env vars:
+**Option 1** point to HelioHost (read-only instance) via PostgreSQL env vars:
 
 .. code-block:: bash
 
@@ -71,6 +94,17 @@ Run (Remote DB)
 ###############
 
 TODO: this
+
+Linting and Formatting
+######################
+
+The code is formatted with ``black``, ``autopep8``, and ``isort``.
+
+You can format with ``make format``
+
+The code is also linted with a variety of tools, see the ``Makefile``
+
+You can lint with ``make lint``
 
 Heroku Config (env) Variables
 #############################

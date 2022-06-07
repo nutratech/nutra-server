@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 
+from ntserv import __db_target_ntdb__
 from ntserv.libserver import Response as _Response
 from ntserv.settings import (
     PSQL_DATABASE,
@@ -12,8 +13,47 @@ from ntserv.settings import (
 
 _url = f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:5432/{PSQL_DATABASE}"
 
+CON = None
 
-def build_con():
+
+class PgResult:
+    def __init__(self, query, rows=None, msg=None, err_msg=None) -> None:
+        """Defines a convenient result from `psql()`"""
+
+        self.query = query
+
+        self.rows = rows
+        self.msg = msg
+
+        self.err_msg = err_msg
+
+    @property
+    def Response(self) -> _Response:
+        """Used ONLY for ERRORS"""
+
+        return _Response(data={"error": self.err_msg}, code=400)
+
+    def set_rows(self, fetchall) -> None:
+        """Sets the DictCursor rows based on cur.fetchall()"""
+
+        self.rows = []
+
+        if len(fetchall):
+            keys = list(fetchall[0]._index.keys())
+
+            # Build dict from named tuple
+            for entry in fetchall:
+                row = {}
+                for i, element in enumerate(entry):
+                    key = keys[i]
+                    row[key] = element
+                self.rows.append(row)
+
+            # Set first row
+            self.row = self.rows[0]
+
+
+def build_con() -> psycopg2._psycopg.connection:
     # TODO: is this best?
     try:
         # Initialize connection
@@ -29,18 +69,25 @@ def build_con():
 
         print(f"[Connected to Postgres DB]    {_url}")
         print(f"[psql] USE SCHEMA {PSQL_SCHEMA};")
+
         return con
     except psycopg2.OperationalError as err:
         print(f"WARN: postgres error: {repr(err)}")
         print(err)
+
+        # noinspection PyTypeChecker
         return None
 
 
-def psql(query, params=None):
+def psql(query, params=None) -> PgResult:
+    # pylint: disable=global-statement
+    global CON
     # TODO: revamp this, tighten ship, make more versatile for DB import,
     #  and decide on mandatory RETURNING for INSERTS
 
-    con = build_con()
+    if CON is None:
+        CON = build_con()
+    con = CON
     # TODO: is this best?
     try:
         cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -95,38 +142,6 @@ def psql(query, params=None):
     return result
 
 
-class PgResult:
-    def __init__(self, query, rows=None, msg=None, err_msg=None):
-        """Defines a convenient result from `psql()`"""
-
-        self.query = query
-
-        self.rows = rows
-        self.msg = msg
-
-        self.err_msg = err_msg
-
-    @property
-    def Response(self):
-        """Used ONLY for ERRORS"""
-
-        return _Response(data={"error": self.err_msg}, code=400)
-
-    def set_rows(self, fetchall):
-        """Sets the DictCursor rows based on cur.fetchall()"""
-
-        self.rows = []
-
-        if len(fetchall):
-            keys = list(fetchall[0]._index.keys())
-
-            # Build dict from named tuple
-            for entry in fetchall:
-                row = {}
-                for i, element in enumerate(entry):
-                    key = keys[i]
-                    row[key] = element
-                self.rows.append(row)
-
-            # Set first row
-            self.row = self.rows[0]
+def verify_db_version_compat() -> bool:
+    pg_result = psql("SELECT * FROM version")
+    return __db_target_ntdb__ == pg_result.row["version"]

@@ -7,6 +7,10 @@ import bcrypt
 from ntserv.postgres import psql
 from ntserv.settings import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
 
+# TODO: @psql(query="", return='id')
+#       @psql(query="", return='all')
+#  annotation to support reducing "those three lines" down to 1 annotation
+
 
 # ----------------------
 # get user_id funcs
