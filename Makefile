@@ -36,9 +36,7 @@ _deps:
 deps: _venv _deps	## Install requirements
 
 LINT_LOCS := ntserv/ server.py
-YAML_LOCS := .*.yml
-# NOTE: yamllint 	ntclient/ntsqlite/.travis.yml ? (submodule)
-# NOTE: doc8 		ntclient/ntsqlite/README.rst  ? (submodule)
+YAML_LOCS := .*.yml .github/
 .PHONY: _lint
 _lint:
 	# check formatting: Python
