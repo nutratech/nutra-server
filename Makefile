@@ -24,11 +24,13 @@ _venv:
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 
 PIP := python -m pip
-PIP_REQS := requirements.txt
+REQS := requirements.txt
+REQS_DEV := requirements-dev.txt
 .PHONY: _deps
 _deps:
 	- $(PIP) install wheel
-	$(PIP) install -r $(PIP_REQS)
+	$(PIP) install -r $(REQS)
+	$(PIP) install -r $(REQS_DEV)
 
 .PHONY: deps
 deps: _venv _deps	## Install requirements
