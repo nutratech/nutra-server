@@ -108,5 +108,6 @@ py/uninstall: _venv py/_uninstall	## pip uninstall nutra
 
 .PHONY: clean
 clean:	## Clean up __pycache__ and leftover bits
-	rm -rf .mypy_cache/
-	find ntserv/ -name __pycache__ | xargs rm -rf
+	rm -f .coverage
+	rm -rf .mypy_cache/ .pytest_cache/
+	find ntserv/ -name __pycache__ .pytest_cache | xargs rm -rf
