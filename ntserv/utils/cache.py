@@ -21,7 +21,8 @@ data_src = {}
 # Reload
 # ---------------
 def reload():
-    global users, shipping_containers, products, variants, nutrients, food_des, servings, servings_food, fdgrp, data_src
+    global users, shipping_containers, products, variants
+    global nutrients, food_des, servings, servings_food, fdgrp, data_src
 
     con = build_con()
     if not con:

@@ -43,7 +43,8 @@ usps = USPSApi(USPS_API_KEY)
 #     "country": "US",
 #     # "phone": "+1 313 259 3219.",
 #     # "email": "postalone@email.usps.gov",
-#     # "metadata": "Neither snow nor rain nor heat nor gloom of night stays these couriers from the swift completion of their appointed rounds",
+#     # "metadata": "Neither snow nor rain nor heat nor gloom of night stays" \
+#     # "these couriers from the swift completion of their appointed rounds",
 # }
 
 address_from = Address(
@@ -98,42 +99,50 @@ def POST_shipping_esimates(request):
     # variants = get_variants()
 
     for c in cache.shipping_containers.values():
-        l = c["dimensions"][0] * 2.54  # inches --> cm
-        w = c["dimensions"][1] * 2.54
-        h = c["dimensions"][2] * 2.54
+        _l = c["dimensions"][0] * 2.54  # inches --> cm
+        _w = c["dimensions"][1] * 2.54
+        _h = c["dimensions"][2] * 2.54
         weight = c["weight_max"] * 454  # pounds -->
         tag = " ".join([c["courier"], c["method"], c["container"]])
-        bin = Bin(tag, l, w, h, weight)
-        print(f"packer.add_bin(Bin('{tag}', {l}, {w}, {h}, {weight}))")
-        packer.add_bin(bin)
+        _bin = Bin(tag, _l, _w, _h, weight)
+        print(f"packer.add_bin(Bin('{tag}', {_l}, {_w}, {_h}, {weight}))")
+        packer.add_bin(_bin)
 
     items_ = []
     for i in items:
         # TODO - include stock/inventory check at this point, or earlier in shop
         i = cache.variants[i]
-        l = i["dimensions"][0]  # cm
-        w = i["dimensions"][1]
-        h = i["dimensions"][2]
+
+        _l = i["dimensions"][0]  # cm
+        _w = i["dimensions"][1]
+        _h = i["dimensions"][2]
+
         if i["unit"] == "g":
             weight = i["quantity"]  # grams
         elif i["unit"] == "ct":
             weight = i["quantity"] * 1000 * i["mg_per_ct"] + 100  # grams
         else:
             weight = i["grams"]
+
         denomination = f"{i['quantity']}{i['unit']} [{i['exemplification']}]"
-        item = Item(denomination, l, w, h, weight)
-        print(
-            f"packer.add_item(Item('{denomination}', {round(l, 3)}, {round(w, 3)}, {round(h, 3)}, {round(weight, 3)}))"
+        item = Item(denomination, _l, _w, _h, weight)
+
+        item_txt = (
+            f"'{denomination}', {round(_l, 3)}, {round(_w, 3)},"
+            f"{round(_h, 3)}, {round(weight, 3)}"
         )
+        print(f"packer.add_item(Item(${item_txt}))")
+
         items_.append(item)
         packer.add_item(item)
 
     packer.pack(bigger_first=True)
 
-    bins = [bin for bin in packer.bins if not bin.unfitted_items]
+    bins = [_bin for _bin in packer.bins if not _bin.unfitted_items]
 
     # Make solution customer friendly
-    # TODO: less simplistic handling than min(volume), e.g. international, different shippint speeds, costs.
+    # TODO: less simplistic handling than min(volume),
+    #  e.g. international, different shippint speeds, costs.
     smallest_bin = min(bins, key=lambda b: b.depth * b.height * b.width)
     solution = next(
         (
@@ -194,8 +203,9 @@ def OPT_addresses(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
         pg_result = psql(
             """
-INSERT INTO addresses (user_id, company_name, street_address, apartment_unit, country_id, state_id, zip, name_first, name_last, phone, email)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+INSERT INTO addresses (user_id, company_name, street_address, apartment_unit,
+  country_id, state_id, zip, name_first, name_last, phone, email)
+  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 RETURNING
     id""",
             [
@@ -212,8 +222,8 @@ RETURNING
                 email,
             ],
         )
-        id = pg_result.row["id"]
-        return Success200Response(data={"id": id})
+        address_id = pg_result.row["id"]
+        return Success200Response(data={"id": address_id})
 
     ################
     # Update address
@@ -283,7 +293,13 @@ def POST_orders(request):
 
     # Insert order
     pg_result = psql(
-        "INSERT INTO orders (user_id, email, address_bill, address_ship, shipping_method, shipping_price) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+        """
+INSERT INTO orders (user_id, email, address_bill, address_ship,
+  shipping_method, shipping_price)
+  VALUES (%s, %s, %s, %s, %s, %s)
+RETURNING
+  id
+        """,
         [
             user_id,
             email,
@@ -300,9 +316,15 @@ def POST_orders(request):
         price = psql("SELECT price FROM variants WHERE id=%s", [variant_id]).row[
             "price"
         ]
-        # TODO: handle error, for example change quantity to quanity and see how it fails silently
+        # TODO: handle error, for example change quantity to quanity
+        #  and see how it fails silently
         pg_result = psql(
-            "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
+            """
+INSERT INTO order_items (order_id, variant_id, quantity, price)
+  VALUES (%s, %s, %s, %s)
+RETURNING
+  variant_id
+            """,
             [order_id, variant_id, quantity, price],
         )
     return Success200Response(data={"order_id": order_id})
@@ -344,7 +366,13 @@ def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
         # Insert order
         pg_result = psql(
-            "INSERT INTO orders (user_id, email, address_bill, address_ship, shipping_method, shipping_price) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+            """
+INSERT INTO orders (user_id, email, address_bill, address_ship,
+  shipping_method, shipping_price)
+  VALUES (%s, %s, %s, %s, %s, %s)
+RETURNING
+  id
+            """,
             [
                 user_id,
                 email,
@@ -361,9 +389,15 @@ def OPT_orders(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
             price = psql("SELECT price FROM variants WHERE id=%s", [variant_id]).row[
                 "price"
             ]
-            # TODO: handle error, for example change quantity to quanity and see how it fails silently
+            # TODO: handle error, for example change quantity to quanity
+            #  and see how it fails silently
             pg_result = psql(
-                "INSERT INTO order_items (order_id, variant_id, quantity, price) VALUES (%s, %s, %s, %s) RETURNING variant_id",
+                """
+INSERT INTO order_items (order_id, variant_id, quantity, price)
+  VALUES (% s, % s, % s, % s)
+RETURNING
+  variant_id
+                """,
                 [order_id, variant_id, quantity, price],
             )
         return Success200Response(data={"order_id": order_id})
@@ -457,7 +491,8 @@ def PATCH_orders_admin(request, level=AUTH_LEVEL_FULL_ADMIN, user_id=None):
 
 @auth
 def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
-    # TODO: attach whole `pg_result` object, in case of generic errors. e.g. missing function?
+    # TODO: attach whole `pg_result` object, in case of generic errors.
+    #  e.g. missing function?
 
     # Parse incoming request
     body = request.json
@@ -468,7 +503,12 @@ def POST_products_reviews(request, level=AUTH_LEVEL_BASIC, user_id=None):
     #
     # Post review
     pg_result = psql(
-        "INSERT INTO reviews (user_id, rating, review_text, product_id) VALUES (%s, %s, %s, %s) RETURNING id",
+        """
+INSERT INTO reviews (user_id, rating, review_text, product_id)
+  VALUES (% s, % s, % s, % s)
+RETURNING
+  id
+        """,
         [user_id, rating, review_text, product_id],
     )
 
