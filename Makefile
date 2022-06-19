@@ -85,7 +85,6 @@ _lint:
 	# lint Python
 	bandit -q -c .banditrc -r $(LINT_LOCS)
 	mypy $(LINT_LOCS)
-	# failing lints, ignore errors for now
 	flake8 --statistics --doctests $(LINT_LOCS)
 	pylint $(LINT_LOCS)
 
