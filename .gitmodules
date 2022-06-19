@@ -1,0 +1,3 @@
+[submodule "ntdb"]
+	path = ntdb
+	url = https://github.com/gamesguru/ntdb.git

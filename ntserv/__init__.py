@@ -24,11 +24,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from .utils import heroku
+from ntserv.utils import heroku
+
+PY_MIN_STR = "3.7.0"
 
 __title__ = "nutra-server"
 __version__ = "0.0.2"
 __heroku__ = heroku()
 __author__ = "gamesguru"
+__email__ = "nutratracker@protonmail.com"
 __license__ = "GPL v3"
-__copyright__ = "Copyright 2019-2020 Shane Jaroch"
+__copyright__ = "Copyright 2019-2022 Shane Jaroch"
+__url__ = "https://github.com/gamesguru/nutra-server"
+
+__db_target_ntdb__ = "0.0.38"

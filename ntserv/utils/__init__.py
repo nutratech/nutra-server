@@ -1,7 +1,8 @@
 import os
 
 
-def heroku():
+def heroku() -> tuple:
+    # TODO: remove this entirely?
     try:
         return (
             os.environ["HEROKU_RELEASE_VERSION"],
@@ -9,5 +10,5 @@ def heroku():
             os.environ["HEROKU_RELEASE_CREATED_AT"],
         )
     except KeyError as err:
-        print(repr(err))
+        print(f"WARN: {repr(err)}")
         return None, None, None
