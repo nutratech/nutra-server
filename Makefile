@@ -34,9 +34,10 @@ REQS := requirements.txt
 REQS_DEV := requirements-dev.txt
 .PHONY: _deps
 _deps:
-	- $(PIP) install wheel
-	$(PIP) install -r $(REQS)
-	$(PIP) install -r $(REQS_DEV)
+	$(PIP) install wheel
+	$(PIP) install -r requirements.txt
+	$(PIP) install -r requirements-opt.txt
+	$(PIP) install -r requirements-dev.txt
 
 .PHONY: deps
 deps: _venv	## Install requirements
@@ -53,8 +54,8 @@ IT_HOME := tests/integration/it*
 MIN_COV := 42
 .PHONY: _test
 _test:
-	coverage run --source=$(APP_HOME) -m pytest -v -s -p no:cacheprovider -o log_cli=true $(TEST_HOME)
-	coverage report --fail-under=$(MIN_COV) --show-missing --skip-empty --skip-covered
+	coverage run -m pytest -v -s -p no:cacheprovider -o log_cli=true $(TEST_HOME)
+	coverage report
 
 .PHONY: test
 test: _venv	## Run unit tests
@@ -71,7 +72,7 @@ format: _venv	## Format Python files
 	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
 	black $(LINT_LOCS)
 
-LINT_LOCS := ntserv/ tests/ setup.py
+LINT_LOCS := $(APP_HOME) $(TEST_HOME) setup.py
 YAML_LOCS := .*.yml .github/
 RST_LOCS := *.rst
 .PHONY: _lint
@@ -81,7 +82,7 @@ _lint:
 	autopep8 --recursive --diff --max-line-length 88 --exit-code $(LINT_LOCS)
 	isort --diff --check $(LINT_LOCS)
 	black --check $(LINT_LOCS)
-	# lint RST (last param is search term, NOT ignore)
+	# lint RST
 	doc8 --quiet $(RST_LOCS)
 	# lint YAML
 	yamllint $(YAML_LOCS)
@@ -102,6 +103,8 @@ lint: _lint
 
 .PHONY: run
 run: _venv	## Start the server in debug mode
+	# TODO: actually use DEBUG flag, or similar config
+	#  (What about unit test) from unit test context too... the pytest warnings?
 	python -m ntserv
 
 
