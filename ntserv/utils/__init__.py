@@ -1,10 +1,10 @@
-import subprocess
+import subprocess  # nosec
 
 
 def release() -> tuple:
     def git_cmd(args: str):
         return (
-            subprocess.run(args, capture_output=True, shell=True, check=True)
+            subprocess.run(args.split(), capture_output=True, check=True)  # nosec
             .stdout.decode()
             .rstrip()
         )

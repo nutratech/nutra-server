@@ -48,7 +48,7 @@ deps: _venv _deps	## Install requirements
 APP_HOME := ntserv/
 TEST_HOME := tests/
 IT_HOME := tests/integration/it*
-MIN_COV := 37
+MIN_COV := 42
 .PHONY: _test
 _test:
 	coverage run --source=$(APP_HOME) -m pytest -v -s -p no:cacheprovider -o log_cli=true $(TEST_HOME)

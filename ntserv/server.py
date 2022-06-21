@@ -143,38 +143,38 @@ def post_sync(request):
 # -------------------------
 # Basic DB functions
 # -------------------------
-@app.route("/calc/bodyfat")
-def get_calc_bodyfat(request):
+@app.route("/calc/bodyfat", methods=["POST"])
+def _post_calc_bodyfat(request):
     return Request(GET_calc_bodyfat, request)
 
 
-@app.route("/calc/lblimits")
-def get_calc_lblimits(request):
+@app.route("/calc/lblimits", methods=["POST"])
+def _post_calc_lblimits(request):
     return Request(GET_calc_lblimits, request)
 
 
-@app.route("/calc/bmr")
-def get_calc_bmr(request):
+@app.route("/calc/bmr", methods=["POST"])
+def _post_calc_bmr(request):
     return Request(GET_calc_bmr, request)
 
 
-@app.route("/calc/bmr/katch_mcardle")
-def get_calc_bmr_katch_mcardle(request):
+@app.route("/calc/bmr/katch_mcardle", methods=["POST"])
+def _post_calc_bmr_katch_mcardle(request):
     return Request(GET_calc_bmr_katch_mcardle, request)
 
 
-@app.route("/calc/bmr/cunningham")
-def get_calc_bmr_cunningham(request):
+@app.route("/calc/bmr/cunningham", methods=["POST"])
+def _post_calc_bmr_cunningham(request):
     return Request(GET_calc_bmr_cunningham, request)
 
 
-@app.route("/calc/bmr/mifflin_st_jeor")
-def get_calc_bmr_mifflin_st_jeor(request):
+@app.route("/calc/bmr/mifflin_st_jeor", methods=["POST"])
+def _post_calc_bmr_mifflin_st_jeor(request):
     return Request(GET_calc_bmr_mifflin_st_jeor, request)
 
 
-@app.route("/calc/bmr/harris_benedict")
-def get_calc_bmr_harris_benedict(request):
+@app.route("/calc/bmr/harris_benedict", methods=["POST"])
+def _post_calc_bmr_harris_benedict(request):
     return Request(GET_calc_bmr_harris_benedict, request)
 
 

@@ -36,7 +36,7 @@ _release = release()
 
 __title__ = "nutra-server"
 __module__ = "ntserv"
-__version__ = "0.0.2"
+__version__ = "0.0.3.dev0"
 __release__ = f"{_release[0]}, {_release[1].split()[0]}"
 __author__ = "gamesguru"
 __email__ = "nutratracker@protonmail.com"
