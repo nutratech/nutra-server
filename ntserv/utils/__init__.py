@@ -1,14 +1,23 @@
-import os
+import subprocess
 
 
-def heroku() -> tuple:
-    # TODO: remove this entirely?
-    try:
+def release() -> tuple:
+    def git_cmd(args: str):
         return (
-            os.environ["HEROKU_RELEASE_VERSION"],
-            os.environ["HEROKU_SLUG_COMMIT"][:9],
-            os.environ["HEROKU_RELEASE_CREATED_AT"],
+            subprocess.run(args, capture_output=True, shell=True, check=True)
+            .stdout.decode()
+            .rstrip()
         )
+
+    try:
+        git_sha = git_cmd("git rev-parse --short HEAD")
+        git_commit_date = git_cmd("git show -s --format=%ci")
+
+        return (
+            git_sha,
+            git_commit_date,
+        )
+
     except KeyError as err:
         print(f"WARN: {repr(err)}")
-        return None, None, None
+        return None, None

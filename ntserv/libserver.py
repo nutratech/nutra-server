@@ -8,7 +8,7 @@ import sanic.response
 from tabulate import tabulate
 from werkzeug.exceptions import BadRequestKeyError
 
-from ntserv import __heroku__, __version__
+from ntserv import __release__, __version__
 from ntserv.settings import SLACK_TOKEN
 
 
@@ -47,7 +47,7 @@ class Response(sanic.response.HTTPResponse):
             {
                 "program": "nutra-server",
                 "version": __version__,
-                "release": int(__heroku__[0][1:]) if __heroku__[0] else __heroku__[0],
+                "release": __release__,
                 "datetime": datetime.now().strftime("%c").strip(),
                 "timestamp": round(time.time() * 1000),
                 "status": "OK" if code < 400 else "Failure",
@@ -173,9 +173,8 @@ def home_page_text(url_map):
     )
 
     return f"""
-Welcome to nutra-server (v{__version__})
-heroku {__heroku__[0]}, commit {__heroku__[1]} [{__heroku__[2]}]
-=======================================================
+Welcome to nutra-server (v{__version__}) {__release__}
+========================================================
 
 An open-sourced health and fitness app from Nutra, LLC.
 Track obscure nutrients and stay healthy with Python and PostgreSQL!
