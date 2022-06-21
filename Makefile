@@ -38,7 +38,8 @@ _deps:
 	$(PIP) install -r $(REQS_DEV)
 
 .PHONY: deps
-deps: _venv _deps	## Install requirements
+deps: _venv	## Install requirements
+deps: _deps
 
 
 # ---------------------------------------
@@ -55,7 +56,8 @@ _test:
 	coverage report --fail-under=$(MIN_COV) --show-missing --skip-empty --skip-covered
 
 .PHONY: test
-test: _venv _test	## Run unit tests
+test: _venv	## Run unit tests
+test: _test
 
 
 # ---------------------------------------
@@ -63,7 +65,7 @@ test: _venv _test	## Run unit tests
 # ---------------------------------------
 
 .PHONY: format
-format:	## Format Python files
+format: _venv	## Format Python files
 	isort $(LINT_LOCS)
 	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
 	black $(LINT_LOCS)
@@ -89,7 +91,8 @@ _lint:
 	pylint $(LINT_LOCS)
 
 .PHONY: lint
-lint: _venv _lint	## Lint code and documentation
+lint: _venv	## Lint code and documentation
+lint: _lint
 
 
 # ---------------------------------------
