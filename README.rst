@@ -23,99 +23,77 @@ Dependencies
 
 You will need to install the following, or newer.
 
-- Python 3.7.0
-- Postgres 12
+- Python 3.7.0 (with ``venv`` support)
+- PostgreSQL 12 (with ``dev`` library)
 
 Initialize Server
 #################
 
-Initialize with:
+Initialize with this.
 
-.. code-block:: bash
+::
 
+    make init
     make deps
 
 Initialize Database
 ###################
 
-**NOTE:** This is outdated.
+See ``ntdb/README.rst``.
 
-These env vars can also be configured in a ``.env`` file inside the
-``sql`` folder.
+You can install Postgres, register it as a startup service, and populate data.
 
+Run
+###
 
-A ``.env`` file is recommended in the ``server`` folder root as well.
+::
 
-**Option 1** point to HelioHost (read-only instance) via PostgreSQL env vars:
+    make run
 
-.. code-block:: bash
+**NOTE:** You can also debug from VS Code, or PyCharm.
 
-    export PSQL_DATABASE=nutra_dev
-    export PSQL_USER=nutra_admin
-    export PSQL_PASSWORD=
-    export PSQL_HOST=nutra.heliohost.org
+**NOTE:** You can also set the ``PSQL_*`` vars in ``.env`` and point to a
+remote database instance.
 
-**Option 2** create local db (see ``ntdb`` repo):
-
-.. code-block:: bash
-
-    export PSQL_LOCAL_DB_DIR="/home/$LOGNAME/.pgsql/nutra"
-    mkdir -p $PSQL_LOCAL_DB_DIR
-
-    git clone git@github.com:gamesguru/ntdb.git
-    cd ntdb
-
-    cd sql
-    cp .env.local .env
-    # exit the sql shell by entering \q
-    bash local.sh
-    bash rebuild.sh
-
-Each time you reboot your computer, start the sql server:
-
-.. code-block:: bash
-
-    ./local.sh
-
-Run (Local DB)
-##############
-
-.. code-block:: bash
-
-    python3 server.py
-
-You can also debug from VS Code.
-Install the Python extension and press F5.
-
-Run (Remote DB)
-###############
-
-TODO: this
-
-Linting and Formatting
+Lint, Test, and Format
 ######################
 
 The code is formatted with ``black``, ``autopep8``, and ``isort``.
 
-You can format with ``make format``
+You can format with this.
+
+::
+
+    make format
 
 The code is also linted with a variety of tools, see the ``Makefile``
 
-You can lint with ``make lint``
+You can lint with this.
 
-Heroku Config (env) Variables
-#############################
+::
 
-TODO: update
+    make lint
+
+The code is tested with ``pytest`` and ``coverage``.
+
+The unit tests require a Postgres connection. Run them like this.
+
+::
+
+    make test
+
+Config Variables in ``.env`` file
+#################################
+
+**TODO:** update this to the latest.
 
 .. code-block:: bash
 
-    JWT_SECRET         =
-    ON_HEROKU          = 1
+    JWT_SECRET         = secret
     ON_REMOTE          = 1
-    PROD_EMAIL         = nutratracker@gmail.com
+    PROD_EMAIL         =
     PROD_EMAIL_PASS    =
-    PSQL_DATABASE      = nutra
-    PSQL_USER          = nutra
-    PSQL_PASSWORD      =
-    PSQL_HOST          = nutra.heliohost.org
+    PSQL_DATABASE      = nt
+    PSQL_USER          = $LOGNAME
+    PSQL_PASSWORD      = password
+    PSQL_HOST          = localhost

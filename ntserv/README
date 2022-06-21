@@ -2,10 +2,11 @@ See the GitHub page for more details (url available in __init__.py)
 
 You can run the server with
 
-    python3 server.py
+    make run
 
 or with
 
     python3 -m ntserv
 
 NOTE: You will need to have Postgres running, and configured. See the ntdb docs
+
