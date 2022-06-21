@@ -26,13 +26,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
-from ntserv.utils import release
+from ntserv.utils import release_git_parse
 
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
 PY_MIN_STR = "3.7.0"
 
-_release = release()
+_release = release_git_parse()
 
 __title__ = "nutra-server"
 __module__ = "ntserv"

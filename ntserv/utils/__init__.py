@@ -1,7 +1,7 @@
 import subprocess  # nosec
 
 
-def release() -> tuple:
+def release_git_parse() -> tuple:
     """Gets release info by calling git commands"""
 
     def git_cmd(args: str):
