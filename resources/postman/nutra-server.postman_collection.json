@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "ac8b2de2-2999-4675-9c99-247d8ea4ea63",
 		"name": "nutra-server",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7660653"
 	},
 	"item": [
 		{
@@ -150,9 +151,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Public functions",
@@ -206,9 +205,7 @@
 									},
 									"response": []
 								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "/analyze",
@@ -238,9 +235,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Trainer",
@@ -473,9 +468,7 @@
 									},
 									"response": []
 								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "/trainer/users",
@@ -561,9 +554,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Recipes and customs",
@@ -934,9 +925,7 @@
 									},
 									"response": []
 								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
+							]
 						},
 						{
 							"name": "/favorites",
@@ -1079,12 +1068,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Account",
@@ -1202,9 +1188,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "/register",
@@ -1220,7 +1204,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"jsheener\",\n    \"email\": \"jsheener3@gmail.com\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\",\n    \"x-hashword\": \"0d18d301e9a23a7a593e704fe7b554e3dcba61d0de262eff00ae2b2b2ca3d2fb\"\n}",
+							"raw": "{\n    \"usename\": \"jsheener\",\n    \"email\": \"jsheener3\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\",\n    \"x-hashword\": \"0d18d301e9a23a7a593e704fe7b554e3dcba61d0de262eff00ae2b2b2ca3d2fb\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1278,7 +1262,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
 								"exec": [
 									"pm.environment.set(\"USER_CREDENTIALS_TOKEN\", JSON.parse(responseBody).data.token);"
 								],
@@ -1298,7 +1281,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"gamesguru\",\n    \"password\": \"Testpw*\"\n}",
+							"raw": "{\n    \"username\": \"gamesguru\",\n    \"email\": \"nutradigest@gmail.com\",\n    \"password\": \"Testpw*\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1337,7 +1320,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "16e85b86-3f41-4cab-88ef-63842712e5b3",
 								"exec": [
 									""
 								],
@@ -1397,7 +1379,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "16e85b86-3f41-4cab-88ef-63842712e5b3",
 								"exec": [
 									""
 								],
@@ -1457,7 +1438,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
 								"exec": [
 									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
 								],
@@ -1505,7 +1485,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
 								"exec": [
 									"pm.environment.set(\"EMAIL_TOKEN_PW_RESET\", JSON.parse(responseBody).data.message);"
 								],
@@ -1552,7 +1531,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fe3623e7-ef16-49d3-a980-7edcbf5a8454",
 								"exec": [
 									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
 								],
@@ -1613,8 +1591,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Calculators",
@@ -1646,7 +1623,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"MALE\",\n\t\"age\": 63,\n\t\"height\": 179,\n\t\"waist\": 87,\n\t\"neck\": 38,\n\t\"chest\": 18,\n\t\"ab\": 26,\n\t\"thigh\": 15,\n\t\"tricep\": 13,\n\t\"sub\": 12,\n\t\"sup\": 15,\n\t\"mid\": 18\n}",
+							"raw": "{\n\t\"gender\": \"MALE\",\n\t\"age\": 28,\n\t\"height\": 178,\n\t\"waist\": 80,\n\t\"neck\": 36.8,\n\t\"chest\": 5,\n\t\"ab\": 6,\n\t\"thigh\": 9,\n\t\"tricep\": 6,\n\t\"sub\": 8,\n\t\"sup\": 7,\n\t\"mid\": 4\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1706,12 +1683,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}"
 						},
 						"url": {
 							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr",
@@ -1850,8 +1822,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Shop",
@@ -1902,9 +1873,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "/countries",
@@ -2428,8 +2397,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Admin functions",
@@ -2476,15 +2444,13 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "b7c2a99a-ef6a-4485-9b56-75b4afad277e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -2494,13 +2460,11 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "2cf0b8bd-831d-4ab3-81f6-5e880eb86b61",
 				"type": "text/javascript",
 				"exec": [
 					""
 				]
 			}
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
