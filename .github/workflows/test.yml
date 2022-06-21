@@ -1,10 +1,10 @@
 ---
-name: test
+name: CI
 "on":
   push: {}
 
 jobs:
-  CI:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

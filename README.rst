@@ -5,9 +5,6 @@
 .. image:: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml/badge.svg
     :target: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml
     :alt: Test status unknown|
-.. image:: https://github.com/gamesguru/nutra-server/actions/workflows/lint.yml/badge.svg
-    :target: https://github.com/gamesguru/nutra-server/actions/workflows/lint.yml
-    :alt: Lint status unknown|
 .. image:: https://badgen.net/badge/code%20style/black/000
     :target: https://github.com/ambv/black
     :alt: Code style: black|
