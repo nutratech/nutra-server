@@ -4,7 +4,7 @@ name: test
   push: {}
 
 jobs:
-  test:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,11 +35,11 @@ jobs:
           sudo -u postgres psql -c "ALTER USER runner PASSWORD 'password'"
           sudo -u postgres psql -c 'ALTER USER runner WITH LOGIN SUPERUSER'
           sudo -u postgres psql -c 'ALTER DATABASE nt OWNER TO runner'
+          psql -d nt -c 'ALTER DATABASE nt SET search_path TO nt'
           psql -l
           python ntdb/sql/pg.py r
           # Select versions, not a pass/fail test but still viewable
-          # NOTE: default schema is NOT set during course of the GitHub action
-          psql -d nt -c 'SELECT * FROM nt.version'
+          psql -d nt -c 'SELECT * FROM version'
 
       - name: Run Tests
         run: make _test
