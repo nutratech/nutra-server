@@ -17,8 +17,8 @@ if __name__ == "__main__":
             host=HOST,
             port=PORT,
             debug=True,
-            use_reloader=False,
-            threaded=True,
+            # use_reloader=False,
+            # threaded=True,
         )
     else:
         # TODO: get this working

@@ -29,6 +29,7 @@ from ntserv.utils import heroku
 PY_MIN_STR = "3.7.0"
 
 __title__ = "nutra-server"
+__module__ = "ntserv"
 __version__ = "0.0.2"
 __heroku__ = heroku()
 __author__ = "gamesguru"

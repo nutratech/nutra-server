@@ -4,6 +4,7 @@ import traceback
 from datetime import datetime
 
 import requests
+import sanic.response
 from tabulate import tabulate
 from werkzeug.exceptions import BadRequestKeyError
 
@@ -20,6 +21,7 @@ def Request(func, req, response_type="JSON"):
         else:  # HTML
             return func(request=req, response_type=response_type)
 
+    # TODO: is this compatible with Sanic?
     except BadRequestKeyError as err_bad_req:
         error_msg = f"{err_bad_req.name}: Missing arguments: {err_bad_req.args}"
         return BadRequest400Response(error_msg)
@@ -28,9 +30,11 @@ def Request(func, req, response_type="JSON"):
         return ServerError500Response(err_generic, req)
 
 
-class Response:
-    # TODO: resolve mypy error about __new__() Response not matching tuple
-    def __new__(cls, message=None, data=None, code=-1) -> tuple:  # type: ignore
+class Response(sanic.response.HTTPResponse):
+    # TODO: resolve mypy error about __new__() Response not matching HTTPResponse
+    def __new__(  # type: ignore
+        cls, message=None, data=None, code=-1
+    ) -> sanic.response.HTTPResponse:
         """Creates a response object for the client"""
 
         if message:
@@ -39,7 +43,7 @@ class Response:
         if not data:
             data = {}
 
-        return (
+        return sanic.response.json(
             {
                 "program": "nutra-server",
                 "version": __version__,
@@ -50,7 +54,7 @@ class Response:
                 "code": code,
                 "data": data,
             },
-            code,
+            status=code,
         )
 
 
@@ -148,6 +152,7 @@ def slack_msg(msg):
 def home_page_text(url_map):
     """Renders <pre></pre> compatible HTML home-page text"""
 
+    # TODO: are any of these dynamic or environment based?
     email_link = (
         '<a href="mailto:nutratracker@gmail.com" '
         'target="_blank" rel="noopener">nutratracker@gmail.com</a>'
@@ -159,8 +164,8 @@ def home_page_text(url_map):
     )
 
     src_link = (
-        "<a href=https://github.com/gamesguru/nutra-server "
-        'target="blank">https://github.com/gamesguru/nutra-server</a>'
+        "<a href=https://github.com/nutratech/nutra-server "
+        'target="blank">https://github.com/nutratech/nutra-server</a>'
     )
     prod_app = (
         "<a href=https://nutra-web.herokuapp.com "
@@ -211,24 +216,25 @@ URL map (auto-generated)
 def self_route_rules(app):
     """Gets human friendly url_map"""
 
-    map_rules = app.url_map._rules
-    map_rules.sort(key=lambda x: x.rule)
+    routes = list(app.router.routes)
+    routes.sort(key=lambda x: x.uri)
 
     rules = []
 
-    for route in map_rules:
-        methods = set(route.methods)
+    for route in routes:
+        methods = list(route.methods)
+        methods.sort()
 
         # Remove default methods
         for method in ["HEAD", "OPTIONS"]:
             if method in methods:
                 methods.remove(method)
 
-        # More filtering
-        if str(route) != "/static/<path:filename>":
-            rule = route.rule.replace("<", "&lt").replace(">", "&gt")
-            rule = (str(methods), rule)
-            rules.append(rule)
+        # TODO: examine this <path:filename> equivalent with Sanic
+        # TODO: more extensive url map, e.g. route/query params, headers, body
+        # Add to the list
+        rule = (" ".join(methods), route.uri)
+        rules.append(rule)
 
     # Return string
     table = tabulate(rules, headers=["methods", "route"])

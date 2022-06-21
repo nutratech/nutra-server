@@ -5,11 +5,9 @@ Created on Sat Jan  4 18:20:27 2020
 @author: shane
 """
 
-import os
+from sanic import Sanic, html
 
-from flask import Flask, request, send_from_directory
-from flask_cors import CORS
-
+from ntserv import __module__
 from ntserv.accounts import (
     GET_confirm_email,
     GET_email_change,
@@ -51,10 +49,13 @@ from ntserv.utils.cache import reload
 # Load SQL cache in-memory, if accessible
 reload()
 
-# Export the Flask server for gunicorn
-app = Flask(__name__)
-app.config["JSON_SORT_KEYS"] = False
-CORS(app)
+# # Export the Flask server for gunicorn
+# app = Flask(__name__)
+# app.config["JSON_SORT_KEYS"] = False
+# CORS(app)
+
+
+app = Sanic(__module__)
 
 
 # -------------------------
@@ -63,23 +64,23 @@ CORS(app)
 
 
 @app.route("/")
-def get_home_page():
+async def get_home_page(request):
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
-    return f"<pre>{home_page}</pre>"
+    return html(f"<pre>{home_page}</pre>", 200)
 
 
-@app.route("/favicon.ico")
-def get_favicon_ico():
-    return send_from_directory(
-        os.path.join(os.path.dirname(app.root_path), "static"),
-        "favicon.ico",
-        mimetype="image/vnd.microsoft.icon",
-    )
+# @app.route("/favicon.ico")
+# def get_favicon_ico(request):
+#     return send_from_directory(
+#         os.path.join(os.path.dirname(app.root_path), "static"),
+#         "favicon.ico",
+#         mimetype="image/vnd.microsoft.icon",
+#     )
 
 
 @app.route("/user_details")
-def get_user_details():
+def get_user_details(request):
     return Request(GET_user_details, request)
 
 
@@ -87,47 +88,47 @@ def get_user_details():
 # Account functions
 # -------------------------
 @app.route("/register", methods=["POST"])
-def post_register():
+def post_register(request):
     return Request(POST_register, request)
 
 
 @app.route("/login", methods=["POST"])
-def post_login():
+def post_login(request):
     return Request(POST_login, request)
 
 
 @app.route("/v2/login", methods=["POST"])
-def post_v2_login():
+def post_v2_login(request):
     return Request(POST_v2_login, request)
 
 
 @app.route("/email/confirm")
-def get_confirm_email():
+def get_confirm_email(request):
     return Request(GET_confirm_email, request)
 
 
 @app.route("/email/change")
-def get_email_change():
+def get_email_change(request):
     return Request(GET_email_change, request)
 
 
 @app.route("/password/change")
-def get_change_password():
+def get_change_password(request):
     return Request(GET_password_change, request)
 
 
 @app.route("/username/forgot")
-def post_forgot_username():
+def post_forgot_username(request):
     return Request(POST_username_forgot, request)
 
 
 @app.route("/password/new/request")
-def post_password_new_request():
+def post_password_new_request(request):
     return Request(POST_password_new_request, request)
 
 
 @app.route("/password/new/reset")
-def post_password_new_reset():
+def post_password_new_reset(request):
     return Request(POST_password_new_reset, request)
 
 
@@ -135,7 +136,7 @@ def post_password_new_reset():
 # Sync functions
 # -------------------------
 @app.route("/sync", methods=["GET", "POST"])
-def post_sync():
+def post_sync(request):
     return Request(OPT_sync, request)
 
 
@@ -143,51 +144,51 @@ def post_sync():
 # Basic DB functions
 # -------------------------
 @app.route("/calc/bodyfat")
-def get_calc_bodyfat():
+def get_calc_bodyfat(request):
     return Request(GET_calc_bodyfat, request)
 
 
 @app.route("/calc/lblimits")
-def get_calc_lblimits():
+def get_calc_lblimits(request):
     return Request(GET_calc_lblimits, request)
 
 
 @app.route("/calc/bmr")
-def get_calc_bmr():
+def get_calc_bmr(request):
     return Request(GET_calc_bmr, request)
 
 
 @app.route("/calc/bmr/katch_mcardle")
-def get_calc_bmr_katch_mcardle():
+def get_calc_bmr_katch_mcardle(request):
     return Request(GET_calc_bmr_katch_mcardle, request)
 
 
 @app.route("/calc/bmr/cunningham")
-def get_calc_bmr_cunningham():
+def get_calc_bmr_cunningham(request):
     return Request(GET_calc_bmr_cunningham, request)
 
 
 @app.route("/calc/bmr/mifflin_st_jeor")
-def get_calc_bmr_mifflin_st_jeor():
+def get_calc_bmr_mifflin_st_jeor(request):
     return Request(GET_calc_bmr_mifflin_st_jeor, request)
 
 
 @app.route("/calc/bmr/harris_benedict")
-def get_calc_bmr_harris_benedict():
+def get_calc_bmr_harris_benedict(request):
     return Request(GET_calc_bmr_harris_benedict, request)
 
 
 ###################################
 # JSON routes (public DB functions)
 @app.route("/nutrients")
-def get_nutrients():
+def get_nutrients(request):
     return Request(GET_nutrients, request)
 
 
 ################################
 # HTML routes for same functions
 @app.route("/html/nutrients")
-def get_html_nutrients():
+def get_html_nutrients(request):
     return Request(GET_nutrients, request, response_type="HTML")
 
 
@@ -195,42 +196,42 @@ def get_html_nutrients():
 # Shop functions
 # -------------------------
 @app.route("/validate/addresses", methods=["POST"])
-def post_validate_addresses():
+def post_validate_addresses(request):
     return Request(POST_validate_addresses, request)
 
 
 @app.route("/shipping/estimates", methods=["POST"])
-def post_shipping_methods():
+def post_shipping_methods(request):
     return Request(POST_shipping_esimates, request)
 
 
 @app.route("/addresses", methods=["GET", "POST", "PATCH", "DELETE"])
-def opt_addresses():
+def opt_addresses(request):
     return Request(OPT_addresses, request)
 
 
 @app.route("/categories")
-def get_categories():
+def get_categories(request):
     return Request(GET_categories, request)
 
 
 @app.route("/products")
-def get_products():
+def get_products(request):
     return Request(GET_products, request)
 
 
 @app.route("/orders", methods=["GET", "POST"])
-def post_orders():
+def post_orders(request):
     return Request(OPT_orders, request)
 
 
 @app.route("/products/reviews", methods=["POST"])
-def post_products_reviews():
+def post_products_reviews(request):
     return Request(POST_products_reviews, request)
 
 
 @app.route("/report", methods=["POST"])
-def post_report():
+def post_report(request):
     return Request(POST_report, request)
 
 
@@ -238,10 +239,10 @@ def post_report():
 # Admin functions
 # -------------------------
 @app.route("/products/profits")
-def get_products_profits():
+def get_products_profits(request):
     return Request(GET_products_profits, request)
 
 
 @app.route("/orders/admin", methods=["PATCH"])
-def patch_orders_admin():
+def patch_orders_admin(request):
     return Request(PATCH_orders_admin, request)
