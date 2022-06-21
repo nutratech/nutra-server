@@ -18,6 +18,7 @@ init:	## Set up a Python virtual environment
 	@if [ ! -d .venv ]; then \
 		python3 -m venv .venv; \
 	fi
+	- direnv allow
 	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
 	@echo -e "HINT: run 'source .venv/bin/activate'"
 
