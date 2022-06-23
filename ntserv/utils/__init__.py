@@ -5,11 +5,15 @@ def release_git_parse() -> tuple:
     """Gets release info by calling git commands"""
 
     def git_cmd(args: str):
-        return (
-            subprocess.run(args.split(), capture_output=True, check=True)  # nosec
-            .stdout.decode()
-            .rstrip()
-        )
+        try:
+            return (
+                subprocess.run(args.split(), capture_output=True, check=True)  # nosec
+                .stdout.decode()
+                .rstrip()
+            )
+        except subprocess.CalledProcessError as err:
+            print(f"Git command error: {repr(err)}")
+            return None
 
     try:
         git_sha = git_cmd("git rev-parse --short HEAD")
