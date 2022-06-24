@@ -11,19 +11,14 @@ def release_git_parse() -> tuple:
                 .stdout.decode()
                 .rstrip()
             )
-        except subprocess.CalledProcessError as err:
-            print(f"Git command error: {repr(err)}")
+        except subprocess.CalledProcessError as sp_err:
+            print(f"WARN: Git command error: {repr(sp_err)}")
             return None
 
-    try:
-        git_sha = git_cmd("git rev-parse --short HEAD")
-        git_commit_date = git_cmd("git show -s --format=%ci")
+    git_sha = git_cmd("git rev-parse --short HEAD") or "UNKNOWN"
+    git_commit_date = git_cmd("git show -s --format=%ci") or "1970-01-01"
 
-        return (
-            git_sha,
-            git_commit_date,
-        )
-
-    except KeyError as err:
-        print(f"WARN: {repr(err)}")
-        return None, None
+    return (
+        git_sha,
+        git_commit_date,
+    )
