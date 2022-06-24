@@ -171,7 +171,7 @@ def home_page_text(url_map):
 
     return f"""
 Welcome to nutra-server (v{__version__}) {__release__}
-========================================================
+========================================================================
 
 An open-sourced health and fitness app from Nutra, LLC.
 Track obscure nutrients and stay healthy with Python and PostgreSQL!
@@ -179,9 +179,9 @@ Track obscure nutrients and stay healthy with Python and PostgreSQL!
 Source code:    &lt{src_link}&gt
 Production app: &lt{prod_app}&gt
 
---------------------------------------------------------------------
+------------------------------------------------------------------------
 LICENSE & COPYING NOTICE
---------------------------------------------------------------------
+------------------------------------------------------------------------
 
     nutra-server, a server for nutratracker clients
     Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] &lt{email_link}&gt
@@ -199,7 +199,7 @@ LICENSE & COPYING NOTICE
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see &lt{licsn_link}&gt
 
---------------------------------------------------------------------
+------------------------------------------------------------------------
 
 
 URL map (auto-generated)
