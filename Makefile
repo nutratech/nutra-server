@@ -98,11 +98,14 @@ lint: _lint
 # Run
 # ---------------------------------------
 
-.PHONY: run
-run: _venv	## Start the server in debug mode
-	# TODO: actually use DEBUG flag, or similar config
-	#  (What about unit test) from unit test context too... the pytest warnings?
+.PHONY: _run
+_run:
 	python -m ntserv
+
+
+.PHONY: run
+run: _venv	## Start the server
+run: _run
 
 
 # ---------------------------------------
