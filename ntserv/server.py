@@ -33,6 +33,7 @@ from ntserv.calculate import (
 )
 from ntserv.controllers.sync import OPT_sync
 from ntserv.libserver import Request, home_page_text, self_route_rules
+from ntserv.settings import PROXY_SECRET
 from ntserv.shop import (
     GET_categories,
     GET_products,
@@ -56,6 +57,7 @@ reload()
 
 
 app = Sanic(__module__)
+app.config.FORWARDED_SECRET = PROXY_SECRET
 
 
 # -------------------------

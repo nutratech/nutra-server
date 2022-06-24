@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 # Read in .env file if it exists locally, else look to env vars
 load_dotenv(verbose=True)
 
-
 # USPS API key
 USPS_API_KEY = os.getenv("USPS_API_KEY")
 
@@ -16,8 +15,8 @@ PROD_EMAIL = os.getenv("PROD_EMAIL")
 PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
 
 # Server host
-SERVER_PORT = os.getenv("PORT", 20000)
-ON_REMOTE = os.getenv("ON_REMOTE", False)
+SERVER_PORT = os.getenv("PORT", str(20000))
+ON_REMOTE = os.getenv("ON_REMOTE", str(0))
 SERVER_HOST = (
     "https://nutra-server.herokuapp.com"
     if ON_REMOTE
@@ -40,6 +39,8 @@ PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 
 # Other
 JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
+PROXY_SECRET = os.getenv("PROXY_SECRET", "secret123")
+
 TOKEN_EXPIRY = timedelta(weeks=520)
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
 SEARCH_LIMIT = 100
