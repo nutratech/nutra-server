@@ -17,10 +17,9 @@ PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
 # Server host
 SERVER_PORT = os.getenv("PORT", str(20000))
 ON_REMOTE = os.getenv("ON_REMOTE", str(0))
+# TODO: static domain
 SERVER_HOST = (
-    "https://nutra-server.herokuapp.com"
-    if ON_REMOTE
-    else f"http://localhost:{SERVER_PORT}"
+    "https://vps76.heliohost.us" if ON_REMOTE else f"http://localhost:{SERVER_PORT}"
 )
 WEB_HOST = (
     "https://nutra-web.herokuapp.com"

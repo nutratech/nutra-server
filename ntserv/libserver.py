@@ -9,7 +9,7 @@ from tabulate import tabulate
 from werkzeug.exceptions import BadRequestKeyError
 
 from ntserv import __release__, __version__
-from ntserv.settings import SLACK_TOKEN
+from ntserv.settings import SERVER_HOST, SLACK_TOKEN
 
 
 def Request(func, req, response_type="JSON"):
@@ -167,10 +167,7 @@ def home_page_text(url_map):
         "<a href=https://github.com/nutratech/nutra-server "
         'target="blank">https://github.com/nutratech/nutra-server</a>'
     )
-    prod_app = (
-        "<a href=https://nutra-web.herokuapp.com "
-        'target="blank">https://nutra-web.herokuapp.com</a>'
-    )
+    prod_app = f"<a href={SERVER_HOST} " f'target="blank">{SERVER_HOST}</a>'
 
     return f"""
 Welcome to nutra-server (v{__version__}) {__release__}
