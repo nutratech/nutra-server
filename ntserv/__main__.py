@@ -1,5 +1,5 @@
 from ntserv.server import app
-from ntserv.settings import DEBUG, HOST, PORT
+from ntserv.settings import DEBUG, HOST, PORT, WORKERS
 
 if __name__ == "__main__":
     print("[__main__] starting app...")
@@ -8,4 +8,5 @@ if __name__ == "__main__":
         port=PORT,
         debug=DEBUG,
         auto_reload=DEBUG,
+        workers=WORKERS,
     )

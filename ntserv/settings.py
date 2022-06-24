@@ -40,6 +40,7 @@ PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 # Server config
 JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
 PROXY_SECRET = os.getenv("PROXY_SECRET", "secret123")
+WORKERS = int(os.getenv("WORKERS", str(1)))
 
 ENV = os.environ.get("ENV", "local")
 PORT = int(os.getenv("PORT", str(20000)))
