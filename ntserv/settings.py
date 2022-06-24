@@ -37,10 +37,17 @@ PSQL_PASSWORD = os.getenv("PSQL_PASSWORD", "password")
 
 PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 
-# Other
+# Server config
 JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
 PROXY_SECRET = os.getenv("PROXY_SECRET", "secret123")
 
+ENV = os.environ.get("ENV", "local")
+PORT = int(os.getenv("PORT", str(20000)))
+HOST = os.getenv("HOST", "127.0.0.1")
+
+DEBUG = bool(ENV == "local")
+
+# Other
 TOKEN_EXPIRY = timedelta(weeks=520)
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
 SEARCH_LIMIT = 100

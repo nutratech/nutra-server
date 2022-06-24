@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
-
-import os
-
 import gunicorn.app.wsgiapp
 
 from ntserv.server import app
-
-ENV = os.environ.get("ENV", "local")
-PORT = int(os.getenv("PORT", "20000"))
-HOST = os.getenv("HOST", "127.0.0.1")
+from ntserv.settings import DEBUG, ENV, HOST, PORT
 
 if __name__ == "__main__":
     if ENV == "local":
@@ -16,10 +10,8 @@ if __name__ == "__main__":
         app.run(
             host=HOST,
             port=PORT,
-            debug=True,
-            # ssl="/etc/letsencrypt/live/example.com/",
-            # use_reloader=False,
-            # threaded=True,
+            debug=DEBUG,
+            auto_reload=DEBUG,
         )
     else:
         # TODO: get this working
