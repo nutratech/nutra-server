@@ -85,15 +85,27 @@ The unit tests require a Postgres connection. Run them like this.
 Config Variables in ``.env`` file
 #################################
 
-**TODO:** update this to the latest.
-
 .. code-block:: bash
 
-    JWT_SECRET         = secret
-    ON_REMOTE          = 1
-    PROD_EMAIL         =
-    PROD_EMAIL_PASS    =
-    PSQL_DATABASE      = nt
-    PSQL_USER          = $LOGNAME
-    PSQL_PASSWORD      = password
-    PSQL_HOST          = localhost
+    # USPS API key
+    USPS_API_KEY=
+
+    # Email creds
+    PROD_EMAIL=
+    PROD_EMAIL_PASS=
+
+    # Remote PostgreSQL
+    # PSQL_USER=
+    # PSQL_PASSWORD=
+    # PSQL_DB_NAME=
+    # PSQL_HOST=
+
+    # Server host
+    HOST=127.0.0.1
+
+    # Other
+    JWT_SECRET=
+    PROXY_SECRET=
+
+    ENV=prod
+    WORKERS=4
