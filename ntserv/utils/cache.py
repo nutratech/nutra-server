@@ -1,4 +1,11 @@
-from ntserv.postgres import build_con, psql
+import traceback
+
+import psycopg2
+
+from ntserv.persistence.psql import build_con, psql
+from ntserv.utils.logger import get_logger
+
+_logger = get_logger(__name__)
 
 # ---------------
 # Cache
@@ -19,17 +26,22 @@ NUTRIENTS = {}
 # data_src = {}
 
 
-def reload() -> None:
+def reload() -> bool:
     # pylint: disable=global-statement
     global USERS, SHIPPING_CONTAINERS, PRODUCTS, VARIANTS, NUTRIENTS
     # pylint: disable=global-statement
     # global food_des, servings, servings_food, fdgrp, data_src
 
-    con = build_con()
-    if not con:
-        print("WARN: skipping reload cache, can't build Postgres connection")
-        return
+    # Skip cache reloads if 1st connection attempt times out
+    try:
+        build_con()
+    except psycopg2.OperationalError:
+        _logger.warning("skipping reload cache, failed to build Postgres connection")
+        _logger.warning(traceback.format_exc())
+        return False
 
+    # TODO: is this necessary with Postgres and Sanic running side-by-side? Any faster?
+    # Reload cache
     pg_result = psql("SELECT * FROM users()")
     USERS = {u["id"]: u for u in pg_result.rows}
 
@@ -44,3 +56,5 @@ def reload() -> None:
 
     pg_result = psql("SELECT * FROM nutr_def")
     NUTRIENTS = {n["id"]: n for n in pg_result.rows}
+
+    return True

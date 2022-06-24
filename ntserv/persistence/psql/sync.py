@@ -1,4 +1,6 @@
-from ...postgres import psql
+from ntserv.persistence.psql import psql
+
+# NOTE: wip
 
 
 def sql_unsynced_rows(profile_guid, synced):

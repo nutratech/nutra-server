@@ -1,6 +1,8 @@
-from ntserv.libserver import Success200Response
-from ntserv.services.psql.sync import sql_unsynced_rows, sql_update_entities
+from ntserv.persistence.psql.sync import sql_unsynced_rows, sql_update_entities
 from ntserv.utils.auth import AUTH_LEVEL_BASIC, auth
+from ntserv.utils.libserver import NotImplemented501Response, Success200Response
+
+# NOTE: wip
 
 
 @auth
@@ -20,3 +22,5 @@ def OPT_sync(request, level=AUTH_LEVEL_BASIC, user_id=None):
         entities = request.json["entities"]
         sql_update_entities(profile_guid, entities)
         return Success200Response()
+
+    return NotImplemented501Response()

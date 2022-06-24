@@ -6,7 +6,7 @@ You can run the server with
 
 or with
 
+    make install
     python3 -m ntserv
 
 NOTE: You will need to have Postgres running, and configured. See the ntdb docs
-
