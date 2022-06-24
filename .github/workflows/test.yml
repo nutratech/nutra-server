@@ -49,7 +49,7 @@ jobs:
         run: make _lint
 
       - name: Start server
-        run: make _run
+        run: make _run &
 
       # NOTE: depends on API_PORT=20000
       - name: Integration test / basic request / 10 second startup
