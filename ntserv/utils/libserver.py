@@ -1,47 +1,58 @@
-import json
 import time
 import traceback
 from datetime import datetime
 
-import requests
 import sanic.response
+from sanic import Sanic
 from tabulate import tabulate
-from werkzeug.exceptions import BadRequestKeyError
 
 from ntserv import __release__, __version__
-from ntserv.settings import SERVER_HOST, SLACK_TOKEN
+from ntserv.env import SERVER_HOST
 
 
-def Request(func, req, response_type="JSON"):
+def exc_req(func, req, response_type="JSON"):
     """Makes a request and handles global exceptions, always returning a `Response()`"""
 
     try:
+        # TODO: refactor services to accept unknown keywords, not crash on response_type
         if response_type == "JSON":
             return func(request=req)
-        else:  # HTML
-            return func(request=req, response_type=response_type)
+
+        # else: HTML
+        return func(request=req, response_type=response_type)
 
     # TODO: is this compatible with Sanic?
-    except BadRequestKeyError as err_bad_req:
-        error_msg = f"{err_bad_req.name}: Missing arguments: {err_bad_req.args}"
-        return BadRequest400Response(error_msg)
+    # except BadRequestKeyError as err_bad_req:
+    #     error_msg = f"{err_bad_req.name}: Missing arguments: {err_bad_req.args}"
+    #     return BadRequest400Response(error_msg)
 
+    # pylint: disable=broad-except
     except Exception as err_generic:
-        return ServerError500Response(err_generic, req)
+        return ServerError500Response(
+            data={
+                "error": "General server error",
+                "exception": repr(err_generic),
+                "stack": traceback.format_exc(),
+            }
+        )
 
 
+# ------------------------
+# Response types
+# ------------------------
 class Response(sanic.response.HTTPResponse):
-    # TODO: resolve mypy error about __new__() Response not matching HTTPResponse
-    def __new__(  # type: ignore
-        cls, message=None, data=None, code=-1
-    ) -> sanic.response.HTTPResponse:
-        """Creates a response object for the client"""
+    """Creates a response object for the client"""
 
-        if message:
-            data["message"] = message
+    def __new__(  # type: ignore
+        cls, message: str = None, data: dict = None, code=-1
+    ) -> sanic.response.HTTPResponse:
 
         if not data:
             data = {}
+
+        if message:
+            # TODO: does this belong nested in data.data?
+            data["message"] = message
 
         return sanic.response.json(
             {
@@ -59,97 +70,45 @@ class Response(sanic.response.HTTPResponse):
 
 
 class Success200Response(Response):
-    def __new__(cls, message=None, data=None, code=-1):
-        return super().__new__(cls, message, data, code=200)
+    def __new__(cls, message=None, data=None, code=200):
+        return super().__new__(cls, message, data, code=code)
 
 
 class MultiStatus207Response(Response):
-    def __new__(cls, message=None, data=None, code=-1):
-        return super().__new__(cls, message, data, code=207)
+    def __new__(cls, message=None, data=None, code=207):
+        return super().__new__(cls, message, data, code=code)
 
 
 class BadRequest400Response(Response):
-    def __new__(cls, message=None, data=None, code=-1):
-        return super().__new__(cls, data={"error": message}, code=400)
+    def __new__(cls, message=None, data=None, code=408):
+        return super().__new__(cls, data={"error": message}, code=code)
 
 
 class Unauthenticated401Response(Response):
-    def __new__(cls, message=None, data=None, code=-1):
-        return super().__new__(cls, data={"error": message}, code=401)
+    def __new__(cls, message=None, data=None, code=401):
+        return super().__new__(cls, data={"error": message}, code=code)
 
 
 class Forbidden403Response(Response):
-    def __new__(cls, message=None, data=None, code=-1):
-        return super().__new__(cls, data={"error": message}, code=403)
+    def __new__(cls, message=None, data=None, code=403):
+        return super().__new__(cls, data={"error": message}, code=code)
 
 
 class ServerError500Response(Response):
-    def __new__(cls, exception, request):
-        # trace = self.friendly_stack(self, exception)
-        # TODO: rethink slack workflow
-        # self.dispatch_slack_msg(self, request, trace)
-        return super().__new__(
-            # TODO: rethink structure of 500 response? include exception type?
-            cls,
-            data={
-                "error": "General server error",
-                "exception": repr(exception),
-                # "stack": None,
-            },
-            code=500,
-        )
-
-    def friendly_stack(self, exception):
-        trace = "\n".join(traceback.format_tb(exception.__traceback__))
-        return repr(exception) + "\n\n" + trace
-
-    def dispatch_slack_msg(self, req, trace):
-        request = json.dumps(req.__dict__, default=lambda o: "<not serializable>")
-        slack_msg(f"Application Error\n\n{request}\n\n{trace}")
+    def __new__(cls, message=None, data=None, code=500):
+        # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
+        return super().__new__(cls, data=data, code=code)
 
 
 class NotImplemented501Response(Response):
-    def __new__(cls, message=None, data=None, code=-1):
-        return super().__new__(cls, message="Not Implemented", data=data, code=501)
-
-
-def Text(text=None):
-    return text
+    def __new__(cls, message=None, data=None, code=501):
+        return super().__new__(cls, message="Not Implemented", data=data, code=code)
 
 
 # ------------------------
 # Helper functions
 # ------------------------
-
-
-def slack_msg(msg):
-    """Sends a slack alert message to nutra1 prod-alerts channel"""
-
-    # Print
-    print(msg)
-
-    # Prep body && headers
-    body = {
-        "channel": "CSBL81C4F",
-        "username": "ntserv",
-        "text": f"```{msg}```",
-        "icon_url": "https://www.nutritionix.com/nix_assets/images/nix_apple.png",
-    }
-
-    headers = {
-        "content-type": "application/json",
-        "authorization": f"Bearer {SLACK_TOKEN}",
-    }
-
-    # Make post
-    requests.post(
-        "https://slack.com/api/chat.postMessage",
-        headers=headers,
-        json=body,
-    )
-
-
-def home_page_text(url_map):
+def home_page_text(routes_table: str):
     """Renders <pre></pre> compatible HTML home-page text"""
 
     # TODO: are any of these dynamic or environment based?
@@ -205,11 +164,11 @@ LICENSE & COPYING NOTICE
 URL map (auto-generated)
 ========================
 
-{url_map}
+{routes_table}
 """
 
 
-def self_route_rules(app):
+def self_route_rules(app: Sanic) -> str:
     """Gets human friendly url_map"""
 
     routes = list(app.router.routes)

@@ -32,6 +32,9 @@ APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
 PY_MIN_STR = "3.7.0"
 
+# ------------------------------------------------
+# Package info
+# ------------------------------------------------
 _release = release_git_parse()
 
 __title__ = "nutra-server"
@@ -45,3 +48,72 @@ __copyright__ = "Copyright 2019-2022 Shane Jaroch"
 __url__ = "https://github.com/gamesguru/nutra-server"
 
 __db_target_ntdb__ = "0.0.38"
+
+# Other
+SEARCH_LIMIT = 100
+CUSTOM_FOOD_DATA_SRC_ID = 6
+
+NUTR_ID_KCAL = 208
+
+NUTR_IDS_FLAVONES = [
+    710,
+    711,
+    712,
+    713,
+    714,
+    715,
+    716,
+    734,
+    735,
+    736,
+    737,
+    738,
+    731,
+    740,
+    741,
+    742,
+    743,
+    745,
+    749,
+    750,
+    751,
+    752,
+    753,
+    755,
+    756,
+    758,
+    759,
+    762,
+    770,
+    773,
+    785,
+    786,
+    788,
+    789,
+    791,
+    792,
+    793,
+    794,
+]
+
+NUTR_IDS_AMINOS = [
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    521,
+]

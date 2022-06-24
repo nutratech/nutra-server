@@ -9,22 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   Local `PostgreSQL` configuration for Linux/macOS (support _startup service_)
+- Local `PostgreSQL` configuration for Linux/macOS (support _startup service_)
+- Use `Sanic` instead of `Flask` for server
+- Support for `nginx` and ssl
+- Refactored controllers & services to more closely align with `MVC` design pattern
 
 ### Fixed
 
--   Graceless crashes when `postgres` server was unreachable;
-    now we operate in cowardly mode
+- Graceless crashes when `postgres` server was unreachable;
+  now we operate in cowardly mode
 
 ### Added
 
--   Preliminary unit tests, and template for integration testing
+- Unit tests, with special `requirements-test.txt` file
+- BMR & other calculations for female users
 
-## [0.0.38] - 2020-08-02
+### Removed
+
+- Shop functions (e.g. controller for orders)
+
+## [0.0.0] - 2020-08-02
 
 ### Added
 
--   Initial release
--   Support for most endpoints
--   `Postgres` database driver and bindings
--   Add `@auth` annotation
+- Initial release
+- Support for most endpoints
+- `Postgres` database driver and bindings
+- Add `@auth` annotation

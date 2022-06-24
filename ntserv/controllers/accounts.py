@@ -3,15 +3,7 @@ import uuid
 
 import bcrypt
 
-from ntserv.libserver import (
-    BadRequest400Response,
-    MultiStatus207Response,
-    NotImplemented501Response,
-    Success200Response,
-    Unauthenticated401Response,
-    slack_msg,
-)
-from ntserv.postgres import psql
+from ntserv.persistence.psql import psql
 from ntserv.utils.account import (
     cmp_pass,
     send_activation_email,
@@ -19,13 +11,20 @@ from ntserv.utils.account import (
     user_id_from_username_or_email,
 )
 from ntserv.utils.auth import AUTH_LEVEL_UNCONFIRMED, auth, issue_jwt_token
+from ntserv.utils.libserver import (
+    BadRequest400Response,
+    MultiStatus207Response,
+    NotImplemented501Response,
+    Success200Response,
+    Unauthenticated401Response,
+)
 
 
 def POST_register(request):
     # Parse incoming request
     body = request.json
     email = body["email"]
-    slack_msg(f"USER REGISTER: {email}")
+    # TODO: notify ourselves, via email, of USER REGISTER? This used to be slack_msg()
 
     username = body.get("username")
     password = body.get("password")
@@ -128,7 +127,7 @@ def POST_login(request):
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
-    slack_msg(f"USER LOGIN: {username}")
+    # TODO: notify ourselves, via email, of USER LOGIN? This used to be slack_msg()
 
     # See if user exists
     user_id = user_id_from_username_or_email(username)
@@ -188,7 +187,7 @@ def GET_confirm_email(request):
 
     email = request.args["email"]
     token = request.args["token"]
-    slack_msg(f"USER ACTIVATE: {email}")
+    # TODO: notify ourselves, via email, of USER ACTIVATE? This used to be slack_msg()
 
     user_id = user_id_from_unver_email(email)
     if not user_id:
@@ -265,6 +264,7 @@ def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
     # Update
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
+    # TODO: Unable to resolve column 'user_id'
     psql(
         "UPDATE users SET passwd=%s WHERE user_id=%s RETURNING user_id",
         [passwd, user_id],

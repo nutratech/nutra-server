@@ -3,9 +3,9 @@ from datetime import datetime
 import bcrypt
 import jwt
 
-from ntserv.libserver import Unauthenticated401Response
-from ntserv.postgres import psql
-from ntserv.settings import JWT_SECRET, TOKEN_EXPIRY
+from ntserv.env import JWT_SECRET, TOKEN_EXPIRY
+from ntserv.persistence.psql import psql
+from ntserv.utils.libserver import Unauthenticated401Response
 
 # -----------------------------
 # Authorization levels

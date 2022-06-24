@@ -42,7 +42,7 @@ CLASSIFIERS = [
 with open("README.rst", encoding="utf-8") as file:
     README = file.read()
 
-# NOTE: do we need to include requirements-dev.txt in MANIFEST.in ?
+# NOTE: do we need to include requirements-*.txt in MANIFEST.in ?
 with open("requirements.txt", encoding="utf-8") as file:
     REQUIREMENTS = file.read().split()
 

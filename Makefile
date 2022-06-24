@@ -29,15 +29,13 @@ _venv:
 	# Test to enforce venv usage across important make targets
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 
-PIP := python -m pip
-REQS := requirements.txt
-REQS_DEV := requirements-dev.txt
+PIP ?= python -m pip
 .PHONY: _deps
 _deps:
 	$(PIP) install wheel
 	$(PIP) install -r requirements.txt
-	$(PIP) install -r requirements-opt.txt
-	$(PIP) install -r requirements-dev.txt
+	$(PIP) install -r requirements-test.txt
+	$(PIP) install -r requirements-lint.txt
 
 .PHONY: deps
 deps: _venv	## Install requirements
@@ -48,10 +46,8 @@ deps: _deps
 # Test
 # ---------------------------------------
 
-APP_HOME := ntserv/
 TEST_HOME := tests/
 IT_HOME := tests/integration/it*
-MIN_COV := 42
 .PHONY: _test
 _test:
 	coverage run -m pytest -v -s -p no:cacheprovider -o log_cli=true $(TEST_HOME)
@@ -72,6 +68,7 @@ format: _venv	## Format Python files
 	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
 	black $(LINT_LOCS)
 
+APP_HOME := ntserv/
 LINT_LOCS := $(APP_HOME) $(TEST_HOME) setup.py
 YAML_LOCS := .*.yml .github/
 RST_LOCS := *.rst
