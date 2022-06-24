@@ -117,8 +117,8 @@ build: _venv	## Create an sdist
 	python setup.py sdist
 
 .PHONY: install
-install: _venv	## Pip install (under venv)
-	pip install .
+install:	## Pip install (user)
+	/usr/bin/python3 -m pip install .
 
 
 # ---------------------------------------
