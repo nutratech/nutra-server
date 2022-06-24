@@ -9,7 +9,7 @@ from datetime import datetime
 import pytest
 
 from ntserv.postgres import verify_db_version_compat
-from ntserv.server import app
+from ntserv.routes import app
 from ntserv.utils import release_git_parse
 
 

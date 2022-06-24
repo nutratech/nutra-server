@@ -66,19 +66,11 @@ app.config.FORWARDED_SECRET = PROXY_SECRET
 
 
 @app.route("/")
+# pylint: disable=unused-argument
 async def get_home_page(request):
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
     return html(f"<pre>{home_page}</pre>", 200)
-
-
-# @app.route("/favicon.ico")
-# def get_favicon_ico(request):
-#     return send_from_directory(
-#         os.path.join(os.path.dirname(app.root_path), "static"),
-#         "favicon.ico",
-#         mimetype="image/vnd.microsoft.icon",
-#     )
 
 
 @app.route("/user_details")
@@ -134,17 +126,17 @@ def post_password_new_reset(request):
     return Request(POST_password_new_reset, request)
 
 
-# -------------------------
+# ------------------------------------------------
 # Sync functions
-# -------------------------
+# ------------------------------------------------
 @app.route("/sync", methods=["GET", "POST"])
 def post_sync(request):
     return Request(OPT_sync, request)
 
 
-# -------------------------
-# Basic DB functions
-# -------------------------
+# ------------------------------------------------
+# Public functions: /calc
+# ------------------------------------------------
 @app.route("/calc/bodyfat", methods=["POST"])
 def _post_calc_bodyfat(request):
     return Request(GET_calc_bodyfat, request)
@@ -180,17 +172,16 @@ def _post_calc_bmr_harris_benedict(request):
     return Request(GET_calc_bmr_harris_benedict, request)
 
 
-###################################
-# JSON routes (public DB functions)
+# ------------------------------------------------
+# Public functions: /nutrients
+# ------------------------------------------------
 @app.route("/nutrients")
 def get_nutrients(request):
     return Request(GET_nutrients, request)
 
 
-################################
-# HTML routes for same functions
-@app.route("/html/nutrients")
-def get_html_nutrients(request):
+@app.route("/nutrients/html")
+def _get_nutrients_html(request):
     return Request(GET_nutrients, request, response_type="HTML")
 
 

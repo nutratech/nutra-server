@@ -1,4 +1,4 @@
-from ntserv.server import app
+from ntserv.routes import app
 from ntserv.settings import DEBUG, HOST, PORT, WORKERS
 
 if __name__ == "__main__":
