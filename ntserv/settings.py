@@ -41,7 +41,7 @@ JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
 PROXY_SECRET = os.getenv("PROXY_SECRET", "secret123")
 WORKERS = int(os.getenv("WORKERS", str(1)))
 
-ENV = os.environ.get("ENV", "local")
+ENV = os.environ.get("ENV", "prod")
 PORT = int(os.getenv("PORT", str(20000)))
 HOST = os.getenv("HOST", "127.0.0.1")
 
