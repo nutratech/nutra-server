@@ -18,6 +18,7 @@ init:	## Set up a Python virtual environment
 	@if [ ! -d .venv ]; then \
 		python3 -m venv .venv; \
 	fi
+	- direnv allow
 	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
 	@echo -e "HINT: run 'source .venv/bin/activate'"
 
@@ -33,12 +34,14 @@ REQS := requirements.txt
 REQS_DEV := requirements-dev.txt
 .PHONY: _deps
 _deps:
-	- $(PIP) install wheel
-	$(PIP) install -r $(REQS)
-	$(PIP) install -r $(REQS_DEV)
+	$(PIP) install wheel
+	$(PIP) install -r requirements.txt
+	$(PIP) install -r requirements-opt.txt
+	$(PIP) install -r requirements-dev.txt
 
 .PHONY: deps
-deps: _venv _deps	## Install requirements
+deps: _venv	## Install requirements
+deps: _deps
 
 
 # ---------------------------------------
@@ -48,14 +51,15 @@ deps: _venv _deps	## Install requirements
 APP_HOME := ntserv/
 TEST_HOME := tests/
 IT_HOME := tests/integration/it*
-MIN_COV := 38
+MIN_COV := 42
 .PHONY: _test
 _test:
-	coverage run --source=$(APP_HOME) -m pytest -v -s -p no:cacheprovider -o log_cli=true $(TEST_HOME)
-	coverage report --fail-under=$(MIN_COV) --show-missing --skip-empty --skip-covered
+	coverage run -m pytest -v -s -p no:cacheprovider -o log_cli=true $(TEST_HOME)
+	coverage report
 
 .PHONY: test
-test: _venv _test	## Run unit tests
+test: _venv	## Run unit tests
+test: _test
 
 
 # ---------------------------------------
@@ -63,12 +67,12 @@ test: _venv _test	## Run unit tests
 # ---------------------------------------
 
 .PHONY: format
-format:	## Format Python files
+format: _venv	## Format Python files
 	isort $(LINT_LOCS)
 	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
 	black $(LINT_LOCS)
 
-LINT_LOCS := ntserv/ tests/ setup.py
+LINT_LOCS := $(APP_HOME) $(TEST_HOME) setup.py
 YAML_LOCS := .*.yml .github/
 RST_LOCS := *.rst
 .PHONY: _lint
@@ -78,19 +82,19 @@ _lint:
 	autopep8 --recursive --diff --max-line-length 88 --exit-code $(LINT_LOCS)
 	isort --diff --check $(LINT_LOCS)
 	black --check $(LINT_LOCS)
-	# lint RST (last param is search term, NOT ignore)
+	# lint RST
 	doc8 --quiet $(RST_LOCS)
 	# lint YAML
 	yamllint $(YAML_LOCS)
 	# lint Python
 	bandit -q -c .banditrc -r $(LINT_LOCS)
 	mypy $(LINT_LOCS)
-	# failing lints, ignore errors for now
 	flake8 --statistics --doctests $(LINT_LOCS)
 	pylint $(LINT_LOCS)
 
 .PHONY: lint
-lint: _venv _lint	## Lint code and documentation
+lint: _venv	## Lint code and documentation
+lint: _lint
 
 
 # ---------------------------------------
@@ -99,6 +103,8 @@ lint: _venv _lint	## Lint code and documentation
 
 .PHONY: run
 run: _venv	## Start the server in debug mode
+	# TODO: actually use DEBUG flag, or similar config
+	#  (What about unit test) from unit test context too... the pytest warnings?
 	python -m ntserv
 
 

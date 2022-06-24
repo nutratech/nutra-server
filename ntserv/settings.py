@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 # Read in .env file if it exists locally, else look to env vars
 load_dotenv(verbose=True)
 
-
 # USPS API key
 USPS_API_KEY = os.getenv("USPS_API_KEY")
 
@@ -16,12 +15,11 @@ PROD_EMAIL = os.getenv("PROD_EMAIL")
 PROD_EMAIL_PASS = os.getenv("PROD_EMAIL_PASS")
 
 # Server host
-SERVER_PORT = os.getenv("PORT", 20000)
-ON_REMOTE = os.getenv("ON_REMOTE", False)
+SERVER_PORT = os.getenv("PORT", str(20000))
+ON_REMOTE = os.getenv("ON_REMOTE", str(0))
+# TODO: static domain
 SERVER_HOST = (
-    "https://nutra-server.herokuapp.com"
-    if ON_REMOTE
-    else f"http://localhost:{SERVER_PORT}"
+    "https://vps76.heliohost.us" if ON_REMOTE else f"http://localhost:{SERVER_PORT}"
 )
 WEB_HOST = (
     "https://nutra-web.herokuapp.com"
@@ -38,8 +36,18 @@ PSQL_PASSWORD = os.getenv("PSQL_PASSWORD", "password")
 
 PSQL_HOST = os.getenv("PSQL_HOST", "localhost")
 
-# Other
+# Server config
 JWT_SECRET = os.getenv("JWT_SECRET", "secret123")
+PROXY_SECRET = os.getenv("PROXY_SECRET", "secret123")
+WORKERS = int(os.getenv("WORKERS", str(1)))
+
+ENV = os.environ.get("ENV", "local")
+PORT = int(os.getenv("PORT", str(20000)))
+HOST = os.getenv("HOST", "127.0.0.1")
+
+DEBUG = bool(ENV == "local")
+
+# Other
 TOKEN_EXPIRY = timedelta(weeks=520)
 SLACK_TOKEN = os.getenv("SLACK_TOKEN")
 SEARCH_LIMIT = 100

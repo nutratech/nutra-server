@@ -1,14 +1,29 @@
-import os
+import subprocess  # nosec
 
 
-def heroku() -> tuple:
-    # TODO: remove this entirely?
+def release_git_parse() -> tuple:
+    """Gets release info by calling git commands"""
+
+    def git_cmd(args: str):
+        try:
+            return (
+                subprocess.run(args.split(), capture_output=True, check=True)  # nosec
+                .stdout.decode()
+                .rstrip()
+            )
+        except subprocess.CalledProcessError as err:
+            print(f"Git command error: {repr(err)}")
+            return None
+
     try:
+        git_sha = git_cmd("git rev-parse --short HEAD")
+        git_commit_date = git_cmd("git show -s --format=%ci")
+
         return (
-            os.environ["HEROKU_RELEASE_VERSION"],
-            os.environ["HEROKU_SLUG_COMMIT"][:9],
-            os.environ["HEROKU_RELEASE_CREATED_AT"],
+            git_sha,
+            git_commit_date,
         )
+
     except KeyError as err:
         print(f"WARN: {repr(err)}")
-        return None, None, None
+        return None, None

@@ -37,8 +37,9 @@ jobs:
           sudo -u postgres psql -c 'ALTER DATABASE nt OWNER TO runner'
           psql -d nt -c 'ALTER DATABASE nt SET search_path TO nt'
           psql -l
-          python ntdb/sql/pg.py r
-          # Select versions, not a pass/fail test but still viewable
+          # This package uses relative imports, so can be called from outside
+          python -m ntdb.sql rebuild
+          # Select versions (not a pass/fail test, but still viewable in logs)
           psql -d nt -c 'SELECT * FROM version'
 
       - name: Run Tests
