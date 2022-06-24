@@ -39,13 +39,13 @@ _release = release_git_parse()
 
 __title__ = "nutra-server"
 __module__ = "ntserv"
-__version__ = "0.0.3.dev1"
+__version__ = "0.1.0.dev0"
 __release__ = f"{_release[0]}, {_release[1].split()[0]}"
-__author__ = "gamesguru"
-__email__ = "nutratracker@protonmail.com"
+__author__ = "Shane Jaroch"
+__email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"
 __copyright__ = "Copyright 2019-2022 Shane Jaroch"
-__url__ = "https://github.com/gamesguru/nutra-server"
+__url__ = "https://github.com/nutratech/nutra-server"
 
 __db_target_ntdb__ = "0.0.38"
 

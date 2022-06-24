@@ -5,6 +5,7 @@ import sanic.response
 from ntserv import __db_target_ntdb__
 from ntserv.env import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
 from ntserv.utils.libserver import Response as _Response
+from ntserv.utils.libserver import Success200Response
 from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
@@ -148,5 +149,16 @@ def psql(query, params=None) -> PgResult:
 
 
 def verify_db_version_compat() -> bool:
+    # FIXME: use this to verify, e.g. cache reload(), and prior to any SQL operation
     pg_result = psql("SELECT * FROM version")
     return __db_target_ntdb__ == pg_result.row["version"]
+
+
+# pylint: disable=unused-argument
+def get_test_pg_connect(request, **kwargs):
+    pg_result = psql("SELECT * FROM version")
+    rows = pg_result.rows
+    for row in rows:
+        row["created"] = row["created"].isoformat()
+
+    return Success200Response(message=pg_result.msg, data={"versions": rows})

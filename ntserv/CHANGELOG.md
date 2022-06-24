@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Shop functions (e.g. controller for orders)
 
-## [0.0.0] - 2020-08-02
+## [0.0.38] - 2020-08-02
 
 ### Added
 

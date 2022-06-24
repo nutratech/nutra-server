@@ -32,6 +32,7 @@ from ntserv.controllers.calculate import (
 )
 from ntserv.controllers.sync import OPT_sync
 from ntserv.env import PROXY_SECRET
+from ntserv.persistence.psql import get_test_pg_connect
 from ntserv.utils.cache import reload
 from ntserv.utils.libserver import exc_req, home_page_text, self_route_rules
 
@@ -59,7 +60,9 @@ def get_user_details(request):
     return exc_req(GET_user_details, request)
 
 
-# TODO: add endpoint /pg/version
+@app.route("/pg/version")
+async def _get_test_pg_connect(request):
+    return exc_req(get_test_pg_connect, request)
 
 
 # ------------------------------------------------
