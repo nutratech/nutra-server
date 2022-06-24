@@ -53,17 +53,18 @@ jobs:
 
       # NOTE: depends on API_PORT=20000
       - name: Integration test / basic request / 10 second startup
-        run: >
-          n=0;
-          set +e;
+        run: |
+          n=0
+          set +e
           while [ $n != 20 ]; do
-            n=$(expr $n + 1);
-            echo $n;
-            sleep 0.5;
-            curl localhost:20000 && break;
+            n=$(expr $n + 1)
+            echo $n
+            sleep 0.5
+            curl localhost:20000 && break
           done;
-          set -e;
+          set -e
 
+          # Do some basic validation, that we get HTTP 2XX/3XX & valid JSON
           curl -I -X GET localhost:20000
           curl localhost:20000/pg/version | jq
           curl localhost:20000/nutrients  | jq
