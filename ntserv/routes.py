@@ -43,8 +43,10 @@ app.config.FORWARDED_SECRET = PROXY_SECRET
 # -------------------------
 # Routes
 # -------------------------
-@app.route("/")
+# TODO: use *args, **kwargs
+# noinspection PyUnusedLocal
 # pylint: disable=unused-argument
+@app.route("/")
 async def get_home_page(request):
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
@@ -139,10 +141,10 @@ def post_sync(request):
 # Public functions: /nutrients
 # ------------------------------------------------
 @app.route("/nutrients")
-def get_nutrients(request):
-    return exc_req(GET_nutrients, request)
+def _get_nutrients(request):
+    return exc_req(get_nutrients, request)
 
 
 @app.route("/nutrients/html")
 def _get_nutrients_html(request):
-    return exc_req(GET_nutrients, request, response_type="HTML")
+    return exc_req(get_nutrients, request, response_type="HTML")

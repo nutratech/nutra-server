@@ -1,7 +1,6 @@
 import time
 import traceback
 from datetime import datetime
-from typing import Any
 
 import sanic.response
 from sanic import Sanic

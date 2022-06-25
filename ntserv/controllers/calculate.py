@@ -38,6 +38,8 @@ def post_calc_bmr(request):
     """Calculates all types of BMR for comparison"""
     body = request.json
 
+    # NOTE: doesn't support imperial units
+
     activity_factor = float(body["activity_factor"])  # TODO: int, float, or string?
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
@@ -91,7 +93,9 @@ def post_calc_bodyfat(request):
     sup = body.get("sup")
     mid = body.get("mid")
 
+    # NOTE: doesn't support imperial units
     # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
+
     # ----------------
     # Navy test
     # ----------------
@@ -140,12 +144,15 @@ def post_calc_bodyfat(request):
 
 def post_calc_lblimits(request):
     body = request.json
-    height = body["height"]
+    height = float(body["height"])
 
     desired_bf = body.get("desired-bf")
 
     wrist = body.get("wrist")
     ankle = body.get("ankle")
+
+    # NOTE: doesn't support SI / metrics units
+    # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
 
     # ----------------
     # Martin Berkhan
@@ -157,34 +164,44 @@ def post_calc_lblimits(request):
     # ----------------
     # Eric Helms
     # ----------------
-    min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-    max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-    eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
+    try:
+        min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
+    except TypeError:
+        eh = {"error": "MISSING_INPUT", "requires": ["height", "desired-bf"]}
 
     # ----------------
     # Casey Butt, PhD
     # ----------------
-    h = height / 2.54
-    w = wrist / 2.54
-    a = ankle / 2.54
-    lbm = round(
-        h ** (3 / 2)
-        * (math.sqrt(w) / 22.6670 + math.sqrt(a) / 17.0104)
-        * (1 + desired_bf / 224),
-        1,
-    )
-    weight = round(lbm / (1 - desired_bf / 100), 1)
-    cb = {
-        "notes": f"{desired_bf}% bodyfat",
-        "lbm": f"{lbm} lbs",
-        "weight": f"{weight} lbs",
-        "chest": round(1.6817 * w + 1.3759 * a + 0.3314 * h, 2),
-        "arm": round(1.2033 * w + 0.1236 * h, 2),
-        "forearm": round(0.9626 * w + 0.0989 * h, 2),
-        "neck": round(1.1424 * w + 0.1236 * h, 2),
-        "thigh": round(1.3868 * a + 0.1805 * h, 2),
-        "calf": round(0.9298 * a + 0.1210 * h, 2),
-    }
+    try:
+        h = height / 2.54
+        w = wrist / 2.54
+        a = ankle / 2.54
+        lbm = round(
+            h ** (3 / 2)
+            * (math.sqrt(w) / 22.6670 + math.sqrt(a) / 17.0104)
+            * (1 + desired_bf / 224),
+            1,
+        )
+        weight = round(lbm / (1 - desired_bf / 100), 1)
+        cb = {
+            "notes": f"{desired_bf}% bodyfat",
+            "lbm": f"{lbm} lbs",
+            "weight": f"{weight} lbs",
+            "chest": round(1.6817 * w + 1.3759 * a + 0.3314 * h, 2),
+            "arm": round(1.2033 * w + 0.1236 * h, 2),
+            "forearm": round(0.9626 * w + 0.0989 * h, 2),
+            "neck": round(1.1424 * w + 0.1236 * h, 2),
+            "thigh": round(1.3868 * a + 0.1805 * h, 2),
+            "calf": round(0.9298 * a + 0.1210 * h, 2),
+        }
+    except TypeError:
+        cb = {
+            "error": "MISSING_INPUT",
+            "requires": ["height", "desired-bf", "wrist", "ankle"],
+        }
+
     return Success200Response(
         data={"martin-berkhan": mb, "eric-helms": eh, "casey-butt": cb}
     )
