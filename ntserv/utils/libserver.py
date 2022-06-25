@@ -13,6 +13,8 @@ from ntserv.env import SERVER_HOST
 def exc_req(func, req, response_type="JSON"):
     """Makes a request and handles global exceptions, always returning a `Response()`"""
 
+    # TODO: do we want to use named arguments here?
+
     try:
         # TODO: refactor services to accept unknown keywords, not crash on response_type
         if response_type == "JSON":
@@ -40,12 +42,12 @@ def exc_req(func, req, response_type="JSON"):
 # ------------------------
 # Response types
 # ------------------------
-class Response(sanic.response.HTTPResponse):
+class Response(sanic.HTTPResponse):
     """Creates a response object for the client"""
 
     def __new__(  # type: ignore
         cls, err_msg: str = None, data: dict = None, code=-1
-    ) -> sanic.response.HTTPResponse:
+    ) -> sanic.HTTPResponse:
 
         if not data:
             data = {}
@@ -69,38 +71,44 @@ class Response(sanic.response.HTTPResponse):
 
 
 class Success200Response(Response):
-    def __new__(cls, message=None, data=None, code=200):
+    def __new__(  # type: ignore
+        cls, message=None, data=None, code=200
+    ) -> sanic.HTTPResponse:
         return super().__new__(cls, message, data, code=code)
 
 
 class MultiStatus207Response(Response):
-    def __new__(cls, message=None, data=None, code=207):
+    def __new__(  # type: ignore
+        cls, message=None, data=None, code=207
+    ) -> sanic.HTTPResponse:
         return super().__new__(cls, message, data, code=code)
 
 
 class BadRequest400Response(Response):
-    def __new__(cls, err_msg=None, code=408):
+    def __new__(cls, err_msg=None, code=408) -> sanic.HTTPResponse:  # type: ignore
         return super().__new__(cls, data={"error": err_msg}, code=code)
 
 
 class Unauthenticated401Response(Response):
-    def __new__(cls, err_msg=None, code=401):
+    def __new__(cls, err_msg=None, code=401) -> sanic.HTTPResponse:  # type: ignore
         return super().__new__(cls, data={"error": err_msg}, code=code)
 
 
 class Forbidden403Response(Response):
-    def __new__(cls, err_msg=None, code=403):
+    def __new__(cls, err_msg=None, code=403) -> sanic.HTTPResponse:  # type: ignore
         return super().__new__(cls, data={"error": err_msg}, code=code)
 
 
 class ServerError500Response(Response):
-    def __new__(cls, data=None, code=500):
+    def __new__(cls, data=None, code=500) -> sanic.HTTPResponse:  # type: ignore
         # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
         return super().__new__(cls, data=data, code=code)
 
 
 class NotImplemented501Response(Response):
-    def __new__(cls, err_msg="Not Implemented", code=501):
+    def __new__(  # type: ignore
+        cls, err_msg="Not Implemented", code=501
+    ) -> sanic.HTTPResponse:
         return super().__new__(cls, err_msg=err_msg, code=code)
 
 

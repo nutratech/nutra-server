@@ -8,6 +8,7 @@ Created on Tue Aug 11 16:47:18 2020
 
 import math
 
+import sanic.response
 from sanic import html
 from tabulate import tabulate
 
@@ -23,7 +24,7 @@ from ntserv.utils.libserver import Success200Response
 
 # TODO: solve this by supporting *args, **kwargs
 # pylint: disable=unused-argument
-def get_nutrients(request, response_type="JSON"):
+def get_nutrients(request, response_type="JSON") -> sanic.HTTPResponse:
     nutrients = list(cache.NUTRIENTS.values())
 
     if response_type == "JSON":
@@ -32,6 +33,16 @@ def get_nutrients(request, response_type="JSON"):
     # else: HTML
     table = tabulate(nutrients, headers="keys", tablefmt="presto")
     return html(f"<pre>{table}</pre>")
+
+
+def post_calc_1rm(request):
+    """Calculates a few different 1 rep max possibilities"""
+    body = request.json
+
+    reps = body["reps"]
+    weight = body["weight"]
+
+    # TODO: tell them how many they can hit for 2, 3, 5, 8, 10, 12, 15, and 20
 
 
 def post_calc_bmr(request):
@@ -69,7 +80,7 @@ def post_calc_bmr(request):
     )
 
 
-def post_calc_bodyfat(request):
+def post_calc_body_fat(request):
     body = request.json
 
     gender = body["gender"]
@@ -142,7 +153,7 @@ def post_calc_bodyfat(request):
     )
 
 
-def post_calc_lblimits(request):
+def post_calc_lb_limits(request):
     body = request.json
     height = float(body["height"])
 

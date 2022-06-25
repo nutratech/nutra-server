@@ -154,8 +154,9 @@ def verify_db_version_compat() -> bool:
     return __db_target_ntdb__ == pg_result.row["version"]
 
 
-# pylint: disable=unused-argument
-def get_test_pg_connect(request, **kwargs):
+def get_pg_version(**kwargs):
+    _ = kwargs
+
     pg_result = psql("SELECT * FROM version")
     rows = pg_result.rows
     for row in rows:

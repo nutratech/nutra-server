@@ -23,12 +23,12 @@ from ntserv.controllers.accounts import (
 from ntserv.controllers.calculate import (
     get_nutrients,
     post_calc_bmr,
-    post_calc_bodyfat,
-    post_calc_lblimits,
+    post_calc_body_fat,
+    post_calc_lb_limits,
 )
 from ntserv.controllers.sync import OPT_sync
 from ntserv.env import PROXY_SECRET
-from ntserv.persistence.psql import get_test_pg_connect
+from ntserv.persistence.psql import get_pg_version
 from ntserv.utils.cache import reload
 from ntserv.utils.libserver import exc_req, home_page_text, self_route_rules
 
@@ -40,45 +40,64 @@ app = Sanic(__module__)
 app.config.FORWARDED_SECRET = PROXY_SECRET
 
 
+# TODO: blueprinting, e.g. /auth, /calc
+
+
 # -------------------------
 # Routes
 # -------------------------
-# TODO: use *args, **kwargs
-# noinspection PyUnusedLocal
-# pylint: disable=unused-argument
 @app.route("/")
-async def get_home_page(request):
+async def _(*args):
+    _ = args
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
     return html(f"<pre>{home_page}</pre>", 200)
 
 
 @app.route("/user_details")
-async def get_user_details(request):
+async def _(request):
     return exc_req(GET_user_details, request)
 
 
 @app.route("/pg/version")
-async def _get_test_pg_connect(request):
-    return exc_req(get_test_pg_connect, request)
+async def _(request):
+    return exc_req(get_pg_version, request)
+
+
+# ------------------------------------------------
+# Public functions: /nutrients
+# ------------------------------------------------
+@app.route("/nutrients")
+async def _get_nutrients(request):
+    return exc_req(get_nutrients, request)
+
+
+@app.route("/nutrients/html")
+async def _get_nutrients_html(request):
+    return exc_req(get_nutrients, request, response_type="HTML")
 
 
 # ------------------------------------------------
 # Public functions: /calc
 # ------------------------------------------------
-@app.route("/calc/bodyfat", methods=["POST"])
-async def _post_calc_bodyfat(request):
-    return exc_req(post_calc_bodyfat, request)
-
-
-@app.route("/calc/lblimits", methods=["POST"])
-async def _post_calc_lblimits(request):
-    return exc_req(post_calc_lblimits, request)
+@app.route("/calc/1rm", methods=["POST"])
+async def _(request):
+    return exc_req(post_calc_1rm, request)
 
 
 @app.route("/calc/bmr", methods=["POST"])
-async def _post_calc_bmr(request):
+async def _(request):
     return exc_req(post_calc_bmr, request)
+
+
+@app.route("/calc/body-fat", methods=["POST"])
+async def _(request):
+    return exc_req(post_calc_body_fat, request)
+
+
+@app.route("/calc/lb-limits", methods=["POST"])
+async def _(request):
+    return exc_req(post_calc_lb_limits, request)
 
 
 # -------------------------
@@ -135,16 +154,3 @@ async def post_password_new_reset(request):
 @app.route("/sync", methods=["GET", "POST"])
 async def post_sync(request):
     return exc_req(OPT_sync, request)
-
-
-# ------------------------------------------------
-# Public functions: /nutrients
-# ------------------------------------------------
-@app.route("/nutrients")
-async def _get_nutrients(request):
-    return exc_req(get_nutrients, request)
-
-
-@app.route("/nutrients/html")
-async def _get_nutrients_html(request):
-    return exc_req(get_nutrients, request, response_type="HTML")
