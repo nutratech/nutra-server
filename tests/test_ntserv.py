@@ -42,7 +42,7 @@ def test_post_calc_bmr(gender: str):
             "Katch-McArdle": [1689, 2618],
             "Cunningham": [1843, 2857],
             "Mifflin-St-Jeor": [1680, 2604],
-            "Harris-Benedict": [1722, 2668],
+            "Harris-Benedict": [1721, 2668],
         }
     else:
         assert data == {
