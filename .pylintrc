@@ -1,5 +1,5 @@
 [MASTER]
-fail-under=8.89
+fail-under=8.5
 
 [MESSAGES CONTROL]
 disable=

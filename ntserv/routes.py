@@ -22,6 +22,7 @@ from ntserv.controllers.accounts import (
 )
 from ntserv.controllers.calculate import (
     get_nutrients,
+    post_calc_1rm,
     post_calc_bmr,
     post_calc_body_fat,
     post_calc_lb_limits,

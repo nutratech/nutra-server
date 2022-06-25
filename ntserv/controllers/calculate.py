@@ -19,11 +19,14 @@ from ntserv.utils.calculate import (
     bmr_katch_mcardle,
     bmr_mifflin_st_jeor,
 )
-from ntserv.utils.libserver import Success200Response
+from ntserv.utils.libserver import NotImplemented501Response, Success200Response
 
+# TODO: import the above and reference from e.g. libserver.Success200Response
 
 # TODO: solve this by supporting *args, **kwargs
 # pylint: disable=unused-argument
+
+
 def get_nutrients(request, response_type="JSON") -> sanic.HTTPResponse:
     nutrients = list(cache.NUTRIENTS.values())
 
@@ -41,6 +44,10 @@ def post_calc_1rm(request):
 
     reps = body["reps"]
     weight = body["weight"]
+
+    print(reps)
+    print(weight)
+    return NotImplemented501Response()
 
     # TODO: tell them how many they can hit for 2, 3, 5, 8, 10, 12, 15, and 20
 
