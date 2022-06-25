@@ -15,7 +15,7 @@ _logger = get_logger(__name__)
 # PRODUCTS = {}
 # VARIANTS = {}
 #
-# NUTRIENTS = {}
+NUTRIENTS = {}
 
 
 # nut_data = {}
@@ -28,7 +28,8 @@ _logger = get_logger(__name__)
 
 def reload() -> bool:
     # pylint: disable=global-statement
-    # global USERS, SHIPPING_CONTAINERS, PRODUCTS, VARIANTS, NUTRIENTS
+    global NUTRIENTS
+    # global USERS, SHIPPING_CONTAINERS, PRODUCTS, VARIANTS
     # pylint: disable=global-statement
     # global food_des, servings, servings_food, fdgrp, data_src
 
@@ -54,7 +55,7 @@ def reload() -> bool:
     # pg_result = psql("SELECT * FROM variants")
     # VARIANTS = {x["id"]: x for x in pg_result.rows}
     #
-    # pg_result = psql("SELECT * FROM nutr_def")
-    # NUTRIENTS = {n["id"]: n for n in pg_result.rows}
+    pg_result = psql("SELECT * FROM nutr_def")
+    NUTRIENTS = {n["id"]: n for n in pg_result.rows}
 
     return True
