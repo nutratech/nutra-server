@@ -11,18 +11,46 @@ from datetime import datetime
 # TODO: generalize activity level across BMR calcs, e.g. LIGHT, MODERATE, EXTREME
 
 
-def _age(dob):
-    now = datetime.now().timestamp()
-    years = (now - dob) / (365 * 24 * 3600)
-    return years
+# ------------------------------------------------
+# 1 rep max
+# ------------------------------------------------
+def orm_epley(reps: float, weight: float) -> dict:
+    """
+    Source: https://workoutable.com/one-rep-max-calculator/
+
+    1 RM = weight * (1 + reps / 30)
+
+    Returns a dict {n_reps: max_weight, ...}
+        for n_reps: (1, 2, 3, 5, 8, 10, 12, 15, 20)
+    """
+
+    maxes = {1: round(weight * (1 + reps / 30), 1)}
+    return maxes
 
 
+def orm_brzycki(reps: float, weight: float) -> dict:
+    """
+    Source: https://workoutable.com/one-rep-max-calculator/
+
+    1 RM = weight * 36 / (37 - reps)
+
+    Returns a dict {n_reps: max_weight, ...}
+        for n_reps: (1, 2, 3, 5, 8, 10, 12, 15, 20)
+    """
+
+    maxes = {1: round(weight * 36 / (37 - reps), 1)}
+    return maxes
+
+
+# ------------------------------------------------
+# BMR
+# ------------------------------------------------
 def bmr_katch_mcardle(lbm, activity_factor):
     """
     BMR = 370 + (21.6 x Lean Body Mass(kg) )
 
-    Source: <https://www.calculatorpro.com/calculator/katch-mcardle-bmr-calculator/>
-    Source: <https://tdeecalculator.net/about.php>
+    Source: https://www.calculatorpro.com/calculator/katch-mcardle-bmr-calculator/
+    Source: https://tdeecalculator.net/about.php
     """
     bmr = 370 + (21.6 * lbm)
     tdee = bmr * (1 + activity_factor)
@@ -87,3 +115,12 @@ def bmr_harris_benedict(gender, weight, height, dob, activity_factor):
 
     tdee = bmr * (1 + activity_factor)
     return round(bmr), round(tdee)
+
+
+# ------------------------------------------------
+# Misc functions
+# ------------------------------------------------
+def _age(dob: int):
+    now = datetime.now().timestamp()
+    years = (now - dob) / (365 * 24 * 3600)
+    return years
