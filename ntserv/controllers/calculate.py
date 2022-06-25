@@ -21,8 +21,9 @@ from ntserv.utils.calculate import (
 from ntserv.utils.libserver import Success200Response
 
 
+# TODO: solve this by supporting *args, **kwargs
 # pylint: disable=unused-argument
-def GET_nutrients(request, response_type="JSON"):
+def get_nutrients(request, response_type="JSON"):
     nutrients = list(cache.NUTRIENTS.values())
 
     if response_type == "JSON":
@@ -33,7 +34,7 @@ def GET_nutrients(request, response_type="JSON"):
     return html(f"<pre>{table}</pre>")
 
 
-def GET_calc_bmr(request):
+def post_calc_bmr(request):
     """Calculates all types of BMR for comparison"""
     body = request.json
 
@@ -66,7 +67,7 @@ def GET_calc_bmr(request):
     )
 
 
-def GET_calc_bodyfat(request):
+def post_calc_bodyfat(request):
     body = request.json
 
     gender = body["gender"]
@@ -137,7 +138,7 @@ def GET_calc_bodyfat(request):
     )
 
 
-def GET_calc_lblimits(request):
+def post_calc_lblimits(request):
     body = request.json
     height = body["height"]
 

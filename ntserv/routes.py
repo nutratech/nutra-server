@@ -21,10 +21,10 @@ from ntserv.controllers.accounts import (
     POST_v2_login,
 )
 from ntserv.controllers.calculate import (
-    GET_calc_bmr,
-    GET_calc_bodyfat,
-    GET_calc_lblimits,
-    GET_nutrients,
+    get_nutrients,
+    post_calc_bmr,
+    post_calc_bodyfat,
+    post_calc_lblimits,
 )
 from ntserv.controllers.sync import OPT_sync
 from ntserv.env import PROXY_SECRET
@@ -66,17 +66,17 @@ async def _get_test_pg_connect(request):
 # ------------------------------------------------
 @app.route("/calc/bodyfat", methods=["POST"])
 def _post_calc_bodyfat(request):
-    return exc_req(GET_calc_bodyfat, request)
+    return exc_req(post_calc_bodyfat, request)
 
 
 @app.route("/calc/lblimits", methods=["POST"])
 def _post_calc_lblimits(request):
-    return exc_req(GET_calc_lblimits, request)
+    return exc_req(post_calc_lblimits, request)
 
 
 @app.route("/calc/bmr", methods=["POST"])
 def _post_calc_bmr(request):
-    return exc_req(GET_calc_bmr, request)
+    return exc_req(post_calc_bmr, request)
 
 
 # -------------------------
