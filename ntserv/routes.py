@@ -54,7 +54,7 @@ async def get_home_page(request):
 
 
 @app.route("/user_details")
-def get_user_details(request):
+async def get_user_details(request):
     return exc_req(GET_user_details, request)
 
 
@@ -67,17 +67,17 @@ async def _get_test_pg_connect(request):
 # Public functions: /calc
 # ------------------------------------------------
 @app.route("/calc/bodyfat", methods=["POST"])
-def _post_calc_bodyfat(request):
+async def _post_calc_bodyfat(request):
     return exc_req(post_calc_bodyfat, request)
 
 
 @app.route("/calc/lblimits", methods=["POST"])
-def _post_calc_lblimits(request):
+async def _post_calc_lblimits(request):
     return exc_req(post_calc_lblimits, request)
 
 
 @app.route("/calc/bmr", methods=["POST"])
-def _post_calc_bmr(request):
+async def _post_calc_bmr(request):
     return exc_req(post_calc_bmr, request)
 
 
@@ -85,47 +85,47 @@ def _post_calc_bmr(request):
 # Account functions
 # -------------------------
 @app.route("/register", methods=["POST"])
-def post_register(request):
+async def post_register(request):
     return exc_req(POST_register, request)
 
 
 @app.route("/login", methods=["POST"])
-def post_login(request):
+async def post_login(request):
     return exc_req(POST_login, request)
 
 
 @app.route("/v2/login", methods=["POST"])
-def post_v2_login(request):
+async def post_v2_login(request):
     return exc_req(POST_v2_login, request)
 
 
 @app.route("/email/confirm")
-def get_confirm_email(request):
+async def get_confirm_email(request):
     return exc_req(GET_confirm_email, request)
 
 
 @app.route("/email/change")
-def get_email_change(request):
+async def get_email_change(request):
     return exc_req(GET_email_change, request)
 
 
 @app.route("/password/change")
-def get_change_password(request):
+async def get_change_password(request):
     return exc_req(GET_password_change, request)
 
 
 @app.route("/username/forgot")
-def post_forgot_username(request):
+async def post_forgot_username(request):
     return exc_req(POST_username_forgot, request)
 
 
 @app.route("/password/new/request")
-def post_password_new_request(request):
+async def post_password_new_request(request):
     return exc_req(POST_password_new_request, request)
 
 
 @app.route("/password/new/reset")
-def post_password_new_reset(request):
+async def post_password_new_reset(request):
     return exc_req(POST_password_new_reset, request)
 
 
@@ -133,7 +133,7 @@ def post_password_new_reset(request):
 # Sync functions
 # ------------------------------------------------
 @app.route("/sync", methods=["GET", "POST"])
-def post_sync(request):
+async def post_sync(request):
     return exc_req(OPT_sync, request)
 
 
@@ -141,10 +141,10 @@ def post_sync(request):
 # Public functions: /nutrients
 # ------------------------------------------------
 @app.route("/nutrients")
-def _get_nutrients(request):
+async def _get_nutrients(request):
     return exc_req(get_nutrients, request)
 
 
 @app.route("/nutrients/html")
-def _get_nutrients_html(request):
+async def _get_nutrients_html(request):
     return exc_req(get_nutrients, request, response_type="HTML")
