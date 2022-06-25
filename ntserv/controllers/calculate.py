@@ -28,9 +28,9 @@ def GET_nutrients(request, response_type="JSON"):
     if response_type == "JSON":
         # TODO: fix dict to accept either dict or list
         return Success200Response(data=nutrients)
-    else:  # HTML
-        table = tabulate(nutrients, headers="keys", tablefmt="presto")
-        return html(f"<pre>{table}</pre>")
+    # else: HTML
+    table = tabulate(nutrients, headers="keys", tablefmt="presto")
+    return html(f"<pre>{table}</pre>")
 
 
 def GET_calc_bmr(request):
@@ -50,6 +50,7 @@ def GET_calc_bmr(request):
         bf = float(body["bodyfat"])
         lbm = weight * (1 - bf)
 
+    # TODO: each of these methods returns a tuple: (bmr, tdee). Do we want a dict?
     katch_mcardle = bmr_katch_mcardle(lbm, activity_factor)
     cunningham = bmr_cunningham(lbm, activity_factor)
     mifflin_st_jeor = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
@@ -63,103 +64,6 @@ def GET_calc_bmr(request):
             "Harris-Benedict": harris_benedict,
         }
     )
-
-
-def GET_calc_bmr_katch_mcardle(request):
-    """
-    BMR = 370 + (21.6 x Lean Body Mass(kg) )
-    Source: <https://www.calculatorpro.com/calculator/katch-mcardle-bmr-calculator/>
-    Source: <https://tdeecalculator.net/about.php>
-    """
-    body = request.json
-
-    activity_factor = float(body["activity_factor"])  # ??
-
-    lbm = body.get("lbm")
-    if lbm:
-        lbm = float(lbm)
-    else:
-        weight = float(body["weight"])
-        bf = float(body["bodyfat"])
-        lbm = weight * (1 - bf)
-
-    bmr, tdee = bmr_katch_mcardle(lbm, activity_factor)
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr_cunningham(request):
-    """
-    Source:
-        <https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture>
-    """
-    body = request.json
-
-    # {'LIGHT': 0.3, 'MODERATE': 0.4, 'HEAVY': 0.5}
-    activity_factor = float(body["activity_factor"])
-
-    lbm = body.get("lbm")
-    if lbm:
-        lbm = float(lbm)
-    else:
-        weight = float(body["weight"])
-        bf = float(body["bodyfat"])
-        lbm = weight * (1 - bf)
-
-    bmr, tdee = bmr_cunningham(lbm, activity_factor)
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr_mifflin_st_jeor(request):
-    """
-    Activity Factor
-    ---------------
-    0.200 = sedentary (little or no exercise)
-
-    0.375 = lightly active
-        (light exercise/sports 1-3 days/week, approx. 590 Cal/day)
-
-    0.550 = moderately active
-        (moderate exercise/sports 3-5 days/week, approx. 870 Cal/day)
-
-    0.725 = very active
-        (hard exercise/sports 6-7 days a week, approx. 1150 Cal/day)
-
-    0.900 = extra active
-        (very hard exercise/sports and physical job, approx. 1580 Cal/day)
-
-    Source: <https://www.myfeetinmotion.com/mifflin-st-jeor-equation/>
-    """
-    body = request.json
-
-    activity_factor = float(body["activity_factor"])
-    weight = float(body["weight"])  # kg
-    height = float(body["height"])  # cm
-    gender = body["gender"]  # ['MALE', 'FEMALE']
-    dob = int(body["dob"])  # unix (epoch) timestamp
-
-    bmr, tdee = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr_harris_benedict(request):
-    """
-    Harris-Benedict = (13.397m + 4.799h - 5.677a) + 88.362 (MEN)
-    Harris-Benedict = (9.247m + 3.098h - 4.330a) + 447.593 (WOMEN)
-
-    m is mass in kg, h is height in cm, a is age in years
-    Source: <https://tdeecalculator.net/about.php>
-    """
-    body = request.json
-
-    activity_factor = float(body["activity_factor"])
-    weight = float(body["weight"])  # kg
-    height = float(body["height"])  # cm
-    gender = body["gender"]  # ['MALE', 'FEMALE']
-    dob = int(body["dob"])  # unix (epoch) timestamp
-
-    bmr, tdee = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
-
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
 
 
 def GET_calc_bodyfat(request):
@@ -186,6 +90,7 @@ def GET_calc_bodyfat(request):
     sup = body.get("sup")
     mid = body.get("mid")
 
+    # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
     # ----------------
     # Navy test
     # ----------------

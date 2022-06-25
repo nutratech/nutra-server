@@ -1,6 +1,7 @@
 import time
 import traceback
 from datetime import datetime
+from typing import Any
 
 import sanic.response
 from sanic import Sanic
@@ -60,7 +61,7 @@ class Response(sanic.response.HTTPResponse):
                 "release": __release__,
                 "datetime": datetime.now().strftime("%c").strip(),
                 "timestamp": round(time.time() * 1000),
-                "OK": bool(code < 400),
+                "ok": bool(code < 400),
                 "code": code,
                 "data": data,
             },
@@ -79,27 +80,24 @@ class MultiStatus207Response(Response):
 
 
 class BadRequest400Response(Response):
-    def __new__(cls, message=None, code=408):
-        # TODO" this is misleading, the top-level data is never used?
-        return super().__new__(cls, data={"error": message}, code=code)
+    def __new__(cls, err_msg=None, code=408):
+        return super().__new__(cls, data={"error": err_msg}, code=code)
 
 
 class Unauthenticated401Response(Response):
-    def __new__(cls, message=None, data=None, code=401):
-        # TODO" this is misleading, the top-level data is never used?
-        return super().__new__(cls, data={"error": message}, code=code)
+    def __new__(cls, err_msg=None, code=401):
+        return super().__new__(cls, data={"error": err_msg}, code=code)
 
 
 class Forbidden403Response(Response):
-    def __new__(cls, message=None, data=None, code=403):
-        # TODO" this is misleading, the top-level data is never used?
-        return super().__new__(cls, data={"error": message}, code=code)
+    def __new__(cls, err_msg=None, code=403):
+        return super().__new__(cls, data={"error": err_msg}, code=code)
 
 
 class ServerError500Response(Response):
-    def __new__(cls, code=500):
+    def __new__(cls, data=None, code=500):
         # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
-        return super().__new__(cls, code=code)
+        return super().__new__(cls, data=data, code=code)
 
 
 class NotImplemented501Response(Response):

@@ -22,10 +22,6 @@ from ntserv.controllers.accounts import (
 )
 from ntserv.controllers.calculate import (
     GET_calc_bmr,
-    GET_calc_bmr_cunningham,
-    GET_calc_bmr_harris_benedict,
-    GET_calc_bmr_katch_mcardle,
-    GET_calc_bmr_mifflin_st_jeor,
     GET_calc_bodyfat,
     GET_calc_lblimits,
     GET_nutrients,
@@ -81,26 +77,6 @@ def _post_calc_lblimits(request):
 @app.route("/calc/bmr", methods=["POST"])
 def _post_calc_bmr(request):
     return exc_req(GET_calc_bmr, request)
-
-
-@app.route("/calc/bmr/katch_mcardle", methods=["POST"])
-def _post_calc_bmr_katch_mcardle(request):
-    return exc_req(GET_calc_bmr_katch_mcardle, request)
-
-
-@app.route("/calc/bmr/cunningham", methods=["POST"])
-def _post_calc_bmr_cunningham(request):
-    return exc_req(GET_calc_bmr_cunningham, request)
-
-
-@app.route("/calc/bmr/mifflin_st_jeor", methods=["POST"])
-def _post_calc_bmr_mifflin_st_jeor(request):
-    return exc_req(GET_calc_bmr_mifflin_st_jeor, request)
-
-
-@app.route("/calc/bmr/harris_benedict", methods=["POST"])
-def _post_calc_bmr_harris_benedict(request):
-    return exc_req(GET_calc_bmr_harris_benedict, request)
 
 
 # -------------------------
