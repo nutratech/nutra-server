@@ -1615,15 +1615,12 @@
 				},
 				{
 					"name": "/calc/bodyfat",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"MALE\",\n\t\"age\": 28,\n\t\"height\": 178,\n\t\"waist\": 80,\n\t\"neck\": 36.8,\n\t\"chest\": 5,\n\t\"ab\": 6,\n\t\"thigh\": 9,\n\t\"tricep\": 6,\n\t\"sub\": 8,\n\t\"sup\": 7,\n\t\"mid\": 4\n}",
+							"raw": "{\n    \"gender\": \"MALE\",\n    \"age\": 28,\n    \"height\": 178,\n    \"waist\": 80,\n    \"neck\": 36.8,\n    \"chest\": 5,\n    \"ab\": 6,\n    \"thigh\": 9,\n    \"tricep\": 6,\n    \"sub\": 8,\n    \"sup\": 7,\n    \"mid\": 4\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1645,15 +1642,12 @@
 				},
 				{
 					"name": "/calc/lblimits",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"MALE\",\n\t\"height\": 179,\n\t\"desired-bf\": 14,\n\t\"wrist\": 17.2,\n\t\"ankle\": 21.5\n}",
+							"raw": "{\n    \"gender\": \"MALE\",\n    \"height\": 179,\n    \"desired-bf\": 12,\n    \"wrist\": 17.2,\n    \"ankle\": 21.5\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1675,15 +1669,17 @@
 				},
 				{
 					"name": "/calc/bmr",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}"
+							"raw": "{\n    \"weight\": 71,\n    \"height\": 177,\n    \"gender\": \"MALE\",\n    \"dob\": 725864400,\n    \"bodyfat\": 0.14,\n    \"activity_factor\": 0.55\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr",
@@ -1693,130 +1689,6 @@
 							"path": [
 								"calc",
 								"bmr"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/katch_mcardle",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/katch_mcardle",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"katch_mcardle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/cunningham",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/cunningham",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"cunningham"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/mifflin_st_jeor",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/mifflin_st_jeor",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"mifflin_st_jeor"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/harris_benedict",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/harris_benedict",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"harris_benedict"
 							]
 						}
 					},
@@ -1874,23 +1746,6 @@
 							"response": []
 						}
 					]
-				},
-				{
-					"name": "/countries",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/countries",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"countries"
-							]
-						}
-					},
-					"response": []
 				},
 				{
 					"name": "/validate/addresses",
