@@ -44,15 +44,14 @@ class Response(sanic.response.HTTPResponse):
     """Creates a response object for the client"""
 
     def __new__(  # type: ignore
-        cls, message: str = None, data: dict = None, code=-1
+        cls, err_msg: str = None, data: dict = None, code=-1
     ) -> sanic.response.HTTPResponse:
 
         if not data:
             data = {}
 
-        if message:
-            # TODO: does this belong nested in data.data?
-            data["message"] = message
+        if err_msg:
+            data["error"] = err_msg
 
         return sanic.response.json(
             {
@@ -61,7 +60,7 @@ class Response(sanic.response.HTTPResponse):
                 "release": __release__,
                 "datetime": datetime.now().strftime("%c").strip(),
                 "timestamp": round(time.time() * 1000),
-                "status": "OK" if code < 400 else "Failure",
+                "OK": bool(code < 400),
                 "code": code,
                 "data": data,
             },
@@ -80,7 +79,7 @@ class MultiStatus207Response(Response):
 
 
 class BadRequest400Response(Response):
-    def __new__(cls, message=None, data=None, code=408):
+    def __new__(cls, message=None, code=408):
         # TODO" this is misleading, the top-level data is never used?
         return super().__new__(cls, data={"error": message}, code=code)
 
@@ -98,14 +97,14 @@ class Forbidden403Response(Response):
 
 
 class ServerError500Response(Response):
-    def __new__(cls, message=None, data=None, code=500):
+    def __new__(cls, code=500):
         # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
-        return super().__new__(cls, message=message, data=data, code=code)
+        return super().__new__(cls, code=code)
 
 
 class NotImplemented501Response(Response):
-    def __new__(cls, message="Not Implemented", data=None, code=501):
-        return super().__new__(cls, message=message, data=data, code=code)
+    def __new__(cls, err_msg="Not Implemented", code=501):
+        return super().__new__(cls, err_msg=err_msg, code=code)
 
 
 # ------------------------
