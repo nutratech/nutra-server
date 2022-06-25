@@ -163,4 +163,4 @@ def get_pg_version(**kwargs):
     for row in rows:
         row["created"] = row["created"].isoformat()
 
-    return Success200Response(message=pg_result.msg, data={"versions": rows})
+    return Success200Response(data={"message": pg_result.msg, "versions": rows})

@@ -21,13 +21,13 @@ from ntserv.utils.calculate import (
 )
 from ntserv.utils.libserver import NotImplemented501Response, Success200Response
 
+# pylint: disable=invalid-name
+
 # TODO: import the above and reference from e.g. libserver.Success200Response
 
-# TODO: solve this by supporting *args, **kwargs
-# pylint: disable=unused-argument
 
-
-def get_nutrients(request, response_type="JSON") -> sanic.HTTPResponse:
+def get_nutrients(*args, response_type="JSON") -> sanic.HTTPResponse:
+    _ = args
     nutrients = list(cache.NUTRIENTS.values())
 
     if response_type == "JSON":

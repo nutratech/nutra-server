@@ -10,6 +10,8 @@ from tabulate import tabulate
 from ntserv import __release__, __version__
 from ntserv.env import SERVER_HOST
 
+# pylint: disable=invalid-name
+
 
 def exc_req(func, req, response_type="JSON"):
     """Makes a request and handles global exceptions, always returning a `Response()`"""
@@ -73,8 +75,6 @@ def _response(
 # Success paths
 # ------------------------------------------------
 def Success200Response(data: Union[dict, list] = None) -> sanic.HTTPResponse:
-    # TODO: fix broken parts, e.g. passing a message (which isn't support anymore)
-    #  maybe nest that under response.data.message ?
     return _response(data=data, code=200)
 
 

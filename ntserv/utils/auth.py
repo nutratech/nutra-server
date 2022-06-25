@@ -7,6 +7,8 @@ from ntserv.env import JWT_SECRET, TOKEN_EXPIRY
 from ntserv.persistence.psql import psql
 from ntserv.utils.libserver import Unauthenticated401Response
 
+# pylint: disable=invalid-name
+
 # -----------------------------
 # Authorization levels
 # -----------------------------
@@ -17,7 +19,6 @@ AUTH_LEVEL_BASIC = 20
 AUTH_LEVEL_PAID = 30
 AUTH_LEVEL_TRAINER = 40
 AUTH_LEVEL_FULL_ADMIN = 10000
-# -----------------------------
 
 
 def issue_jwt_token(user_id, password):

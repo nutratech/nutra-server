@@ -19,6 +19,8 @@ from ntserv.utils.libserver import (
     Unauthenticated401Response,
 )
 
+# pylint: disable=invalid-name
+
 
 def POST_register(request):
     # Parse incoming request
@@ -120,7 +122,9 @@ def POST_register(request):
     send_activation_email(email, token)
 
     # TODO: rethink "message"?
-    return Success200Response("Successfully registered", data={"id": user_id})
+    return Success200Response(
+        data={"message": "Successfully registered", "id": user_id}
+    )
 
 
 def POST_login(request):
@@ -138,7 +142,7 @@ def POST_login(request):
     token, auth_level, error = issue_jwt_token(user_id, password)
     if token:
         return Success200Response(
-            "Logged in", {"token": token, "auth-level": auth_level}
+            data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
     else:
         return BadRequest400Response(error)
@@ -147,6 +151,7 @@ def POST_login(request):
 def POST_v2_login(request):
     def issue_oauth_token(*args):
         # TODO: complete this in another module
+        _ = args
         return None, None, None
 
     email = request.json["email"]
@@ -170,7 +175,7 @@ def POST_v2_login(request):
     token, auth_level, error = issue_oauth_token(user_id, password, device_id)
     if token:
         return Success200Response(
-            "Logged in", data={"token": token, "auth-level": auth_level}
+            data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
     return BadRequest400Response(error)
 
@@ -208,7 +213,7 @@ def GET_confirm_email(request):
     # Update info
     # ---------------------
     # TODO: transactional `block()`
-    pg_result = psql(
+    _ = psql(
         """
 UPDATE
   emails
@@ -222,7 +227,7 @@ RETURNING
         """,
         [user_id],
     )
-    pg_result = psql(
+    _ = psql(
         """
 DELETE FROM tokens
 WHERE user_id = %s
@@ -233,7 +238,7 @@ RETURNING
         [user_id],
     )
     # TODO: send welcome email?
-    return Success200Response("Successfully activated")
+    return Success200Response(data={"message": "Successfully activated"})
 
 
 @auth
