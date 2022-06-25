@@ -1,6 +1,7 @@
 import time
 import traceback
 from datetime import datetime
+from typing import Union
 
 import sanic.response
 from sanic import Sanic
@@ -42,14 +43,16 @@ def exc_req(func, req, response_type="JSON"):
 # ------------------------
 # Response types
 # ------------------------
-def _response(err_msg: str = None, data: dict = None, code=-1) -> sanic.HTTPResponse:
+def _response(
+    err_msg: str = None, data: Union[dict, list] = None, code=-1
+) -> sanic.HTTPResponse:
     """Creates a response object for the client"""
 
     if not data:
         data = {}
 
     if err_msg:
-        data["error"] = err_msg
+        data["error"] = err_msg  # type: ignore
 
     return sanic.response.json(
         {
@@ -69,7 +72,7 @@ def _response(err_msg: str = None, data: dict = None, code=-1) -> sanic.HTTPResp
 # ------------------------------------------------
 # Success paths
 # ------------------------------------------------
-def Success200Response(data: dict = None) -> sanic.HTTPResponse:
+def Success200Response(data: Union[dict, list] = None) -> sanic.HTTPResponse:
     # TODO: fix broken parts, e.g. passing a message (which isn't support anymore)
     #  maybe nest that under response.data.message ?
     return _response(data=data, code=200)
