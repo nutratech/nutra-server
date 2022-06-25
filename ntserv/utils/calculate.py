@@ -14,17 +14,29 @@ from datetime import datetime
 # ------------------------------------------------
 # 1 rep max
 # ------------------------------------------------
+
+common_n_reps = (1, 2, 3, 5, 8, 10, 12, 15, 20)
+
+
 def orm_epley(reps: float, weight: float) -> dict:
     """
     Source: https://workoutable.com/one-rep-max-calculator/
 
-    1 RM = weight * (1 + reps / 30)
+    1 RM = weight * (1 + (reps - 1) / 30)
 
     Returns a dict {n_reps: max_weight, ...}
         for n_reps: (1, 2, 3, 5, 8, 10, 12, 15, 20)
     """
 
-    maxes = {1: round(weight * (1 + reps / 30), 1)}
+    def one_rm() -> float:
+        _un_rounded_result = weight * (1 + (reps - 1) / 30)
+        return round(_un_rounded_result, 1)
+
+    def weight_max_reps(target_reps: float) -> float:
+        _un_rounded_result = one_rm() / (1 + (target_reps - 1) / 30)
+        return round(_un_rounded_result, 1)
+
+    maxes = {n_reps: weight_max_reps(n_reps) for n_reps in common_n_reps}
     return maxes
 
 

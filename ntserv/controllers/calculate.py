@@ -12,14 +12,10 @@ import sanic.response
 from sanic import html
 from tabulate import tabulate
 
+import ntserv.utils.calculate as calc
 from ntserv.utils import cache
-from ntserv.utils.calculate import (
-    bmr_cunningham,
-    bmr_harris_benedict,
-    bmr_katch_mcardle,
-    bmr_mifflin_st_jeor,
-)
 from ntserv.utils.libserver import NotImplemented501Response, Success200Response
+
 
 # pylint: disable=invalid-name
 
@@ -42,14 +38,18 @@ def post_calc_1rm(request):
     """Calculates a few different 1 rep max possibilities"""
     body = request.json
 
-    reps = body["reps"]
-    weight = body["weight"]
+    reps = float(body["reps"])
+    weight = float(body["weight"])
 
-    print(reps)
-    print(weight)
-    return NotImplemented501Response()
+    epley = calc.orm_epley(reps, weight)
+    brzycki = calc.orm_brzycki(reps, weight)
 
-    # TODO: tell them how many they can hit for 2, 3, 5, 8, 10, 12, 15, and 20
+    return Success200Response(
+        data={
+            "epley": epley,
+            "brzycki": brzycki,
+        }
+    )
 
 
 def post_calc_bmr(request):
