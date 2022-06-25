@@ -81,28 +81,31 @@ class MultiStatus207Response(Response):
 
 class BadRequest400Response(Response):
     def __new__(cls, message=None, data=None, code=408):
+        # TODO" this is misleading, the top-level data is never used?
         return super().__new__(cls, data={"error": message}, code=code)
 
 
 class Unauthenticated401Response(Response):
     def __new__(cls, message=None, data=None, code=401):
+        # TODO" this is misleading, the top-level data is never used?
         return super().__new__(cls, data={"error": message}, code=code)
 
 
 class Forbidden403Response(Response):
     def __new__(cls, message=None, data=None, code=403):
+        # TODO" this is misleading, the top-level data is never used?
         return super().__new__(cls, data={"error": message}, code=code)
 
 
 class ServerError500Response(Response):
     def __new__(cls, message=None, data=None, code=500):
         # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
-        return super().__new__(cls, data=data, code=code)
+        return super().__new__(cls, message=message, data=data, code=code)
 
 
 class NotImplemented501Response(Response):
-    def __new__(cls, message=None, data=None, code=501):
-        return super().__new__(cls, message="Not Implemented", data=data, code=code)
+    def __new__(cls, message="Not Implemented", data=None, code=501):
+        return super().__new__(cls, message=message, data=data, code=code)
 
 
 # ------------------------

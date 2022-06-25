@@ -8,6 +8,7 @@ Created on Tue Aug 11 16:47:18 2020
 
 import math
 
+from sanic import html
 from tabulate import tabulate
 
 from ntserv.utils import cache
@@ -25,10 +26,11 @@ def GET_nutrients(request, response_type="JSON"):
     nutrients = list(cache.NUTRIENTS.values())
 
     if response_type == "JSON":
+        # TODO: fix dict to accept either dict or list
         return Success200Response(data=nutrients)
     else:  # HTML
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
-        return f"<pre>{table}</pre>"
+        return html(f"<pre>{table}</pre>")
 
 
 def GET_calc_bmr(request):
