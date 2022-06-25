@@ -93,7 +93,7 @@ def POST_register(request):
     )
     # ERRORs
     if pg_result.err_msg:
-        return pg_result.Response
+        return pg_result.http_response_error
     user_id = pg_result.row["id"]
     # Insert emails
     pg_result = psql(
@@ -103,7 +103,7 @@ def POST_register(request):
     # ERRORs
     if pg_result.err_msg:
         psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
-        return pg_result.Response
+        return pg_result.http_response_error
     # Insert tokens
     token = str(uuid.uuid4()).replace("-", "")
     pg_result = psql(
@@ -114,7 +114,7 @@ def POST_register(request):
     if pg_result.err_msg:
         psql("DELETE FROM emails WHERE user_id=%s RETURNING email", [user_id])
         psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
-        return pg_result.Response
+        return pg_result.http_response_error
     #
     # Send activation email
     send_activation_email(email, token)

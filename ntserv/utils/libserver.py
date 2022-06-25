@@ -42,78 +42,72 @@ def exc_req(func, req, response_type="JSON"):
 # ------------------------
 # Response types
 # ------------------------
-class Response(sanic.HTTPResponse):
+def _response(err_msg: str = None, data: dict = None, code=-1) -> sanic.HTTPResponse:
     """Creates a response object for the client"""
 
-    def __new__(  # type: ignore
-        cls, err_msg: str = None, data: dict = None, code=-1
-    ) -> sanic.HTTPResponse:
+    if not data:
+        data = {}
 
-        if not data:
-            data = {}
+    if err_msg:
+        data["error"] = err_msg
 
-        if err_msg:
-            data["error"] = err_msg
-
-        return sanic.response.json(
-            {
-                "program": "nutra-server",
-                "version": __version__,
-                "release": __release__,
-                "datetime": datetime.now().strftime("%c").strip(),
-                "timestamp": round(time.time() * 1000),
-                "ok": bool(code < 400),
-                "code": code,
-                "data": data,
-            },
-            status=code,
-        )
+    return sanic.response.json(
+        {
+            "program": "nutra-server",
+            "version": __version__,
+            "release": __release__,
+            "datetime": datetime.now().strftime("%c").strip(),
+            "timestamp": round(time.time() * 1000),
+            "ok": bool(code < 400),
+            "code": code,
+            "data": data,
+        },
+        status=code,
+    )
 
 
-class Success200Response(Response):
-    def __new__(  # type: ignore
-        cls, message=None, data=None, code=200
-    ) -> sanic.HTTPResponse:
-        return super().__new__(cls, message, data, code=code)
+# ------------------------------------------------
+# Success paths
+# ------------------------------------------------
+def Success200Response(data: dict = None) -> sanic.HTTPResponse:
+    # TODO: fix broken parts, e.g. passing a message (which isn't support anymore)
+    #  maybe nest that under response.data.message ?
+    return _response(data=data, code=200)
 
 
-class MultiStatus207Response(Response):
-    def __new__(  # type: ignore
-        cls, message=None, data=None, code=207
-    ) -> sanic.HTTPResponse:
-        return super().__new__(cls, message, data, code=code)
+def MultiStatus207Response(data: dict = None) -> sanic.HTTPResponse:
+    return _response(data=data, code=207)
 
 
-class BadRequest400Response(Response):
-    def __new__(cls, err_msg=None, code=408) -> sanic.HTTPResponse:  # type: ignore
-        return super().__new__(cls, data={"error": err_msg}, code=code)
+# ------------------------------------------------
+# Client errors
+# ------------------------------------------------
+def BadRequest400Response(err_msg="Bad request") -> sanic.HTTPResponse:
+    return _response(err_msg=err_msg, code=400)
 
 
-class Unauthenticated401Response(Response):
-    def __new__(cls, err_msg=None, code=401) -> sanic.HTTPResponse:  # type: ignore
-        return super().__new__(cls, data={"error": err_msg}, code=code)
+def Unauthenticated401Response(err_msg="Unauthenticated"):
+    return _response(err_msg=err_msg, code=401)
 
 
-class Forbidden403Response(Response):
-    def __new__(cls, err_msg=None, code=403) -> sanic.HTTPResponse:  # type: ignore
-        return super().__new__(cls, data={"error": err_msg}, code=code)
+def Forbidden403Response(err_msg="Forbidden") -> sanic.HTTPResponse:
+    return _response(err_msg=err_msg, code=403)
 
 
-class ServerError500Response(Response):
-    def __new__(cls, data=None, code=500) -> sanic.HTTPResponse:  # type: ignore
-        # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
-        return super().__new__(cls, data=data, code=code)
+# ------------------------------------------------
+# Server errors
+# ------------------------------------------------
+def ServerError500Response(data: dict) -> sanic.HTTPResponse:
+    # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
+    return _response(data=data, code=500)
 
 
-class NotImplemented501Response(Response):
-    def __new__(  # type: ignore
-        cls, err_msg="Not Implemented", code=501
-    ) -> sanic.HTTPResponse:
-        return super().__new__(cls, err_msg=err_msg, code=code)
+def NotImplemented501Response(err_msg="Not Implemented") -> sanic.HTTPResponse:
+    return _response(err_msg=err_msg, code=501)
 
 
 # ------------------------
-# Helper functions
+# Misc functions
 # ------------------------
 def home_page_text(routes_table: str):
     """Renders <pre></pre> compatible HTML home-page text"""
