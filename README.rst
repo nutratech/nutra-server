@@ -78,26 +78,9 @@ They use the recommended practices for testing a ``Sanic`` app.
 Config Variables in ``.env`` file
 #################################
 
-**TODO:** Check which are required, and which will be overwritten as ``null``.
+The server runs with default configuration locally.
 
-.. code-block:: ini
+Check the ``.env.local`` file for specifics on deployed environments.
 
-    # Email creds
-    PROD_EMAIL=
-    PROD_EMAIL_PASS=
-
-    # Remote PostgreSQL
-    # PSQL_USER=
-    # PSQL_PASSWORD=
-    # PSQL_DB_NAME=
-    # PSQL_HOST=
-
-    # Server host
-    # HOST=127.0.0.1
-
-    # Other
-    # JWT_SECRET=
-    # PROXY_SECRET=
-
-    # ENV=prod
-    # WORKERS=4
+These can be supplied as environment variables to the systemctl service.
+See ``ntserv.service`` for an example.
