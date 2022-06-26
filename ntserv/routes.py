@@ -9,16 +9,16 @@ from sanic import Sanic, html
 
 from ntserv import __module__
 from ntserv.controllers.accounts import (
-    GET_confirm_email,
-    GET_email_change,
-    GET_password_change,
-    GET_user_details,
-    POST_login,
-    POST_password_new_request,
-    POST_password_new_reset,
-    POST_register,
-    POST_username_forgot,
-    POST_v2_login,
+    get_confirm_email,
+    get_email_change,
+    get_password_change,
+    get_user_details,
+    post_login,
+    post_password_new_request,
+    post_password_new_reset,
+    post_register,
+    post_username_forgot,
+    post_v2_login,
 )
 from ntserv.controllers.calculate import (
     get_nutrients,
@@ -27,7 +27,7 @@ from ntserv.controllers.calculate import (
     post_calc_body_fat,
     post_calc_lb_limits,
 )
-from ntserv.controllers.sync import OPT_sync
+from ntserv.controllers.sync import opt_sync
 from ntserv.env import PROXY_SECRET
 from ntserv.persistence.psql import get_pg_version
 from ntserv.utils.cache import reload
@@ -57,7 +57,7 @@ async def _(*args):
 
 @app.route("/user_details")
 async def _(request):
-    return exc_req(GET_user_details, request)
+    return exc_req(get_user_details, request)
 
 
 @app.route("/pg/version")
@@ -69,12 +69,12 @@ async def _(request):
 # Public functions: /nutrients
 # ------------------------------------------------
 @app.route("/nutrients")
-async def _get_nutrients(request):
+async def _(request):
     return exc_req(get_nutrients, request)
 
 
 @app.route("/nutrients/html")
-async def _get_nutrients_html(request):
+async def _(request):
     return exc_req(get_nutrients, request, response_type="HTML")
 
 
@@ -105,53 +105,53 @@ async def _(request):
 # Account functions
 # -------------------------
 @app.route("/register", methods=["POST"])
-async def post_register(request):
-    return exc_req(POST_register, request)
+async def _(request):
+    return exc_req(post_register, request)
 
 
 @app.route("/login", methods=["POST"])
-async def post_login(request):
-    return exc_req(POST_login, request)
+async def _(request):
+    return exc_req(post_login, request)
 
 
 @app.route("/v2/login", methods=["POST"])
-async def post_v2_login(request):
-    return exc_req(POST_v2_login, request)
+async def _(request):
+    return exc_req(post_v2_login, request)
 
 
 @app.route("/email/confirm")
-async def get_confirm_email(request):
-    return exc_req(GET_confirm_email, request)
+async def _(request):
+    return exc_req(get_confirm_email, request)
 
 
 @app.route("/email/change")
-async def get_email_change(request):
-    return exc_req(GET_email_change, request)
+async def _(request):
+    return exc_req(get_email_change, request)
 
 
 @app.route("/password/change")
-async def get_change_password(request):
-    return exc_req(GET_password_change, request)
+async def _(request):
+    return exc_req(get_password_change, request)
 
 
 @app.route("/username/forgot")
-async def post_forgot_username(request):
-    return exc_req(POST_username_forgot, request)
+async def _(request):
+    return exc_req(post_username_forgot, request)
 
 
 @app.route("/password/new/request")
-async def post_password_new_request(request):
-    return exc_req(POST_password_new_request, request)
+async def _(request):
+    return exc_req(post_password_new_request, request)
 
 
 @app.route("/password/new/reset")
-async def post_password_new_reset(request):
-    return exc_req(POST_password_new_reset, request)
+async def _(request):
+    return exc_req(post_password_new_reset, request)
 
 
 # ------------------------------------------------
 # Sync functions
 # ------------------------------------------------
 @app.route("/sync", methods=["GET", "POST"])
-async def post_sync(request):
-    return exc_req(OPT_sync, request)
+async def _(request):
+    return exc_req(opt_sync, request)

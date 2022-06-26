@@ -56,13 +56,16 @@ def post_calc_bmr(request):
 
     # NOTE: doesn't support imperial units
 
-    activity_factor = float(body["activity_factor"])  # TODO: int, float, or string?
+    # TODO: enum class for this?
+    activity_factor = float(body["activity_factor"])
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
+    # TODO: validate accuracy of gender here, not deeper in service
     gender = body["gender"]  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
 
     lbm = body.get("lbm")
+    # TODO: validate this against a REQUIRES: {lbm || bf}
     if lbm:
         lbm = float(lbm)
     else:
