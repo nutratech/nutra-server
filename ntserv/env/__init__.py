@@ -9,27 +9,28 @@ from dotenv import load_dotenv
 # Read in .env file if it exists locally, else look to env vars
 load_dotenv(verbose=True)
 
-# Log level
-LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(10)))
-
 # Environment and run config
 ENV = os.environ.get("NTSERV_ENV", "local")
 PORT = int(os.getenv("NTSERV_PORT", str(20000)))
 
 DEBUG = bool(ENV == "local")
 
-DEFAULT_WORKERS = 1 if (ENV == "local") else 2
-N_WORKERS = int(os.getenv("NTSERV_N_WORKERS", str(DEFAULT_WORKERS)))
+DEFAULT_N_WORKERS = 1 if DEBUG else 2
+N_WORKERS = int(os.getenv("NTSERV_N_WORKERS", str(DEFAULT_N_WORKERS)))
+
+# Log level
+DEFAULT_LOG_LEVEL = 10 if DEBUG else 20
+LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(DEFAULT_LOG_LEVEL)))
 
 # Self-referential hosts
 # TODO: static domain
 SERVER_HOST = (
-    f"http://127.0.0.1:{PORT}" if ENV == "local" else "https://vps76.heliohost.us"
+    f"http://127.0.0.1:{PORT}" if DEBUG else "https://vps76.heliohost.us"
 )
 UI_PORT = 3000
 UI_HOST = (
     f"http://127.0.0.1:{UI_PORT}"
-    if ENV == "local"
+    if DEBUG
     else "https://nutra-web.herokuapp.com"
 )
 
