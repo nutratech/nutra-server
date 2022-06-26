@@ -181,6 +181,7 @@ def post_v2_login(request):
 @auth
 def get_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     # TODO: if not user_id: return err
+    # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
     pg_result = psql("SELECT * FROM users(%s)", [user_id])
     return Success200Response(data=pg_result.row)
 

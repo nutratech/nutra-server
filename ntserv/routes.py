@@ -134,7 +134,7 @@ async def _(request):
     return exc_req(get_password_change, request)
 
 
-@app.route("/username/forgot")
+@app.route("/username/forgot", methods=["POST"])
 async def _(request):
     return exc_req(post_username_forgot, request)
 
