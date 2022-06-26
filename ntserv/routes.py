@@ -96,7 +96,7 @@ async def _(request):
     return exc_req(post_calc_body_fat, request)
 
 
-@app.route("/calc/lb-limits", methods=["POST"])
+@app.route("/calc/lbm-limits", methods=["POST"])
 async def _(request):
     return exc_req(post_calc_lb_limits, request)
 
