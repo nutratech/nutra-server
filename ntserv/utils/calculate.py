@@ -5,11 +5,14 @@ Created on Tue Aug 11 20:53:14 2020
 
 @author: shane
 """
-
+import traceback
 from datetime import datetime
+
+from ntserv.utils.logger import get_logger
 
 # TODO: generalize activity level across BMR calcs, e.g. LIGHT, MODERATE, EXTREME
 
+_logger = get_logger(__name__)
 
 # ------------------------------------------------
 # 1 rep max
@@ -90,15 +93,22 @@ def orm_dos_remedios(reps: int, weight: float) -> dict:
         _un_rounded_result = weight / _multiplier
         return round(_un_rounded_result, 1)
 
-    one_rm = _one_rm()
+    try:
+        one_rm = _one_rm()
+    except KeyError:
+        _logger.debug(traceback.format_exc())
+        valid_reps = list(_common_n_reps.keys())
+        return {
+            "error": "INVALID_RANGE",
+            "requires": ["reps", "in", valid_reps, "got", reps],
+        }
 
     def max_weight(target_reps: int) -> float:
         _multiplier = _common_n_reps[target_reps]
         _un_rounded_result = one_rm * _multiplier
         return round(_un_rounded_result, 1)
 
-    maxes = {n_reps: max_weight(n_reps) for n_reps in _common_n_reps}
-    return maxes
+    return {n_reps: max_weight(n_reps) for n_reps in _common_n_reps}
 
 
 # ------------------------------------------------

@@ -36,12 +36,12 @@ def post_calc_1rm(request):
     """Calculates a few different 1 rep max possibilities"""
     body = request.json
 
-    reps = float(body["reps"])
+    reps = int(body["reps"])
     weight = float(body["weight"])
 
     epley = calc.orm_epley(reps, weight)
     brzycki = calc.orm_brzycki(reps, weight)
-    dos_remedios = calc.dos_remedios(reps, weight)
+    dos_remedios = calc.orm_dos_remedios(reps, weight)
 
     return Success200Response(
         data={
