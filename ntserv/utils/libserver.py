@@ -7,7 +7,7 @@ import sanic.response
 from sanic import Sanic
 from tabulate import tabulate
 
-from ntserv import __release__, __version__
+from ntserv import __email__, __release__, __url__, __version__
 from ntserv.env import SERVER_HOST
 
 # pylint: disable=invalid-name
@@ -116,38 +116,41 @@ def home_page_text(routes_table: str):
     """Renders <pre></pre> compatible HTML home-page text"""
 
     # TODO: are any of these dynamic or environment based?
-    email_link = (
-        '<a href="mailto:nutratracker@gmail.com" '
-        'target="_blank" rel="noopener">nutratracker@gmail.com</a>'
-    )
+    email_link = f"<a href=mailto:{__email__}>{__email__}</a>"
 
     licsn_link = (
         '<a href="https://www.gnu.org/licenses" '
-        'target="_blank" >https://www.gnu.org/licenses</a>'
+        'target="_blank">https://www.gnu.org/licenses</a>'
     )
 
-    src_link = (
-        "<a href=https://github.com/nutratech/nutra-server "
-        'target="blank">https://github.com/nutratech/nutra-server</a>'
+    cli_link = (
+        '<a href="https://pypi.org/project/nutra/" '
+        'target="_blank">https://pypi.org/project/nutra/</a>'
     )
+
+    src_link = f'<a href={__url__} target="blank">{__url__}</a>'
+
     prod_app = f"<a href={SERVER_HOST} " f'target="blank">{SERVER_HOST}</a>'
 
     return f"""
 Welcome to nutra-server (v{__version__}) {__release__}
 ========================================================================
 
-An open-sourced health and fitness app from Nutra, LLC.
-Track obscure nutrients and stay healthy with Python and PostgreSQL!
+You can install our command line interface with Python and pip:
 
-Source code:    &lt{src_link}&gt
-Production app: &lt{prod_app}&gt
+    pip3 install nutra
+
+CLI page:       {cli_link}
+
+Source code:    {src_link}
+Production app: {prod_app}
 
 ------------------------------------------------------------------------
 LICENSE & COPYING NOTICE
 ------------------------------------------------------------------------
 
-    nutra-server, a server for nutratracker clients
-    Copyright (C) 2020  Nutra, LLC. [Shane & Kyle] &lt{email_link}&gt
+    nutra-server, a tool for health and food
+    Copyright (C) 2019-2022  Shane Jaroch &lt{email_link}&gt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -192,9 +195,14 @@ def self_route_rules(app: Sanic) -> str:
         # TODO: examine this <path:filename> equivalent with Sanic
         # TODO: more extensive url map, e.g. route/query params, headers, body
         # Add to the list
-        rule = (" ".join(methods), route.uri)
+        if "GET" in methods:
+            uri = f'<a href="{SERVER_HOST}{route.uri}">{route.uri}</a>'
+
+        else:
+            uri = route.uri
+        rule = (" ".join(methods), uri)
         rules.append(rule)
 
     # Return string
-    table = tabulate(rules, headers=["methods", "route"])
+    table = tabulate(rules, tablefmt="plain", headers=["methods", "route"])
     return table

@@ -14,8 +14,7 @@ from tabulate import tabulate
 
 import ntserv.utils.calculate as calc
 from ntserv.utils import cache
-from ntserv.utils.libserver import NotImplemented501Response, Success200Response
-
+from ntserv.utils.libserver import Success200Response
 
 # pylint: disable=invalid-name
 
@@ -72,10 +71,14 @@ def post_calc_bmr(request):
         lbm = weight * (1 - bf)
 
     # TODO: each of these methods returns a tuple: (bmr, tdee). Do we want a dict?
-    katch_mcardle = bmr_katch_mcardle(lbm, activity_factor)
-    cunningham = bmr_cunningham(lbm, activity_factor)
-    mifflin_st_jeor = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
-    harris_benedict = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
+    katch_mcardle = calc.bmr_katch_mcardle(lbm, activity_factor)
+    cunningham = calc.bmr_cunningham(lbm, activity_factor)
+    mifflin_st_jeor = calc.bmr_mifflin_st_jeor(
+        gender, weight, height, dob, activity_factor
+    )
+    harris_benedict = calc.bmr_harris_benedict(
+        gender, weight, height, dob, activity_factor
+    )
 
     return Success200Response(
         data={
