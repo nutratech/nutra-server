@@ -7,6 +7,657 @@
 	},
 	"item": [
 		{
+			"name": "Public (calc, nutrients, etc)",
+			"item": [
+				{
+					"name": "/nutrients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/nutrients",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"nutrients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/calc/1rm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reps\": 10,\n    \"weight\": 225\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/1rm",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"1rm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/calc/bmr",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"weight\": 71,\n    \"height\": 177,\n    \"gender\": \"MALE\",\n    \"dob\": 725864400,\n    \"bodyfat\": 0.14,\n    \"activity_factor\": 0.55\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"bmr"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/calc/body-fat",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gender\": \"MALE\",\n    \"age\": 28,\n    \"height\": 178,\n    \"waist\": 80,\n    \"neck\": 36.8,\n    \"chest\": 5,\n    \"ab\": 6,\n    \"thigh\": 9,\n    \"tricep\": 6,\n    \"sub\": 8,\n    \"sup\": 7,\n    \"mid\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/body-fat",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"body-fat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/calc/lbm-limits",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gender\": \"MALE\",\n    \"height\": 179,\n    \"desired-bf\": 12,\n    \"wrist\": 17.2,\n    \"ankle\": 21.5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/calc/lbm-limits",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"calc",
+								"lbm-limits"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "TODO",
+					"item": [
+						{
+							"name": "/report",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{USER_CREDENTIALS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "report_type",
+											"value": "food",
+											"type": "text"
+										},
+										{
+											"key": "report_message",
+											"value": "butter sucks",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/report",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"report"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/preorder",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "mathmuncher11@gmail.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{NUTRA_SERVER_URL}}/preorder",
+									"host": [
+										"{{NUTRA_SERVER_URL}}"
+									],
+									"path": [
+										"preorder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/slack/heroku",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"text\": \"heh\"\n}"
+								},
+								"url": {
+									"raw": "https://hooks.slack.com/services/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",
+									"protocol": "https",
+									"host": [
+										"hooks",
+										"slack",
+										"com"
+									],
+									"path": [
+										"services",
+										"TDHGE5LMB",
+										"BK621E6P6",
+										"gsGWvwgQjjptsKAGc4Jpr26e"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"usename\": \"jsheener\",\n    \"email\": \"jsheener3\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\",\n    \"x-hashword\": \"0d18d301e9a23a7a593e704fe7b554e3dcba61d0de262eff00ae2b2b2ca3d2fb\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/register",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/register (email only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jsheener4@gmail.com\",\n    \"2email\": \"nutratracker@gmail.com\",\n    \"3email\": \"n@g.c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/register",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"USER_CREDENTIALS_TOKEN\", JSON.parse(responseBody).data.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"gamesguru\",\n    \"email\": \"nutradigest@gmail.com\",\n    \"password\": \"Testpw*\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/login",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/email/confirm",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "intentionally blank",
+							"host": [
+								"intentionally blank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/email/change",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "new_email",
+									"value": "mathmuncher11@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "confirm_new_email",
+									"value": "mathmuncher11@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "101Problems!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/email/change",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"email",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/password/change",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "new_password",
+									"value": "101Problems!",
+									"type": "text"
+								},
+								{
+									"key": "confirm_password",
+									"value": "101Problems!",
+									"type": "text"
+								},
+								{
+									"key": "old_password",
+									"value": "101Problems!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/password/change",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"password",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/password/new/reset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/password/new/reset?email=mathmuncher11@gmail.com&email_token_pw_reset={{EMAIL_TOKEN_PW_RESET}}",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"password",
+								"new",
+								"reset"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "mathmuncher11@gmail.com"
+								},
+								{
+									"key": "email_token_pw_reset",
+									"value": "{{EMAIL_TOKEN_PW_RESET}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/password/new/request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"EMAIL_TOKEN_PW_RESET\", JSON.parse(responseBody).data.message);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "loanwolf200@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "kthprog",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/password/new/request",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"password",
+								"new",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/username/forgot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "loanwolf200@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{NUTRA_SEVER_URL}}/username/forgot",
+							"host": [
+								"{{NUTRA_SEVER_URL}}"
+							],
+							"path": [
+								"username",
+								"forgot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user_details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{USER_CREDENTIALS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NUTRA_SERVER_URL}}/user_details",
+							"host": [
+								"{{NUTRA_SERVER_URL}}"
+							],
+							"path": [
+								"user_details"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "[TODO] App Functions",
 			"item": [
 				{
@@ -1069,1333 +1720,6 @@
 							"response": []
 						}
 					]
-				}
-			]
-		},
-		{
-			"name": "Account",
-			"item": [
-				{
-					"name": "TODO",
-					"item": [
-						{
-							"name": "/report",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "report_type",
-											"value": "food",
-											"type": "text"
-										},
-										{
-											"key": "report_message",
-											"value": "butter sucks",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/report",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"report"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/preorder",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": [
-										{
-											"key": "email",
-											"value": "mathmuncher11@gmail.com",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/preorder",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"preorder"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/slack/heroku",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"text\": \"heh\"\n}"
-								},
-								"url": {
-									"raw": "https://hooks.slack.com/services/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",
-									"protocol": "https",
-									"host": [
-										"hooks",
-										"slack",
-										"com"
-									],
-									"path": [
-										"services",
-										"TDHGE5LMB",
-										"BK621E6P6",
-										"gsGWvwgQjjptsKAGc4Jpr26e"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "/register",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"usename\": \"jsheener\",\n    \"email\": \"jsheener3\",\n    \"password\": \"101Problems!\",\n    \"password-confirm\": \"101Problems!\",\n    \"x-hashword\": \"0d18d301e9a23a7a593e704fe7b554e3dcba61d0de262eff00ae2b2b2ca3d2fb\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/register",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/register (email only)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"jsheener4@gmail.com\",\n    \"2email\": \"nutratracker@gmail.com\",\n    \"3email\": \"n@g.c\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/register",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"USER_CREDENTIALS_TOKEN\", JSON.parse(responseBody).data.token);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"gamesguru\",\n    \"email\": \"nutradigest@gmail.com\",\n    \"password\": \"Testpw*\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/login",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/email/confirm",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "intentionally blank",
-							"host": [
-								"intentionally blank"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/email/change",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "new_email",
-									"value": "mathmuncher11@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "confirm_new_email",
-									"value": "mathmuncher11@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "101Problems!",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/email/change",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"email",
-								"change"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/password/change",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "new_password",
-									"value": "101Problems!",
-									"type": "text"
-								},
-								{
-									"key": "confirm_password",
-									"value": "101Problems!",
-									"type": "text"
-								},
-								{
-									"key": "old_password",
-									"value": "101Problems!",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/password/change",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"password",
-								"change"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/password/new/reset",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/password/new/reset?email=mathmuncher11@gmail.com&email_token_pw_reset={{EMAIL_TOKEN_PW_RESET}}",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"password",
-								"new",
-								"reset"
-							],
-							"query": [
-								{
-									"key": "email",
-									"value": "mathmuncher11@gmail.com"
-								},
-								{
-									"key": "email_token_pw_reset",
-									"value": "{{EMAIL_TOKEN_PW_RESET}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/password/new/request",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"EMAIL_TOKEN_PW_RESET\", JSON.parse(responseBody).data.message);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "email",
-									"value": "loanwolf200@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "username",
-									"value": "kthprog",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/password/new/request",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"password",
-								"new",
-								"request"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/username/forgot",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"EMAIL_TOKEN\", JSON.parse(responseBody).data.message);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "email",
-									"value": "loanwolf200@gmail.com",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SEVER_URL}}/username/forgot",
-							"host": [
-								"{{NUTRA_SEVER_URL}}"
-							],
-							"path": [
-								"username",
-								"forgot"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/user_details",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/user_details",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"user_details"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Calculators",
-			"item": [
-				{
-					"name": "/nutrients",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/nutrients",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"nutrients"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bodyfat",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"MALE\",\n\t\"age\": 28,\n\t\"height\": 178,\n\t\"waist\": 80,\n\t\"neck\": 36.8,\n\t\"chest\": 5,\n\t\"ab\": 6,\n\t\"thigh\": 9,\n\t\"tricep\": 6,\n\t\"sub\": 8,\n\t\"sup\": 7,\n\t\"mid\": 4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bodyfat",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bodyfat"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/lblimits",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"gender\": \"MALE\",\n\t\"height\": 179,\n\t\"desired-bf\": 14,\n\t\"wrist\": 17.2,\n\t\"ankle\": 21.5\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/lblimits",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"lblimits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}"
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/katch_mcardle",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/katch_mcardle",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"katch_mcardle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/cunningham",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/cunningham",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"cunningham"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/mifflin_st_jeor",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/mifflin_st_jeor",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"mifflin_st_jeor"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/calc/bmr/harris_benedict",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"weight\": 71,\n\t\"height\": 177,\n\t\"gender\": \"MALE\",\n\t\"dob\": 725864400,\n\t\"bodyfat\": 0.14,\n\t\"activity_factor\": 0.55\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/calc/bmr/harris_benedict",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"calc",
-								"bmr",
-								"harris_benedict"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Shop",
-			"item": [
-				{
-					"name": "TODO",
-					"item": [
-						{
-							"name": "/orders",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{USER_CREDENTIALS_TOKEN}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PATCH",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"order_id\": 1,\n    \"email\": \"nutratracker@gmail.com\",\n    \"status\": \"PROCESSING\",\n    \"shipping_method\": \"usps_priority\",\n    \"paypal_id\": \"UNKNOWN\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{NUTRA_SERVER_URL}}/orders",
-									"host": [
-										"{{NUTRA_SERVER_URL}}"
-									],
-									"path": [
-										"orders"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "/countries",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/countries",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"countries"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/validate/addresses",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\n    {\n        \"name\": \"John Smith\",\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    {\n        \"name\": \"Jane Doe\",\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"\",\n        \"state\": \"CA\",\n        \"zip\": 12260,\n        \"country\": \"US\"\n    }\n]",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/validate/addresses",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"validate",
-								"addresses"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/shipping/estimates",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"address\": {\n        \"name\": \"John Smith\",\n        \"street1\": \"44250 Town Center Way\",\n        \"city\": \"Palm Desert\",\n        \"state\": \"CA\",\n        \"zip\": 92260,\n        \"country\": \"US\"\n    },\n    \"items\": [\n        2,\n        2,\n        3,\n        4\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/shipping/estimates",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"shipping",
-								"estimates"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/products",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/products",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/products/<id>/reviews",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "product_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "rating",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "review_text",
-									"value": "garbage",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/products/prod_F9t9QWJWt8Abz0/reviews",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"products",
-								"prod_F9t9QWJWt8Abz0",
-								"reviews"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/products/reviews",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "product_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "rating",
-									"value": "0",
-									"type": "text"
-								},
-								{
-									"key": "review_text",
-									"value": "garbage",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/products/reviews",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"products",
-								"reviews"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/orders",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/orders",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"orders"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/orders",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"address_bill\": {\n        \"street1\": \"4002 Harrison Shores\",\n        \"street2\": \"Apt. 047\",\n        \"city\": \"Blairbury,\",\n        \"state\": \"ND\",\n        \"zip\": \"25795\",\n        \"country\": \"US\"\n    },\n    \"address_ship\": {\n        \"street1\": \"4002 Harrison Shores\",\n        \"street2\": \"Apt. 047\",\n        \"city\": \"Blairbury,\",\n        \"state\": \"ND\",\n        \"zip\": \"25795\",\n        \"country\": \"US\"\n    },\n    \"email\": \"hi\",\n    \"paypal_id\": \"4XJ52194CG0464404\",\n    \"shipping_method\": \"usps_first\",\n    \"shipping_price\": 0,\n    \"items\": [\n        7\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/orders",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"orders"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/orders/admin",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"order_id\": 1,\n\t\"status\": \"PROCESSING\",\n    \"tracking_num\": \"UNKNOWN\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/orders/admin",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"orders",
-								"admin"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/addresses",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/addresses",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"addresses"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/addresses",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name_first\": \"Test\",\n    \"name_last\": \"Monkey\",\n    \"street_address\": \"1234 Crapo St\",\n    \"country_id\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/addresses",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"addresses"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/addresses",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": 1,\n    \"SQL_PARAMS\": {\n        \"name_first\": \"Test\",\n        \"name_last\": \"Monkey\",\n        \"street_address\": \"1234 Crapo St\",\n        \"country_id\": 1\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/addresses",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"addresses"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/addresses",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{USER_CREDENTIALS_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": 3\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{NUTRA_SERVER_URL}}/addresses",
-							"host": [
-								"{{NUTRA_SERVER_URL}}"
-							],
-							"path": [
-								"addresses"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},

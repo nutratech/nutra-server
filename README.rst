@@ -12,7 +12,9 @@
     :target: https://www.gnu.org/licenses/gpl-3.0.en.html
     :alt: License GPL-3
 
-Backend server for ``nutra`` clients.
+-------------------------------------------------------------------------------
+
+Current URL: https://vps76.heliohost.us/
 
 See database: https://github.com/gamesguru/ntdb
 
@@ -24,12 +26,14 @@ Dependencies
 You will need to install the following, or newer.
 
 - Python 3.7.0 (with ``venv`` support)
-- PostgreSQL 12 (with ``dev`` library)
+- PostgreSQL 12 (with ``dev`` library, see ``ntdb`` for details)
 
 Initialize Server
 #################
 
 Initialize with this.
+
+It will require ``python-venv`` and (optionally) ``direnv``.
 
 ::
 
@@ -39,9 +43,12 @@ Initialize with this.
 Initialize Database
 ###################
 
-See ``ntdb/README.rst``.
-
 You can install Postgres, register it as a startup service, and populate data.
+
+You can also set the ``PSQL_*`` vars in ``.env`` and point to a
+remote database instance.
+
+See ``ntdb/README.rst``.
 
 Run
 ###
@@ -50,45 +57,30 @@ Run
 
     make run
 
-**NOTE:** You can also debug from VS Code, or PyCharm.
+**NOTE:** You can also debug from ``VSCode``, or ``PyCharm``.
 
-**NOTE:** You can also set the ``PSQL_*`` vars in ``.env`` and point to a
-remote database instance.
-
-Lint, Test, and Format
+Format, Lint, and Test
 ######################
 
 The code is formatted with ``black``, ``autopep8``, and ``isort``.
-
-You can format with this.
-
-::
-
-    make format
-
 The code is also linted with a variety of tools, see the ``Makefile``
 
-You can lint with this.
-
-::
-
-    make lint
-
 The code is tested with ``pytest`` and ``coverage``.
+The unit tests require a Postgres connection.
+They use the recommended practices for testing a ``Sanic`` app.
 
-The unit tests require a Postgres connection. Run them like this.
+**NOTE:** It's recommended to run this before committing changes.
 
 ::
 
-    make test
+    make format lint test
 
 Config Variables in ``.env`` file
 #################################
 
-.. code-block:: bash
+**TODO:** Check which are required, and which will be overwritten as ``null``.
 
-    # USPS API key
-    USPS_API_KEY=
+.. code-block:: ini
 
     # Email creds
     PROD_EMAIL=
@@ -101,11 +93,11 @@ Config Variables in ``.env`` file
     # PSQL_HOST=
 
     # Server host
-    HOST=127.0.0.1
+    # HOST=127.0.0.1
 
     # Other
-    JWT_SECRET=
-    PROXY_SECRET=
+    # JWT_SECRET=
+    # PROXY_SECRET=
 
-    ENV=prod
-    WORKERS=4
+    # ENV=prod
+    # WORKERS=4

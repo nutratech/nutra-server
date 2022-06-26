@@ -39,7 +39,7 @@ _release = release_git_parse()
 
 __title__ = "nutra-server"
 __module__ = "ntserv"
-__version__ = "0.1.0.dev0"
+__version__ = "0.1.0.dev2"
 __release__ = f"{_release[0]}, {_release[1].split()[0]}"
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"

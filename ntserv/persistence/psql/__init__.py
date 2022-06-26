@@ -4,8 +4,7 @@ import sanic.response
 
 from ntserv import __db_target_ntdb__
 from ntserv.env import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
-from ntserv.utils.libserver import Response as _Response
-from ntserv.utils.libserver import Success200Response
+from ntserv.utils.libserver import ServerError500Response, Success200Response
 from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
@@ -26,10 +25,12 @@ class PgResult:
         self.err_msg = err_msg
 
     @property
-    def Response(self) -> sanic.response.HTTPResponse:
+    def http_response_error(self) -> sanic.response.HTTPResponse:
         """Used ONLY for ERRORS"""
 
-        return _Response(data={"error": self.err_msg}, code=400)
+        return ServerError500Response(
+            data={"error": "General PostgreSQL error", "stack": self.err_msg}
+        )
 
     def set_rows(self, cur: psycopg2._psycopg.cursor) -> None:
         """Sets the DictCursor rows based on cur.fetchall()"""
@@ -154,11 +155,12 @@ def verify_db_version_compat() -> bool:
     return __db_target_ntdb__ == pg_result.row["version"]
 
 
-# pylint: disable=unused-argument
-def get_test_pg_connect(request, **kwargs):
+def get_pg_version(**kwargs):
+    _ = kwargs
+
     pg_result = psql("SELECT * FROM version")
     rows = pg_result.rows
     for row in rows:
         row["created"] = row["created"].isoformat()
 
-    return Success200Response(message=pg_result.msg, data={"versions": rows})
+    return Success200Response(data={"message": pg_result.msg, "versions": rows})

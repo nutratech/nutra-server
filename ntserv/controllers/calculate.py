@@ -8,34 +8,53 @@ Created on Tue Aug 11 16:47:18 2020
 
 import math
 
+import sanic.response
 from sanic import html
 from tabulate import tabulate
 
+import ntserv.utils.calculate as calc
 from ntserv.utils import cache
-from ntserv.utils.calculate import (
-    bmr_cunningham,
-    bmr_harris_benedict,
-    bmr_katch_mcardle,
-    bmr_mifflin_st_jeor,
-)
 from ntserv.utils.libserver import Success200Response
 
+# pylint: disable=invalid-name
 
-# pylint: disable=unused-argument
-def GET_nutrients(request, response_type="JSON"):
+# TODO: import the above and reference from e.g. libserver.Success200Response
+
+
+def get_nutrients(**kwargs) -> sanic.HTTPResponse:
+    response_type = kwargs.get("response_type")
     nutrients = list(cache.NUTRIENTS.values())
 
-    if response_type == "JSON":
-        # TODO: fix dict to accept either dict or list
-        return Success200Response(data=nutrients)
-    else:  # HTML
+    if response_type == "HTML":
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return html(f"<pre>{table}</pre>")
+    # else: JSON
+    return Success200Response(data=nutrients)
 
 
-def GET_calc_bmr(request):
+def post_calc_1rm(request):
+    """Calculates a few different 1 rep max possibilities"""
+    body = request.json
+
+    reps = float(body["reps"])
+    weight = float(body["weight"])
+
+    epley = calc.orm_epley(reps, weight)
+    brzycki = calc.orm_brzycki(reps, weight)
+
+    return Success200Response(
+        data={
+            "epley": epley,
+            "brzycki": brzycki,
+        }
+    )
+
+
+def post_calc_bmr(request):
     """Calculates all types of BMR for comparison"""
     body = request.json
+
+    # NOTE: doesn't support imperial units
 
     activity_factor = float(body["activity_factor"])  # TODO: int, float, or string?
     weight = float(body["weight"])  # kg
@@ -50,10 +69,15 @@ def GET_calc_bmr(request):
         bf = float(body["bodyfat"])
         lbm = weight * (1 - bf)
 
-    katch_mcardle = bmr_katch_mcardle(lbm, activity_factor)
-    cunningham = bmr_cunningham(lbm, activity_factor)
-    mifflin_st_jeor = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
-    harris_benedict = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
+    # TODO: each of these methods returns a tuple: (bmr, tdee). Do we want a dict?
+    katch_mcardle = calc.bmr_katch_mcardle(lbm, activity_factor)
+    cunningham = calc.bmr_cunningham(lbm, activity_factor)
+    mifflin_st_jeor = calc.bmr_mifflin_st_jeor(
+        gender, weight, height, dob, activity_factor
+    )
+    harris_benedict = calc.bmr_harris_benedict(
+        gender, weight, height, dob, activity_factor
+    )
 
     return Success200Response(
         data={
@@ -65,104 +89,7 @@ def GET_calc_bmr(request):
     )
 
 
-def GET_calc_bmr_katch_mcardle(request):
-    """
-    BMR = 370 + (21.6 x Lean Body Mass(kg) )
-    Source: <https://www.calculatorpro.com/calculator/katch-mcardle-bmr-calculator/>
-    Source: <https://tdeecalculator.net/about.php>
-    """
-    body = request.json
-
-    activity_factor = float(body["activity_factor"])  # ??
-
-    lbm = body.get("lbm")
-    if lbm:
-        lbm = float(lbm)
-    else:
-        weight = float(body["weight"])
-        bf = float(body["bodyfat"])
-        lbm = weight * (1 - bf)
-
-    bmr, tdee = bmr_katch_mcardle(lbm, activity_factor)
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr_cunningham(request):
-    """
-    Source:
-        <https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture>
-    """
-    body = request.json
-
-    # {'LIGHT': 0.3, 'MODERATE': 0.4, 'HEAVY': 0.5}
-    activity_factor = float(body["activity_factor"])
-
-    lbm = body.get("lbm")
-    if lbm:
-        lbm = float(lbm)
-    else:
-        weight = float(body["weight"])
-        bf = float(body["bodyfat"])
-        lbm = weight * (1 - bf)
-
-    bmr, tdee = bmr_cunningham(lbm, activity_factor)
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr_mifflin_st_jeor(request):
-    """
-    Activity Factor
-    ---------------
-    0.200 = sedentary (little or no exercise)
-
-    0.375 = lightly active
-        (light exercise/sports 1-3 days/week, approx. 590 Cal/day)
-
-    0.550 = moderately active
-        (moderate exercise/sports 3-5 days/week, approx. 870 Cal/day)
-
-    0.725 = very active
-        (hard exercise/sports 6-7 days a week, approx. 1150 Cal/day)
-
-    0.900 = extra active
-        (very hard exercise/sports and physical job, approx. 1580 Cal/day)
-
-    Source: <https://www.myfeetinmotion.com/mifflin-st-jeor-equation/>
-    """
-    body = request.json
-
-    activity_factor = float(body["activity_factor"])
-    weight = float(body["weight"])  # kg
-    height = float(body["height"])  # cm
-    gender = body["gender"]  # ['MALE', 'FEMALE']
-    dob = int(body["dob"])  # unix (epoch) timestamp
-
-    bmr, tdee = bmr_mifflin_st_jeor(gender, weight, height, dob, activity_factor)
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bmr_harris_benedict(request):
-    """
-    Harris-Benedict = (13.397m + 4.799h - 5.677a) + 88.362 (MEN)
-    Harris-Benedict = (9.247m + 3.098h - 4.330a) + 447.593 (WOMEN)
-
-    m is mass in kg, h is height in cm, a is age in years
-    Source: <https://tdeecalculator.net/about.php>
-    """
-    body = request.json
-
-    activity_factor = float(body["activity_factor"])
-    weight = float(body["weight"])  # kg
-    height = float(body["height"])  # cm
-    gender = body["gender"]  # ['MALE', 'FEMALE']
-    dob = int(body["dob"])  # unix (epoch) timestamp
-
-    bmr, tdee = bmr_harris_benedict(gender, weight, height, dob, activity_factor)
-
-    return Success200Response(data={"bmr": round(bmr), "tdee": round(tdee)})
-
-
-def GET_calc_bodyfat(request):
+def post_calc_body_fat(request):
     body = request.json
 
     gender = body["gender"]
@@ -185,6 +112,9 @@ def GET_calc_bodyfat(request):
     sub = body.get("sub")
     sup = body.get("sup")
     mid = body.get("mid")
+
+    # NOTE: doesn't support imperial units
+    # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
 
     # ----------------
     # Navy test
@@ -232,14 +162,17 @@ def GET_calc_bodyfat(request):
     )
 
 
-def GET_calc_lblimits(request):
+def post_calc_lb_limits(request):
     body = request.json
-    height = body["height"]
+    height = float(body["height"])
 
     desired_bf = body.get("desired-bf")
 
     wrist = body.get("wrist")
     ankle = body.get("ankle")
+
+    # NOTE: doesn't support SI / metrics units
+    # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
 
     # ----------------
     # Martin Berkhan
@@ -251,34 +184,44 @@ def GET_calc_lblimits(request):
     # ----------------
     # Eric Helms
     # ----------------
-    min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-    max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-    eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
+    try:
+        min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
+    except TypeError:
+        eh = {"error": "MISSING_INPUT", "requires": ["height", "desired-bf"]}
 
     # ----------------
     # Casey Butt, PhD
     # ----------------
-    h = height / 2.54
-    w = wrist / 2.54
-    a = ankle / 2.54
-    lbm = round(
-        h ** (3 / 2)
-        * (math.sqrt(w) / 22.6670 + math.sqrt(a) / 17.0104)
-        * (1 + desired_bf / 224),
-        1,
-    )
-    weight = round(lbm / (1 - desired_bf / 100), 1)
-    cb = {
-        "notes": f"{desired_bf}% bodyfat",
-        "lbm": f"{lbm} lbs",
-        "weight": f"{weight} lbs",
-        "chest": round(1.6817 * w + 1.3759 * a + 0.3314 * h, 2),
-        "arm": round(1.2033 * w + 0.1236 * h, 2),
-        "forearm": round(0.9626 * w + 0.0989 * h, 2),
-        "neck": round(1.1424 * w + 0.1236 * h, 2),
-        "thigh": round(1.3868 * a + 0.1805 * h, 2),
-        "calf": round(0.9298 * a + 0.1210 * h, 2),
-    }
+    try:
+        h = height / 2.54
+        w = wrist / 2.54
+        a = ankle / 2.54
+        lbm = round(
+            h ** (3 / 2)
+            * (math.sqrt(w) / 22.6670 + math.sqrt(a) / 17.0104)
+            * (1 + desired_bf / 224),
+            1,
+        )
+        weight = round(lbm / (1 - desired_bf / 100), 1)
+        cb = {
+            "notes": f"{desired_bf}% bodyfat",
+            "lbm": f"{lbm} lbs",
+            "weight": f"{weight} lbs",
+            "chest": round(1.6817 * w + 1.3759 * a + 0.3314 * h, 2),
+            "arm": round(1.2033 * w + 0.1236 * h, 2),
+            "forearm": round(0.9626 * w + 0.0989 * h, 2),
+            "neck": round(1.1424 * w + 0.1236 * h, 2),
+            "thigh": round(1.3868 * a + 0.1805 * h, 2),
+            "calf": round(0.9298 * a + 0.1210 * h, 2),
+        }
+    except TypeError:
+        cb = {
+            "error": "MISSING_INPUT",
+            "requires": ["height", "desired-bf", "wrist", "ankle"],
+        }
+
     return Success200Response(
         data={"martin-berkhan": mb, "eric-helms": eh, "casey-butt": cb}
     )
