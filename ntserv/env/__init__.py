@@ -12,29 +12,25 @@ load_dotenv(verbose=True)
 # Log level
 LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(10)))
 
-# Server config
-JWT_SECRET = os.getenv("NTSERV_JWT_SECRET", "secret123")
-PROXY_SECRET = os.getenv("NTSERV_PROXY_SECRET", "secret123")
-
-ENV = os.environ.get("NTSERV_ENV", "prod")
+# Environment and run config
+ENV = os.environ.get("NTSERV_ENV", "local")
 PORT = int(os.getenv("NTSERV_PORT", str(20000)))
-HOST = os.getenv("NTSERV_HOST", "127.0.0.1")
 
 DEBUG = bool(ENV == "local")
 
-DEFAULT_WORKERS = 1 if DEBUG else 2
-WORKERS = int(os.getenv("NTSERV_N_WORKERS", str(DEFAULT_WORKERS)))
+DEFAULT_WORKERS = 1 if (ENV == "local") else 2
+N_WORKERS = int(os.getenv("NTSERV_N_WORKERS", str(DEFAULT_WORKERS)))
 
-# Server host
-SERVER_PORT = os.getenv("NTSERV_PORT", str(20000))
+# Self-referential hosts
 # TODO: static domain
 SERVER_HOST = (
-    "https://vps76.heliohost.us" if ENV == "local" else f"http://{HOST}:{SERVER_PORT}"
+    f"http://127.0.0.1:{PORT}" if ENV == "local" else "https://vps76.heliohost.us"
 )
-WEB_HOST = (
-    "https://nutra-web.herokuapp.com"
+UI_PORT = 3000
+UI_HOST = (
+    f"http://127.0.0.1:{UI_PORT}"
     if ENV == "local"
-    else f"http://localhost:{SERVER_PORT}"
+    else "https://nutra-web.herokuapp.com"
 )
 
 # PostgreSQL
@@ -46,9 +42,14 @@ PSQL_PASSWORD = os.getenv("NTSERV_PSQL_PASSWORD", "password")
 
 PSQL_HOST = os.getenv("NTSERV_PSQL_HOST", "localhost")
 
+# Server secrets
+JWT_SECRET = os.getenv("NTSERV_JWT_SECRET", "secret123")
+PROXY_SECRET = os.getenv("NTSERV_PROXY_SECRET", "secret123")
+
 # Email creds
 PROD_EMAIL = os.getenv("NTSERV_PROD_EMAIL")
 PROD_EMAIL_PASS = os.getenv("NTSERV_PROD_EMAIL_PASS")
 
+# NOTE: are these used?
 # Other configurations
 TOKEN_EXPIRY = timedelta(weeks=520)

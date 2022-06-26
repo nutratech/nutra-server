@@ -133,6 +133,8 @@ def home_page_text(routes_table: str):
 
     prod_app = f"<a href={SERVER_HOST} " f'target="blank">{SERVER_HOST}</a>'
 
+    # TODO: put UI_HOST link back... production server, production app, android app, etc
+
     return f"""
 Welcome to nutra-server (v{__version__}) {__release__}
 ========================================================================
@@ -141,16 +143,18 @@ You can install our command line interface with Python and pip:
 
     pip3 install nutra
 
-CLI page:       {cli_link}
 
-Source code:    {src_link}
-Production app: {prod_app}
+CLI page:          {cli_link}
+
+Production server: {prod_app}
+
+Source code:       {src_link}
 
 ------------------------------------------------------------------------
 LICENSE & COPYING NOTICE
 ------------------------------------------------------------------------
 
-    nutra-server, a tool for health and food
+    nutra-server, a tool for all things health, food, and fitness
     Copyright (C) 2019-2022  Shane Jaroch &lt{email_link}&gt
 
     This program is free software: you can redistribute it and/or modify
