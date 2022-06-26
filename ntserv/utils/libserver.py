@@ -45,6 +45,7 @@ def exc_req(func, req, response_type="JSON"):
 # ------------------------
 # Response types
 # ------------------------
+# TODO: fix dict to accept either dict or list
 def _response(
     err_msg: str = None, data: Union[dict, list] = None, code=-1
 ) -> sanic.HTTPResponse:

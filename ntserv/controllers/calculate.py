@@ -21,16 +21,15 @@ from ntserv.utils.libserver import Success200Response
 # TODO: import the above and reference from e.g. libserver.Success200Response
 
 
-def get_nutrients(*args, response_type="JSON") -> sanic.HTTPResponse:
-    _ = args
+def get_nutrients(**kwargs) -> sanic.HTTPResponse:
+    response_type = kwargs.get("response_type")
     nutrients = list(cache.NUTRIENTS.values())
 
-    if response_type == "JSON":
-        # TODO: fix dict to accept either dict or list
-        return Success200Response(data=nutrients)
-    # else: HTML
-    table = tabulate(nutrients, headers="keys", tablefmt="presto")
-    return html(f"<pre>{table}</pre>")
+    if response_type == "HTML":
+        table = tabulate(nutrients, headers="keys", tablefmt="presto")
+        return html(f"<pre>{table}</pre>")
+    # else: JSON
+    return Success200Response(data=nutrients)
 
 
 def post_calc_1rm(request):
