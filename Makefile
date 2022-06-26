@@ -119,6 +119,7 @@ build: _venv	## Create an sdist
 .PHONY: install
 install:	## Pip install (user)
 	/usr/bin/python3 -m pip install .
+	- systemctl restart ntserv.service
 
 
 # ---------------------------------------
