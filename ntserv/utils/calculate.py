@@ -15,17 +15,17 @@ from datetime import datetime
 # 1 rep max
 # ------------------------------------------------
 
-common_n_reps = (1, 2, 3, 5, 8, 10, 12, 15, 20)
+common_n_reps = (1, 2, 3, 5, 6, 8, 10, 12, 15, 20)
 
 
 def orm_epley(reps: float, weight: float) -> dict:
     """
-    Source: https://workoutable.com/one-rep-max-calculator/
+    Returns a dict {n_reps: max_weight, ...}
+        for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15, 20)
 
     1 RM = weight * (1 + (reps - 1) / 30)
 
-    Returns a dict {n_reps: max_weight, ...}
-        for n_reps: (1, 2, 3, 5, 8, 10, 12, 15, 20)
+    Source: https://workoutable.com/one-rep-max-calculator/
     """
 
     def one_rm() -> float:
@@ -42,24 +42,62 @@ def orm_epley(reps: float, weight: float) -> dict:
 
 def orm_brzycki(reps: float, weight: float) -> dict:
     """
-    Source: https://workoutable.com/one-rep-max-calculator/
+    Returns a dict {n_reps: max_weight, ...}
+        for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15)
 
     1 RM = weight * 36 / (37 - reps)
 
-    Returns a dict {n_reps: max_weight, ...}
-        for n_reps: (1, 2, 3, 5, 8, 10, 12, 15, 20)
+    Source: https://workoutable.com/one-rep-max-calculator/
     """
 
-    def one_rm() -> float:
+    def _one_rm() -> float:
         _un_rounded_result = weight * 36 / (37 - reps)
         return round(_un_rounded_result, 1)
 
+    one_rm = _one_rm()
+
     def weight_max_reps(target_reps: float) -> float:
-        _un_rounded_result = one_rm() / (1 + (target_reps - 1) / 30)
+        _un_rounded_result = one_rm / (1 + (target_reps - 1) / 30)
         return round(_un_rounded_result, 1)
 
-    # maxes = {1: round(weight * 36 / (37 - reps), 1)}
     maxes = {n_reps: weight_max_reps(n_reps) for n_reps in common_n_reps}
+    return maxes
+
+
+def orm_dos_remedios(reps: int, weight: float) -> dict:
+    """
+    Returns a dict {n_reps: max_weight, ...}
+        for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15)
+
+    Source:
+        https://www.peterrobertscoaching.com/blog/the-best-way-to-calculate-1-rep-max
+    """
+
+    _common_n_reps = {
+        1: 1,
+        2: 0.92,
+        3: 0.9,
+        5: 0.87,
+        6: 0.82,
+        8: 0.75,
+        10: 0.7,
+        12: 0.65,
+        15: 0.6,
+    }
+
+    def _one_rm() -> float:
+        _multiplier = _common_n_reps[reps]
+        _un_rounded_result = weight / _multiplier
+        return round(_un_rounded_result, 1)
+
+    one_rm = _one_rm()
+
+    def max_weight(target_reps: int) -> float:
+        _multiplier = _common_n_reps[target_reps]
+        _un_rounded_result = one_rm * _multiplier
+        return round(_un_rounded_result, 1)
+
+    maxes = {n_reps: max_weight(n_reps) for n_reps in _common_n_reps}
     return maxes
 
 

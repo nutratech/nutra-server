@@ -41,11 +41,13 @@ def post_calc_1rm(request):
 
     epley = calc.orm_epley(reps, weight)
     brzycki = calc.orm_brzycki(reps, weight)
+    dos_remedios = calc.dos_remedios(reps, weight)
 
     return Success200Response(
         data={
             "epley": epley,
             "brzycki": brzycki,
+            "dos_remedios": dos_remedios,
         }
     )
 
