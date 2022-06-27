@@ -7,7 +7,7 @@ Created on Fri Jan 31 16:01:31 2020
 This file is part of nutra-server, a server for nutra clients.
     https://github.com/gamesguru/nutra-server
 
-nutra-server is a server for nutra clients.
+nutra-server, a tool for all things health, food, and fitness
 Copyright (C) 2019-2022  Shane Jaroch
 
 This program is free software: you can redistribute it and/or modify
@@ -26,8 +26,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
-from ntserv.utils import release_git_parse
-
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
 PY_MIN_STR = "3.7.0"
@@ -35,21 +33,22 @@ PY_MIN_STR = "3.7.0"
 # ------------------------------------------------
 # Package info
 # ------------------------------------------------
-_release = release_git_parse()
 
 __title__ = "nutra-server"
 __module__ = "ntserv"
-__version__ = "0.1.0.dev2"
-__release__ = f"{_release[0]}, {_release[1].split()[0]}"
+__version__ = "0.1.0.dev3"
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"
 __copyright__ = "Copyright 2019-2022 Shane Jaroch"
 __url__ = "https://github.com/nutratech/nutra-server"
 
+# nt-sqlite database target version
 __db_target_ntdb__ = "0.0.38"
 
-# Other
+# -------------------------------------------------
+# Constants / configurations
+# -------------------------------------------------
 SEARCH_LIMIT = 100
 CUSTOM_FOOD_DATA_SRC_ID = 6
 

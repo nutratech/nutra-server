@@ -44,6 +44,22 @@ def test_orm_brzycki(reps, weight, expected_results):
     _check_orm_results(maxes, expected_results)
 
 
+@pytest.mark.parametrize(
+    "reps,weight,expected_results",
+    [
+        # NOTE: dos Remedios only supports select rep counts
+        (3, 315, [(1, 350.0)]),
+        (8, 275, [(1, 366.7)]),
+        (10, 225, [(1, 321.4)]),
+        (12, 225, [(1, 346.2)]),
+        (15, 225, [(1, 375.0)]),
+    ],
+)
+def test_orm_dos_remedios(reps, weight, expected_results):
+    maxes = calc.orm_dos_remedios(reps, weight)
+    _check_orm_results(maxes, expected_results)
+
+
 # ------------------------------------------------
 # BMR
 # ------------------------------------------------

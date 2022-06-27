@@ -23,11 +23,3 @@ def test_post_calc_bmr():
     }
     _req, res = app.test_client.post("/calc/bmr", json=data)
     assert res.status_code == 200
-
-    data = res.json["data"]
-    assert data == {
-        "Katch-McArdle": {"bmr": 1689, "tdee": 2618},
-        "Cunningham": {"bmr": 1843, "tdee": 2857},
-        "Mifflin-St-Jeor": {"bmr": 1680, "tdee": 2604},
-        "Harris-Benedict": {"bmr": 1721, "tdee": 2668},
-    }

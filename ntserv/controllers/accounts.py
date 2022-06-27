@@ -19,10 +19,8 @@ from ntserv.utils.libserver import (
     Unauthenticated401Response,
 )
 
-# pylint: disable=invalid-name
 
-
-def POST_register(request):
+def post_register(request):
     # Parse incoming request
     body = request.json
     email = body["email"]
@@ -127,7 +125,7 @@ def POST_register(request):
     )
 
 
-def POST_login(request):
+def post_login(request):
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
@@ -148,7 +146,7 @@ def POST_login(request):
         return BadRequest400Response(error)
 
 
-def POST_v2_login(request):
+def post_v2_login(request):
     def issue_oauth_token(*args):
         # TODO: complete this in another module
         _ = args
@@ -181,13 +179,14 @@ def POST_v2_login(request):
 
 
 @auth
-def GET_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def get_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     # TODO: if not user_id: return err
+    # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
     pg_result = psql("SELECT * FROM users(%s)", [user_id])
     return Success200Response(data=pg_result.row)
 
 
-def GET_confirm_email(request):
+def get_confirm_email(request):
     # TODO: redirect code with user-friendly, non-JSON output
 
     email = request.args["email"]
@@ -242,7 +241,7 @@ RETURNING
 
 
 @auth
-def GET_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def get_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     email = request.args["email"]
     password = request.args["password"]
 
@@ -255,7 +254,7 @@ def GET_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
 
 
 @auth
-def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def get_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     password_old = request.args["password_old"]
     password = request.args["password"]
     password_confirm = request.args["password_confirm"]
@@ -279,15 +278,15 @@ def GET_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     return Success200Response()
 
 
-def POST_username_forgot(request):
+def post_username_forgot(request):
     return NotImplemented501Response()
 
 
-def POST_password_new_request(request):
+def post_password_new_request(request):
     return NotImplemented501Response()
 
 
-def POST_password_new_reset(request):
+def post_password_new_reset(request):
     return NotImplemented501Response()
 
 

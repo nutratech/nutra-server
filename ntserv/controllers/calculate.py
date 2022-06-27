@@ -36,16 +36,18 @@ def post_calc_1rm(request):
     """Calculates a few different 1 rep max possibilities"""
     body = request.json
 
-    reps = float(body["reps"])
+    reps = int(body["reps"])
     weight = float(body["weight"])
 
     epley = calc.orm_epley(reps, weight)
     brzycki = calc.orm_brzycki(reps, weight)
+    dos_remedios = calc.orm_dos_remedios(reps, weight)
 
     return Success200Response(
         data={
             "epley": epley,
             "brzycki": brzycki,
+            "dos_remedios": dos_remedios,
         }
     )
 
@@ -56,13 +58,16 @@ def post_calc_bmr(request):
 
     # NOTE: doesn't support imperial units
 
-    activity_factor = float(body["activity_factor"])  # TODO: int, float, or string?
+    # TODO: enum class for this?
+    activity_factor = float(body["activity_factor"])
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
+    # TODO: validate accuracy of gender here, not deeper in service
     gender = body["gender"]  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
 
     lbm = body.get("lbm")
+    # TODO: validate this against a REQUIRES: {lbm || bf}
     if lbm:
         lbm = float(lbm)
     else:

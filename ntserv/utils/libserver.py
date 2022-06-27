@@ -7,7 +7,7 @@ import sanic.response
 from sanic import Sanic
 from tabulate import tabulate
 
-from ntserv import __email__, __release__, __url__, __version__
+from ntserv import __email__, __url__, __version__
 from ntserv.env import SERVER_HOST
 
 # pylint: disable=invalid-name
@@ -61,7 +61,6 @@ def _response(
         {
             "program": "nutra-server",
             "version": __version__,
-            "release": __release__,
             "datetime": datetime.now().strftime("%c").strip(),
             "timestamp": round(time.time() * 1000),
             "ok": bool(code < 400),
@@ -136,7 +135,7 @@ def home_page_text(routes_table: str):
     # TODO: put UI_HOST link back... production server, production app, android app, etc
 
     return f"""
-Welcome to nutra-server (v{__version__}) {__release__}
+Welcome to nutra-server (v{__version__})
 ========================================================================
 
 You can install our command line interface with Python and pip:

@@ -6,7 +6,7 @@ from ntserv.utils.libserver import NotImplemented501Response, Success200Response
 
 
 @auth
-def OPT_sync(request, level=AUTH_LEVEL_BASIC, user_id=None):
+def opt_sync(request, level=AUTH_LEVEL_BASIC, user_id=None):
     """Used to GET and POST local saved data to remote"""
 
     method = request.environ["REQUEST_METHOD"]

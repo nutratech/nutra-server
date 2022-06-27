@@ -4,13 +4,16 @@
 
 .. image:: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml/badge.svg
     :target: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml
-    :alt: Test status unknown|
+    :alt: CI status: unknown
+.. image:: https://github.com/nutratech/nutra-server/actions/workflows/deploy-dev.yml/badge.svg
+    :target: https://github.com/nutratech/nutra-server/actions/workflows/deploy-dev.yml
+    :alt: deploy-dev status: unknown
 .. image:: https://badgen.net/badge/code%20style/black/000
     :target: https://github.com/ambv/black
-    :alt: Code style: black|
+    :alt: Code style: black
 .. image:: https://badgen.net/pypi/license/nutra
     :target: https://www.gnu.org/licenses/gpl-3.0.en.html
-    :alt: License GPL-3
+    :alt: License: GPL-3
 
 -------------------------------------------------------------------------------
 
@@ -28,6 +31,16 @@ You will need to install the following, or newer.
 - Python 3.7.0 (with ``venv`` support)
 - PostgreSQL 12 (with ``dev`` library, see ``ntdb`` for details)
 
+Initialize Database
+###################
+
+You can install Postgres, register it as a startup service, and populate data.
+
+You can also set the ``PSQL_*`` vars in ``.env`` and point to a
+remote database instance.
+
+See ``ntdb/README.rst``.
+
 Initialize Server
 #################
 
@@ -39,16 +52,6 @@ It will require ``python-venv`` and (optionally) ``direnv``.
 
     make init
     make deps
-
-Initialize Database
-###################
-
-You can install Postgres, register it as a startup service, and populate data.
-
-You can also set the ``PSQL_*`` vars in ``.env`` and point to a
-remote database instance.
-
-See ``ntdb/README.rst``.
 
 Run
 ###
@@ -78,26 +81,9 @@ They use the recommended practices for testing a ``Sanic`` app.
 Config Variables in ``.env`` file
 #################################
 
-**TODO:** Check which are required, and which will be overwritten as ``null``.
+The server runs with default configuration locally.
 
-.. code-block:: ini
+Check the ``.env.local`` file for specifics on deployed environments.
 
-    # Email creds
-    PROD_EMAIL=
-    PROD_EMAIL_PASS=
-
-    # Remote PostgreSQL
-    # PSQL_USER=
-    # PSQL_PASSWORD=
-    # PSQL_DB_NAME=
-    # PSQL_HOST=
-
-    # Server host
-    # HOST=127.0.0.1
-
-    # Other
-    # JWT_SECRET=
-    # PROXY_SECRET=
-
-    # ENV=prod
-    # WORKERS=4
+These can be supplied as environment variables to the ``systemctl`` service.
+See ``ntserv.service`` for an example.
