@@ -12,13 +12,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Check environment
+      - name: Verify
+        run: make lint test
+
+      # TODO: database upgrades as part of this? Or app handles that?
+      - name: Install & Restart Service
         run: |
-          pwd
-          uname -a
-          echo $PATH
-          ls -la
-          ls -la /
-          dpkg -l
-          psql -l
-          curl localhost:20000
+          make install
+          systemctl --user restart ntserv.service
