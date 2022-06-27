@@ -8,7 +8,7 @@ from sanic import Sanic
 from tabulate import tabulate
 
 from ntserv import __email__, __url__, __version__
-from ntserv.env import SERVER_HOST
+from ntserv.env import SERVER_HOST, SERVER_HOST_PROD
 
 # pylint: disable=invalid-name
 
@@ -130,7 +130,7 @@ def home_page_text(routes_table: str):
 
     src_link = f'<a href={__url__} target="blank">{__url__}</a>'
 
-    prod_app = f"<a href={SERVER_HOST} " f'target="blank">{SERVER_HOST}</a>'
+    prod_app = f"<a href={SERVER_HOST_PROD} " f'target="blank">{SERVER_HOST_PROD}</a>'
 
     # TODO: put UI_HOST link back... production server, production app, android app, etc
 

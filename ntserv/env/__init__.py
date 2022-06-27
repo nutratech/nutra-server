@@ -23,10 +23,9 @@ DEFAULT_LOG_LEVEL = 10 if DEBUG else 20
 LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(DEFAULT_LOG_LEVEL)))
 
 # Self-referential hosts
-# TODO: static domain
-SERVER_HOST = (
-    f"http://127.0.0.1:{PORT}" if DEBUG else "https://vps76.heliohost.us"
-)
+# TODO: is this the most maintainable? This needs to be set on both dev/prod service
+SERVER_HOST_PROD = "https://vps76.heliohost.us"
+SERVER_HOST = os.getenv("NTSERV_SERVER_HOST", f"http://127.0.0.1:{PORT}")
 UI_PORT = 3000
 UI_HOST = (
     f"http://127.0.0.1:{UI_PORT}"
