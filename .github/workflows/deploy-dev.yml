@@ -15,22 +15,25 @@ jobs:
 
       - name: Clean up & Init
         run: |
+          make clean
           rm -rf .venv
           make init
           source .venv/bin/activate
           make deps
 
-      - name: Verify
+      - name: Verify (Lint & Test)
         run: |
           source .venv/bin/activate
           make lint test
 
       # TODO: database upgrades as part of this? Or app handles that?
       #  That means also backups and a retention policy
-      - name: Install & Restart Service
+      - name: Install
         run: |
           source .venv/bin/activate
           make install
-          # NOTE: I added a /etc/sudoers rule, to avoid the password prompt
-          # See: https://unix.stackexchange.com/a/606476/290740
-          sudo systemctl restart ntserv.service
+
+      # NOTE: I added a /etc/sudoers rule, to avoid the password prompt
+      # See: https://unix.stackexchange.com/a/606476/290740
+      - name: Restart Service
+        run: sudo systemctl restart ntserv.service
