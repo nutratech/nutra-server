@@ -16,6 +16,7 @@ jobs:
         run: |
           rm -rf .venv
           make init
+          source .venv/bin/activate
           make deps
 
       - name: Verify
@@ -24,5 +25,6 @@ jobs:
       # TODO: database upgrades as part of this? Or app handles that?
       - name: Install & Restart Service
         run: |
+          source .venv/bin/activate
           make install
           systemctl --user restart ntserv.service
