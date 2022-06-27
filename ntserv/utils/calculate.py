@@ -69,8 +69,10 @@ def orm_brzycki(reps: float, weight: float) -> dict:
 
 def orm_dos_remedios(reps: int, weight: float) -> dict:
     """
-    Returns a dict {n_reps: max_weight, ...}
+    Returns dict {n_reps: max_weight, ...}
         for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15)
+
+    Or an {"error": "INVALID_RANGE", ...}
 
     Source:
         https://www.peterrobertscoaching.com/blog/the-best-way-to-calculate-1-rep-max
