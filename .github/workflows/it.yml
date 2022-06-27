@@ -1,16 +1,22 @@
 ---
-name: CI
+name: deploy-dev
 "on":
   push: {}
 
 jobs:
-  test:
+  deploy-dev:
     runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: recursive
+
+      - name: Clean up & Init
+        run: |
+          rm -rf .venv
+          make init
+          make deps
 
       - name: Verify
         run: make lint test
