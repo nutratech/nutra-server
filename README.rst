@@ -4,10 +4,13 @@
 
 .. image:: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml/badge.svg
     :target: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml
-    :alt: CI status: unknown|
+    :alt: CI status: unknown
+.. image:: https://github.com/nutratech/nutra-server/actions/workflows/deploy-dev.yml/badge.svg
+    :target: https://github.com/nutratech/nutra-server/actions/workflows/deploy-dev.yml
+    :alt: deploy-dev status: unknown
 .. image:: https://badgen.net/badge/code%20style/black/000
     :target: https://github.com/ambv/black
-    :alt: Code style: black|
+    :alt: Code style: black
 .. image:: https://badgen.net/pypi/license/nutra
     :target: https://www.gnu.org/licenses/gpl-3.0.en.html
     :alt: License: GPL-3
