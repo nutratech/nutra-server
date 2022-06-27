@@ -28,11 +28,14 @@ class AuthResult:
     def __init__(self, token: dict = None, err_msg=str()) -> None:
         self.user_id = token["id"]
 
-        self.err_msg = err_msg
-
         self.auth_level = token["auth-level"]
         self.expires = token["expires"]
-        self.expired = datetime.now().timestamp() > self.expires
+
+        self.err_msg = err_msg
+
+    @property
+    def expired(self):
+        return datetime.now().timestamp() > self.expires
 
 
 def issue_jwt_token(user_id, password) -> tuple:
