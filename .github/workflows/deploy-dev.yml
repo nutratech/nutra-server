@@ -1,7 +1,8 @@
 ---
 name: deploy-dev
 "on":
-  push: {}
+  push:
+    branches: ["master"]
 
 jobs:
   deploy-dev:
@@ -25,6 +26,7 @@ jobs:
           make lint test
 
       # TODO: database upgrades as part of this? Or app handles that?
+      #  That means also backups and a retention policy
       - name: Install & Restart Service
         run: |
           source .venv/bin/activate
