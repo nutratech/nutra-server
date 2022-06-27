@@ -36,7 +36,7 @@ PY_MIN_STR = "3.7.0"
 
 __title__ = "nutra-server"
 __module__ = "ntserv"
-__version__ = "0.1.0.dev3"
+__version__ = "0.1.0.dev13"
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"
