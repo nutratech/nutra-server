@@ -1,0 +1,8 @@
+[Unit]
+Description=GitHub Action Runner
+
+[Service]
+WorkingDirectory=/home/shane/actions-runner
+ExecStart=/bin/bash run.sh
+Restart=always
+

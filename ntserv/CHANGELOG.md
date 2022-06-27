@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Systematic logging (logging module)
 - Nginx config
 - Coverage and other configs in `setup.cfg`
+- A `deploy-dev` GitHub workflow, on self-hosted runner
 
 ### Removed
 
