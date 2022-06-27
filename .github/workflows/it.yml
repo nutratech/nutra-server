@@ -20,7 +20,9 @@ jobs:
           make deps
 
       - name: Verify
-        run: make lint test
+        run: |
+          source .venv/bin/activate
+          make lint test
 
       # TODO: database upgrades as part of this? Or app handles that?
       - name: Install & Restart Service
