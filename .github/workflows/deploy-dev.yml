@@ -31,4 +31,6 @@ jobs:
         run: |
           source .venv/bin/activate
           make install
-          systemctl --user restart ntserv.service
+          # NOTE: I added a /etc/sudoers rule, to avoid the password prompt
+          # See: https://unix.stackexchange.com/a/606476/290740
+          sudo systemctl restart ntserv.service
