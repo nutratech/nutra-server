@@ -60,11 +60,11 @@ jobs:
             n=$(expr $n + 1)
             echo $n
             sleep 0.5
-            curl localhost:20000 && break
+            curl localhost:20000/api && break
           done;
           set -e
 
           # Do some basic validation, that we get HTTP 2XX/3XX & valid JSON
-          curl -I -X GET localhost:20000
-          curl localhost:20000/pg/version | jq
-          curl localhost:20000/nutrients  | jq
+          curl -I -X GET localhost:20000/api
+          curl localhost:20000/api/pg/version | jq
+          curl localhost:20000/api/nutrients  | jq
