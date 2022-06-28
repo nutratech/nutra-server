@@ -47,7 +47,7 @@ app.config.FORWARDED_SECRET = PROXY_SECRET
 # -------------------------
 # Routes
 # -------------------------
-@app.route("/")
+@app.route("/api")
 async def _(*args):
     _ = args
     url_map = self_route_rules(app)
@@ -55,12 +55,12 @@ async def _(*args):
     return html(f"<pre>{home_page}</pre>", 200)
 
 
-@app.route("/user_details")
+@app.route("/api/user_details")
 async def _(request):
     return exc_req(get_user_details, request)
 
 
-@app.route("/pg/version")
+@app.route("/api/pg/version")
 async def _(request):
     return exc_req(get_pg_version, request)
 
@@ -68,12 +68,12 @@ async def _(request):
 # ------------------------------------------------
 # Public functions: /nutrients
 # ------------------------------------------------
-@app.route("/nutrients")
+@app.route("/api/nutrients")
 async def _(request):
     return exc_req(get_nutrients, request)
 
 
-@app.route("/nutrients/html")
+@app.route("/api/nutrients/html")
 async def _(request):
     return exc_req(get_nutrients, request, response_type="HTML")
 
@@ -81,22 +81,22 @@ async def _(request):
 # ------------------------------------------------
 # Public functions: /calc
 # ------------------------------------------------
-@app.route("/calc/1rm", methods=["POST"])
+@app.route("/api/calc/1rm", methods=["POST"])
 async def _(request):
     return exc_req(post_calc_1rm, request)
 
 
-@app.route("/calc/bmr", methods=["POST"])
+@app.route("/api/calc/bmr", methods=["POST"])
 async def _(request):
     return exc_req(post_calc_bmr, request)
 
 
-@app.route("/calc/body-fat", methods=["POST"])
+@app.route("/api/calc/body-fat", methods=["POST"])
 async def _(request):
     return exc_req(post_calc_body_fat, request)
 
 
-@app.route("/calc/lbm-limits", methods=["POST"])
+@app.route("/api/calc/lbm-limits", methods=["POST"])
 async def _(request):
     return exc_req(post_calc_lb_limits, request)
 
@@ -104,47 +104,47 @@ async def _(request):
 # -------------------------
 # Account functions
 # -------------------------
-@app.route("/register", methods=["POST"])
+@app.route("/api/register", methods=["POST"])
 async def _(request):
     return exc_req(post_register, request)
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 async def _(request):
     return exc_req(post_login, request)
 
 
-@app.route("/v2/login", methods=["POST"])
+@app.route("/api/v2/login", methods=["POST"])
 async def _(request):
     return exc_req(post_v2_login, request)
 
 
-@app.route("/email/confirm")
+@app.route("/api/email/confirm")
 async def _(request):
     return exc_req(get_confirm_email, request)
 
 
-@app.route("/email/change")
+@app.route("/api/email/change")
 async def _(request):
     return exc_req(get_email_change, request)
 
 
-@app.route("/password/change")
+@app.route("/api/password/change")
 async def _(request):
     return exc_req(get_password_change, request)
 
 
-@app.route("/username/forgot", methods=["POST"])
+@app.route("/api/username/forgot", methods=["POST"])
 async def _(request):
     return exc_req(post_username_forgot, request)
 
 
-@app.route("/password/new/request")
+@app.route("/api/password/new/request")
 async def _(request):
     return exc_req(post_password_new_request, request)
 
 
-@app.route("/password/new/reset")
+@app.route("/api/password/new/reset")
 async def _(request):
     return exc_req(post_password_new_reset, request)
 
@@ -152,6 +152,6 @@ async def _(request):
 # ------------------------------------------------
 # Sync functions
 # ------------------------------------------------
-@app.route("/sync", methods=["GET", "POST"])
+@app.route("/api/sync", methods=["GET", "POST"])
 async def _(request):
     return exc_req(opt_sync, request)
