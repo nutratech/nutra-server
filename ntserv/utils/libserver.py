@@ -119,11 +119,14 @@ def NotImplemented501Response(err_msg="Not Implemented") -> sanic.HTTPResponse:
 # ------------------------
 # Misc functions
 # ------------------------
-def home_page_text(routes_table: str):
-    """Renders <pre></pre> compatible HTML home-page text"""
-
-    def a_href(link: str, target="blank"):
+def a_href(link: str, target=str()) -> str:
+    if target:
         return f'<a href="{link}" target="{target}">{link}</a>'
+    return f'<a href="{link}">{link}</a>'
+
+
+def home_page_text(routes_table: str) -> str:
+    """Renders <pre></pre> compatible HTML home-page text"""
 
     # TODO: are any of these dynamic or environment based?
     email_link = f"<a href=mailto:{__email__}>{__email__}</a>"
@@ -138,9 +141,9 @@ def home_page_text(routes_table: str):
 
     server_dev = a_href(SERVER_HOST_DEV)
 
-    website_link = a_href(UI_HOST)
+    website_link = a_href(UI_HOST, target="blank")
     server_link = a_href(SERVER_HOST)
-    blog_link = a_href(BLOG_HOST)
+    blog_link = a_href(BLOG_HOST, target="blank")
 
     # TODO: put UI_HOST link back... production server, production app, android app, etc
 
@@ -224,9 +227,9 @@ def self_route_rules(app: Sanic) -> str:
         # Add to the list
         if "GET" in methods:
             uri = f'<a href="{SERVER_HOST_BASE}{route.uri}">{route.uri}</a>'
-
         else:
             uri = route.uri
+
         rule = (" ".join(methods), uri)
         rules.append(rule)
 
