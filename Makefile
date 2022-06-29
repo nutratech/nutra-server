@@ -16,20 +16,20 @@ _help:
 init:	## Set up a Python virtual environment
 	git submodule update --init
 	@if [ ! -d .venv ]; then \
-		python3 -m venv .venv; \
+		python -m venv .venv; \
 	fi
 	- direnv allow
 	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
 	@echo -e "HINT: run 'source .venv/bin/activate'"
 
-PYTHON ?= $(shell which python3)
+PYTHON ?= $(shell which python)
 PWD ?= $(shell pwd)
 .PHONY: _venv
 _venv:
 	# Test to enforce venv usage across important make targets
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 
-PIP ?= python3 -m pip
+PIP ?= python -m pip
 .PHONY: _deps
 _deps:
 	$(PIP) install wheel
@@ -100,7 +100,7 @@ lint: _lint
 
 .PHONY: _run
 _run:
-	python3 -m ntserv
+	python -m ntserv
 
 
 .PHONY: run
@@ -114,13 +114,13 @@ run: _run
 
 .PHONY: build
 build: _venv	## Create an sdist
-	python3 setup.py sdist
+	python setup.py sdist
 
 .PHONY: install
 install:	## Pip install (user)
 	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" > ntserv/__sha__.py
 	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >> ntserv/__sha__.py
-	/usr/bin/python3 -m pip install .
+	/usr/bin/python -m pip install .
 
 
 # ---------------------------------------
