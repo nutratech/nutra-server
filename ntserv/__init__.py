@@ -26,6 +26,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
+from utils import git_commit_info
+
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
 PY_MIN_STR = "3.7.0"
@@ -37,6 +39,7 @@ PY_MIN_STR = "3.7.0"
 __title__ = "nutra-server"
 __module__ = "ntserv"
 __version__ = "0.1.0.dev14"
+__release__ = git_commit_info()
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"

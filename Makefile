@@ -118,6 +118,8 @@ build: _venv	## Create an sdist
 
 .PHONY: install
 install:	## Pip install (user)
+	git rev-parse --short HEAD > ntserv/git-commit-info
+	git show -s --format=%cs >> ntserv/git-commit-info
 	/usr/bin/python3 -m pip install .
 
 

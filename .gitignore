@@ -13,6 +13,7 @@
 tmp/
 *.out
 .env*
+git-commit-info
 
 
 # ------------------
