@@ -1,6 +1,6 @@
 import os
 
-from utils.logger import get_logger
+from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
 

@@ -26,7 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
-from utils import git_commit_info
+from ntserv.utils import git_commit_info
 
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
