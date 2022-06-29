@@ -16,7 +16,7 @@ _help:
 init:	## Set up a Python virtual environment
 	git submodule update --init
 	@if [ ! -d .venv ]; then \
-		python -m venv .venv; \
+		python3 -m venv .venv; \
 	fi
 	- direnv allow
 	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
@@ -120,7 +120,7 @@ build: _venv	## Create an sdist
 install:	## Pip install (user)
 	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" > ntserv/__sha__.py
 	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >> ntserv/__sha__.py
-	/usr/bin/python -m pip install .
+	/usr/bin/python3 -m pip install .
 
 
 # ---------------------------------------
