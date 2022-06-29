@@ -13,6 +13,8 @@
 tmp/
 *.out
 .env*
+git-commit-info
+__sha__.py
 
 
 # ------------------
