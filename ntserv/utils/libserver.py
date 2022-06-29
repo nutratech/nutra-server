@@ -8,7 +8,7 @@ from sanic import Sanic
 from tabulate import tabulate
 
 from ntserv import __email__, __url__, __version__
-from ntserv.env import SERVER_HOST, SERVER_HOST_PROD
+from ntserv.env import BASE_HOST_PROD, BLOG_HOST, SERVER_HOST, SERVER_HOST_BASE, UI_HOST
 
 # pylint: disable=invalid-name
 
@@ -115,22 +115,23 @@ def NotImplemented501Response(err_msg="Not Implemented") -> sanic.HTTPResponse:
 def home_page_text(routes_table: str):
     """Renders <pre></pre> compatible HTML home-page text"""
 
+    def a_href(link: str, target="blank"):
+        return f'<a href="{link}" target="{target}">{link}</a>'
+
     # TODO: are any of these dynamic or environment based?
     email_link = f"<a href=mailto:{__email__}>{__email__}</a>"
 
-    licsn_link = (
-        '<a href="https://www.gnu.org/licenses" '
-        'target="_blank">https://www.gnu.org/licenses</a>'
-    )
+    licsn_link = a_href("https://www.gnu.org/licenses", target="_blank")
 
-    cli_link = (
-        '<a href="https://pypi.org/project/nutra/" '
-        'target="_blank">https://pypi.org/project/nutra/</a>'
-    )
+    cli_link = a_href("https://pypi.org/project/nutra/", target="_blank")
 
-    src_link = f'<a href={__url__} target="blank">{__url__}</a>'
+    src_link = a_href(__url__)
 
-    prod_app = f"<a href={SERVER_HOST_PROD} " f'target="blank">{SERVER_HOST_PROD}</a>'
+    prod_site = a_href(BASE_HOST_PROD)
+
+    website_link = a_href(UI_HOST)
+    server_link = a_href(SERVER_HOST)
+    blog_link = a_href(BLOG_HOST)
 
     # TODO: put UI_HOST link back... production server, production app, android app, etc
 
@@ -138,16 +139,25 @@ def home_page_text(routes_table: str):
 Welcome to nutra-server (v{__version__})
 ========================================================================
 
-You can install our command line interface with Python and pip:
+You can install our command line interface with Python and pip.
 
     pip3 install nutra
 
 
-CLI page:          {cli_link}
+Website:              {website_link}
 
-Production server: {prod_app}
+API server:           {server_link}
 
-Source code:       {src_link}
+Blog:                 {blog_link}
+
+
+
+Production website:   {prod_site}
+
+Server Source code:   {src_link}
+
+CLI page:             {cli_link}
+
 
 ------------------------------------------------------------------------
 LICENSE & COPYING NOTICE
@@ -200,7 +210,7 @@ def self_route_rules(app: Sanic) -> str:
         # TODO: more extensive url map, e.g. route/query params, headers, body
         # Add to the list
         if "GET" in methods:
-            uri = f'<a href="{SERVER_HOST}{route.uri}">{route.uri}</a>'
+            uri = f'<a href="{SERVER_HOST_BASE}{route.uri}">{route.uri}</a>'
 
         else:
             uri = route.uri

@@ -22,15 +22,32 @@ N_WORKERS = int(os.getenv("NTSERV_N_WORKERS", str(DEFAULT_N_WORKERS)))
 DEFAULT_LOG_LEVEL = 10 if DEBUG else 20
 LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(DEFAULT_LOG_LEVEL)))
 
-# Self-referential hosts
-# TODO: is this the most maintainable? This needs to be set on both dev/prod service
-SERVER_HOST_PROD = "https://vps76.heliohost.us"
-SERVER_HOST = os.getenv("NTSERV_SERVER_HOST", f"http://127.0.0.1:{PORT}")
+# Self-referential hooks
+BASE_HOST = os.getenv("NTSERV_SERVER_HOST", "http://127.0.0.1")
+BASE_HOST_PROD = "https://nutra1.tk"
+
 UI_PORT = 3000
+SERVER_PORT = 20000
+BLOG_PORT = 2368
 UI_HOST = (
-    f"http://127.0.0.1:{UI_PORT}"
-    if DEBUG
-    else "https://nutra-web.herokuapp.com"
+    f"{BASE_HOST}:{UI_PORT}" if DEBUG
+    else BASE_HOST
+)
+SERVER_HOST_BASE = (
+    f"{BASE_HOST}:{SERVER_PORT}" if DEBUG
+    else f"{BASE_HOST}"
+)
+SERVER_HOST = (
+    f"{BASE_HOST}:{SERVER_PORT}/api" if DEBUG
+    else f"{BASE_HOST}/api"
+)
+BLOG_HOST = (
+    f"{BASE_HOST}:{BLOG_PORT}" if DEBUG
+    else f"{BASE_HOST}/blog"
+)
+UI_HOST = (
+    f"http://127.0.0.1:{UI_PORT}" if DEBUG
+    else BASE_HOST
 )
 
 # PostgreSQL
