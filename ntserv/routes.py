@@ -4,8 +4,7 @@ Created on Sat Jan  4 18:20:27 2020
 
 @author: shane
 """
-
-from sanic import Sanic, html
+import sanic
 
 from ntserv import __module__
 from ntserv.controllers.accounts import (
@@ -37,7 +36,7 @@ from ntserv.utils.libserver import exc_req, home_page_text, self_route_rules
 reload()
 
 # Export the Sanic app
-app = Sanic(__module__)
+app = sanic.Sanic(__module__)
 app.config.FORWARDED_SECRET = PROXY_SECRET
 
 
@@ -47,12 +46,18 @@ app.config.FORWARDED_SECRET = PROXY_SECRET
 # -------------------------
 # Routes
 # -------------------------
+@app.route("/")
+async def _(*args):
+    _ = args
+    return sanic.response.redirect("/api")
+
+
 @app.route("/api")
 async def _(*args):
     _ = args
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
-    return html(f"<pre>{home_page}</pre>", 200)
+    return sanic.html(f"<pre>{home_page}</pre>", 200)
 
 
 @app.route("/api/user_details")

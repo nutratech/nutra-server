@@ -8,7 +8,14 @@ from sanic import Sanic
 from tabulate import tabulate
 
 from ntserv import __email__, __url__, __version__
-from ntserv.env import BASE_HOST_PROD, BLOG_HOST, SERVER_HOST, SERVER_HOST_BASE, UI_HOST
+from ntserv.env import (
+    BLOG_HOST,
+    SERVER_HOST,
+    SERVER_HOST_BASE,
+    SERVER_HOST_DEV,
+    SERVER_HOST_PROD,
+    UI_HOST,
+)
 
 # pylint: disable=invalid-name
 
@@ -127,7 +134,9 @@ def home_page_text(routes_table: str):
 
     src_link = a_href(__url__)
 
-    prod_site = a_href(BASE_HOST_PROD)
+    server_prod = a_href(SERVER_HOST_PROD)
+
+    server_dev = a_href(SERVER_HOST_DEV)
 
     website_link = a_href(UI_HOST)
     server_link = a_href(SERVER_HOST)
@@ -152,7 +161,11 @@ Blog:                 {blog_link}
 
 
 
-Production website:   {prod_site}
+Production server:    {server_prod}
+
+Dev server:           {server_dev}
+
+
 
 Server Source code:   {src_link}
 
