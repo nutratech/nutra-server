@@ -20,7 +20,7 @@
 
 -------------------------------------------------------------------------------
 
-Current URL: https://nutra1.tk/api/
+Current URL: https://nutra.tk/api/
 
 See database: https://github.com/gamesguru/ntdb
 

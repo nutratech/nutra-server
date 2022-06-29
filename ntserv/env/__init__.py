@@ -24,8 +24,8 @@ LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(DEFAULT_LOG_LEVEL)))
 
 # Self-referential hooks
 BASE_HOST = os.getenv("NTSERV_SERVER_HOST", "http://127.0.0.1")
-BASE_HOST_PROD = "https://nutra1.tk"
-SERVER_HOST_PROD = "https://nutra1.tk/api"
+BASE_HOST_PROD = "https://nutra.tk"
+SERVER_HOST_PROD = "https://nutra.tk/api"
 BASE_HOST_DEV = "https://deveast.linode.poczatek.dev"
 SERVER_HOST_DEV = "https://deveast.linode.poczatek.dev/api"
 
