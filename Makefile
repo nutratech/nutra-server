@@ -22,14 +22,14 @@ init:	## Set up a Python virtual environment
 	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
 	@echo -e "HINT: run 'source .venv/bin/activate'"
 
-PYTHON ?= $(shell which python)
+PYTHON ?= $(shell which python3)
 PWD ?= $(shell pwd)
 .PHONY: _venv
 _venv:
 	# Test to enforce venv usage across important make targets
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 
-PIP ?= python -m pip
+PIP ?= python3 -m pip
 .PHONY: _deps
 _deps:
 	$(PIP) install wheel
@@ -100,7 +100,7 @@ lint: _lint
 
 .PHONY: _run
 _run:
-	python -m ntserv
+	python3 -m ntserv
 
 
 .PHONY: run
@@ -114,7 +114,7 @@ run: _run
 
 .PHONY: build
 build: _venv	## Create an sdist
-	python setup.py sdist
+	python3 setup.py sdist
 
 .PHONY: install
 install:	## Pip install (user)

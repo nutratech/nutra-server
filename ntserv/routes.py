@@ -5,6 +5,7 @@ Created on Sat Jan  4 18:20:27 2020
 @author: shane
 """
 import sanic
+from sanic_ext import Extend
 
 from ntserv import __module__
 from ntserv.controllers.accounts import (
@@ -38,6 +39,9 @@ reload()
 # Export the Sanic app
 app = sanic.Sanic(__module__)
 app.config.FORWARDED_SECRET = PROXY_SECRET
+
+app.config.CORS_ORIGINS = "http://localhost:3000,https://nutra.tk"
+Extend(app)
 
 
 # TODO: blueprinting, e.g. /auth, /calc
@@ -74,6 +78,10 @@ async def _(request):
 # Public functions: /nutrients
 # ------------------------------------------------
 @app.route("/api/nutrients")
+async def _(request):
+    return exc_req(get_nutrients, request)
+
+@app.route("/api/products")
 async def _(request):
     return exc_req(get_nutrients, request)
 
