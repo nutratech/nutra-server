@@ -24,6 +24,7 @@ jobs:
       - name: Verify (Lint & Test)
         run: |
           source .venv/bin/activate
+          source .env
           make lint test
 
       # TODO: database upgrades as part of this? Or app handles that?
