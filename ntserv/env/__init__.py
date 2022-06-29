@@ -26,8 +26,8 @@ LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(DEFAULT_LOG_LEVEL)))
 BASE_HOST = os.getenv("NTSERV_SERVER_HOST", "http://127.0.0.1")
 BASE_HOST_PROD = "https://nutra.tk"
 SERVER_HOST_PROD = "https://nutra.tk/api"
-BASE_HOST_DEV = "https://deveast.linode.poczatek.dev"
-SERVER_HOST_DEV = "https://deveast.linode.poczatek.dev/api"
+BASE_HOST_DEV = "https://dev.nutra.tk"
+SERVER_HOST_DEV = "https://dev.nutra.tk/api"
 
 UI_PORT = 3000
 SERVER_PORT = 20000
