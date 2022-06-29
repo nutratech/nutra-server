@@ -81,6 +81,7 @@ async def _(request):
 async def _(request):
     return exc_req(get_nutrients, request)
 
+
 @app.route("/api/products")
 async def _(request):
     return exc_req(get_nutrients, request)
