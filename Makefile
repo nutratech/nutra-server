@@ -118,8 +118,8 @@ build: _venv	## Create an sdist
 
 .PHONY: install
 install:	## Pip install (user)
-	git rev-parse --short HEAD > ntserv/git-commit-info
-	git show -s --format=%cs >> ntserv/git-commit-info
+	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" > ntserv/__sha__.py
+	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >> ntserv/__sha__.py
 	/usr/bin/python3 -m pip install .
 
 

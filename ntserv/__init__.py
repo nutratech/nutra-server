@@ -26,7 +26,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
-from ntserv.utils import git_commit_info
+try:
+    from ntserv.__sha__ import COMMIT_DATE, COMMIT_SHA
+except ModuleNotFoundError:
+    print("Error reading git info, this is fine in development.")
+    COMMIT_SHA = str()
+    COMMIT_DATE = str()
 
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
@@ -39,7 +44,7 @@ PY_MIN_STR = "3.7.0"
 __title__ = "nutra-server"
 __module__ = "ntserv"
 __version__ = "0.1.0.dev14"
-__release__ = git_commit_info()
+__release__ = COMMIT_SHA + " " + COMMIT_DATE
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"
