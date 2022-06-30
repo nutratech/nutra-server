@@ -68,6 +68,12 @@ format: _venv	## Format Python files
 	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
 	black $(LINT_LOCS)
 
+.PHONY: _format
+_format:
+	isort $(LINT_LOCS)
+	autopep8 --recursive --in-place --max-line-length 88 $(LINT_LOCS)
+	black $(LINT_LOCS)
+
 APP_HOME := ntserv/
 LINT_LOCS := $(APP_HOME) $(TEST_HOME) setup.py
 YAML_LOCS := .*.yml .github/
