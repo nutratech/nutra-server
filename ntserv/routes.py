@@ -7,7 +7,7 @@ Created on Sat Jan  4 18:20:27 2020
 import sanic
 from sanic_ext import Extend
 
-from ntserv import __module__
+from ntserv import ALLOWED_ORIGINS, __module__
 from ntserv.controllers.accounts import (
     get_confirm_email,
     get_email_change,
@@ -40,7 +40,7 @@ reload()
 app = sanic.Sanic(__module__)
 app.config.FORWARDED_SECRET = PROXY_SECRET
 
-app.config.CORS_ORIGINS = "http://localhost:3000,https://nutra.tk"
+app.config.CORS_ORIGINS = ','.join(ALLOWED_ORIGINS)
 Extend(app)
 
 
