@@ -62,8 +62,6 @@ CUSTOM_FOOD_DATA_SRC_ID = 6
 
 NUTR_ID_KCAL = 208
 
-ALLOWED_ORIGINS = ["http://localhost:3000", "https://nutra.tk"]
-
 NUTR_IDS_FLAVONES = [
     710,
     711,

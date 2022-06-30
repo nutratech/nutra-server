@@ -7,7 +7,7 @@ Created on Sat Jan  4 18:20:27 2020
 import sanic
 from sanic_ext import Extend
 
-from ntserv import ALLOWED_ORIGINS, __module__
+from ntserv import __module__
 from ntserv.controllers.accounts import (
     get_confirm_email,
     get_email_change,
@@ -28,7 +28,7 @@ from ntserv.controllers.calculate import (
     post_calc_lb_limits,
 )
 from ntserv.controllers.sync import opt_sync
-from ntserv.env import PROXY_SECRET
+from ntserv.env import ALLOWED_ORIGINS, PROXY_SECRET
 from ntserv.persistence.psql import get_pg_version
 from ntserv.utils.cache import reload
 from ntserv.utils.libserver import exc_req, home_page_text, self_route_rules

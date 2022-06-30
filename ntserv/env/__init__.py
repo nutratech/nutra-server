@@ -29,6 +29,8 @@ SERVER_HOST_PROD = "https://nutra.tk/api"
 BASE_HOST_DEV = "https://dev.nutra.tk"
 SERVER_HOST_DEV = "https://dev.nutra.tk/api"
 
+ALLOWED_ORIGINS = ["http://localhost:3000", "https://nutra.tk"]
+
 UI_PORT = 3000
 SERVER_PORT = 20000
 BLOG_PORT = 2368
