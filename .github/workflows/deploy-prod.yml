@@ -38,4 +38,6 @@ jobs:
       # NOTE: I added a /etc/sudoers rule, to avoid the password prompt
       # See: https://unix.stackexchange.com/a/606476/290740
       - name: Restart Service
-        run: sudo systemctl restart ntserv
+        run: |
+          sudo systemctl daemon-reload
+          sudo systemctl restart ntserv
