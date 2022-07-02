@@ -218,10 +218,10 @@ def self_route_rules(app: Sanic) -> str:
         methods = list(route.methods)
         methods.sort()
 
-        # Remove default methods
-        for method in ["HEAD", "OPTIONS"]:
-            if method in methods:
-                methods.remove(method)
+        # Skip default methods
+        _method = next(iter(methods), None)
+        if _method in {"HEAD", "OPTIONS"}:
+            continue
 
         # TODO: examine this <path:filename> equivalent with Sanic
         # TODO: more extensive url map, e.g. route/query params, headers, body

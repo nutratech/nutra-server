@@ -6,7 +6,7 @@ name: deploy-dev
 
 jobs:
   deploy-dev:
-    runs-on: [self-hosted, dev-east-sanic]
+    runs-on: [self-hosted, dev-east]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -36,4 +36,6 @@ jobs:
       # NOTE: I added a /etc/sudoers rule, to avoid the password prompt
       # See: https://unix.stackexchange.com/a/606476/290740
       - name: Restart Service
-        run: sudo systemctl restart ntserv
+        run: |
+          sudo systemctl daemon-reload
+          sudo systemctl restart ntserv
