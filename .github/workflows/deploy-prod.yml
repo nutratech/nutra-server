@@ -1,12 +1,14 @@
 ---
 name: deploy-prod
+
 "on":
   push:
     branches: ["prod"]
 
 jobs:
   deploy-prod:
-    runs-on: [self-hosted, vps76-sanic]
+    runs-on: [self-hosted, vps76]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
