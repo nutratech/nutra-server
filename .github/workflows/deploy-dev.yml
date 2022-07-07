@@ -39,3 +39,4 @@ jobs:
         run: |
           sudo systemctl daemon-reload
           sudo systemctl restart ntserv
+          sudo systemctl stop ntserv
