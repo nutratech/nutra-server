@@ -12,11 +12,14 @@ _help:
 # init, venv, and deps
 # ---------------------------------------
 
+PY_SYS_INTERPRETER ?= /usr/bin/python3
+PY_VIRTUAL_INTERPRETER ?= python
+
 .PHONY: init
 init:	## Set up a Python virtual environment
 	git submodule update --init
-	@if [ ! -d .venv ]; then \
-		python3 -m venv .venv; \
+	if [ ! -d .venv ]; then \
+		$(PY_SYS_INTERPRETER) -m venv .venv; \
 	fi
 	- direnv allow
 	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
@@ -29,7 +32,7 @@ _venv:
 	# Test to enforce venv usage across important make targets
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 
-PIP ?= python -m pip
+PIP ?= $(PY_VIRTUAL_INTERPRETER) -m pip
 .PHONY: _deps
 _deps:
 	$(PIP) install wheel
@@ -104,7 +107,7 @@ lint: _lint
 
 .PHONY: _run
 _run:
-	python -m ntserv
+	$(PY_VIRTUAL_INTERPRETER) -m ntserv
 
 
 .PHONY: run
@@ -118,13 +121,13 @@ run: _run
 
 .PHONY: build
 build: _venv	## Create an sdist
-	python setup.py sdist
+	$(PY_VIRTUAL_INTERPRETER) setup.py sdist
 
 .PHONY: install
 install:	## Pip install (user)
-	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" > ntserv/__sha__.py
-	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >> ntserv/__sha__.py
-	/usr/bin/python3 -m pip install .
+	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" >ntserv/__sha__.py
+	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >>ntserv/__sha__.py
+	$(PY_SYS_INTERPRETER) -m pip install .
 
 
 # ---------------------------------------
