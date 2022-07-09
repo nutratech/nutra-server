@@ -25,7 +25,7 @@ jobs:
         run: |
           pip install testresources==2.0.1
           make _deps
-          pip install -r ntdb/requirements.txt
+          pip install -r db/requirements.txt
 
       - name: Start database
         run: |
@@ -38,7 +38,7 @@ jobs:
           psql -d nt -c 'ALTER DATABASE nt SET search_path TO nt'
           psql -l
           # This package uses relative imports, so can be called from outside
-          python -m ntdb.sql rebuild
+          python -m db.sql rebuild
           # Select versions (not a pass/fail test, but still viewable in logs)
           psql -d nt -c 'SELECT * FROM version'
 

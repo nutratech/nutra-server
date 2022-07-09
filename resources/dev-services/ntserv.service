@@ -1,5 +1,5 @@
 [Unit]
-Description=Nutra Server (Sanic / PostgreSQL)
+Description=NT Server (Sanic / Postgres)
 
 [Service]
 User=github

@@ -1,5 +1,5 @@
 [Unit]
-Description=GitHub Action Runner (nutra-server) [deploy-prod]
+Description=GitHub Actions Runner (Organizational)
 
 [Service]
 User=github

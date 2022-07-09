@@ -22,7 +22,7 @@
 
 Current URL: https://nutra.tk/api/
 
-See database: https://github.com/gamesguru/ntdb
+See database: https://github.com/nutratech/db
 
 See cli: https://github.com/nutratech/cli
 
@@ -32,17 +32,18 @@ Dependencies
 You will need to install the following, or newer.
 
 - Python 3.7.0 (with ``venv`` support)
-- PostgreSQL 12 (with ``dev`` library, see ``ntdb`` for details)
+- PostgreSQL 12 (with ``dev`` library, see ``db`` for details)
 
 Initialize Database
 ###################
 
-You can install Postgres, register it as a startup service, and populate data.
+You can install PostgreSQL, register it as a startup service,
+and populate data.
 
 You can also set the ``PSQL_*`` vars in ``.env`` and point to a
 remote database instance.
 
-See ``ntdb/README.rst``.
+See ``db/README.rst``.
 
 Initialize Server
 #################

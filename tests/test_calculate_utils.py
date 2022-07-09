@@ -75,7 +75,7 @@ def test_bmr_cunningham():
     "gender,weight,height,dob,activity_factor,expected_result",
     [
         ("MALE", 77, 177, 725864400, 0.55, {"bmr": 1740, "tdee": 2697}),
-        ("FEMALE", 77, 177, 725864400, 0.55, {"bmr": 1574, "tdee": 2440}),
+        ("FEMALE", 77, 177, 725864400, 0.55, {"bmr": 1574, "tdee": 2439}),
     ],
 )
 def test_bmr_mifflin_st_jeor(
