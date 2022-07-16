@@ -1,6 +1,6 @@
 import pytest
 
-import ntserv.utils.calculate as calc
+import ntserv.services.calculate as calc
 
 
 # ------------------------------------------------

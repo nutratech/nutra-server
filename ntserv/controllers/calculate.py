@@ -12,7 +12,7 @@ import sanic.response
 from sanic import html
 from tabulate import tabulate
 
-import ntserv.utils.calculate as calc
+import ntserv.services.calculate as calc
 from ntserv.utils import cache
 from ntserv.utils.libserver import Success200Response
 
@@ -97,19 +97,21 @@ def post_calc_bmr(request):
 def post_calc_body_fat(request):
     body = request.json
 
+    # TODO: make service level functions, reduce size of this method
+    # NOTE: doesn't support imperial units
+
     gender = body["gender"]
     age = body["age"]
     height = body["height"]
 
     # Navy measurements
     waist = body.get("waist")
-    if gender == "FEMALE":
-        hip = body.get("hip")
+    hip = body.get("hip")  # Only applies if gender == "FEMALE"
     neck = body.get("neck")
 
     # 3-site calipers
     chest = body.get("chest")
-    ab = body.get("ab")
+    abd = body.get("ab")
     thigh = body.get("thigh")
 
     # 7-site calipers
@@ -118,49 +120,9 @@ def post_calc_body_fat(request):
     sup = body.get("sup")
     mid = body.get("mid")
 
-    # NOTE: doesn't support imperial units
-    # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
-
-    # ----------------
-    # Navy test
-    # ----------------
-    if gender == "MALE":
-        denom = (
-            1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
-        )
-    elif gender == "FEMALE":
-        denom = (
-            1.29579
-            - 0.35004 * math.log10(waist + hip - neck)
-            + 0.22100 * math.log10(height)
-        )
-    else:
-        denom = 1
-    navy = round(495 / denom - 450, 2)
-
-    # ----------------
-    # 3-site test
-    # ----------------
-    s3 = chest + ab + thigh
-    if gender == "MALE":
-        denom = 1.10938 - 0.0008267 * s3 + 0.0000016 * s3 * s3 - 0.0002574 * age
-    elif gender == "FEMALE":
-        denom = 1.089733 - 0.0009245 * s3 + 0.0000025 * s3 * s3 - 0.0000979 * age
-    else:
-        denom = 1
-    three_site = round(495 / denom - 450, 2)
-
-    # ----------------
-    # 7-site test
-    # ----------------
-    s7 = chest + ab + thigh + tricep + sub + sup + mid
-    if gender == "MALE":
-        denom = 1.112 - 0.00043499 * s7 + 0.00000055 * s7 * s7 - 0.00028826 * age
-    elif gender == "FEMALE":
-        denom = 1.097 - 0.00046971 * s7 + 0.00000056 * s7 * s7 - 0.00012828 * age
-    else:
-        denom = 1
-    seven_site = round(495 / denom - 450, 2)
+    navy = calc.bf_navy(gender, height, waist, neck, hip)
+    three_site = calc.bf_3site(gender, age, chest, abd, thigh)
+    seven_site = calc.bf_7site(gender, age, chest, abd, thigh, tricep, sub, sup, mid)
 
     return Success200Response(
         data={"navy": navy, "three-site": three_site, "seven-site": seven_site}

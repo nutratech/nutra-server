@@ -5,6 +5,7 @@ Created on Tue Aug 11 20:53:14 2020
 
 @author: shane
 """
+import math
 import traceback
 from datetime import datetime
 
@@ -182,17 +183,17 @@ def bmr_mifflin_st_jeor(
     Source: https://www.myfeetinmotion.com/mifflin-st-jeor-equation/
     """
 
-    def gender_specific(_gender: str, _bmr: float) -> float:
-        func = {
-            "MALE": lambda x: x + 5,
-            "FEMALE": lambda x: x - 161,
+    def gender_specific_bmr(_gender: str, _bmr: float) -> float:
+        _second_term = {
+            "MALE": 5,
+            "FEMALE": -161,
         }
-        # TODO: would we rather enforce gender, or avoid mypy "errors" with lambdas
-        return func[_gender](_bmr)  # type: ignore
+        # Exc: KeyError
+        return _bmr + _second_term[gender]
 
     bmr = 10 * weight + 6.25 + 6.25 * height - 5 * _age(dob)
 
-    bmr = gender_specific(gender, bmr)
+    bmr = gender_specific_bmr(gender, bmr)
     tdee = bmr * (1 + activity_factor)
 
     return {
@@ -203,7 +204,7 @@ def bmr_mifflin_st_jeor(
 
 def bmr_harris_benedict(
     gender: str, weight: float, height: float, dob: int, activity_factor: float
-):
+) -> dict:
     """
     @param gender: {'MALE', 'FEMALE'}
     @param weight: kg
@@ -220,17 +221,17 @@ def bmr_harris_benedict(
     Source: https://tdeecalculator.net/about.php
     """
 
-    def gender_specific(_gender: str) -> float:
+    def gender_specific_bmr(_gender: str) -> float:
         age = _age(dob)
 
-        func = {
-            "MALE": lambda: (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362,
-            "FEMALE": lambda: (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593,
+        _gender_specific_bmr = {
+            "MALE": (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362,
+            "FEMALE": (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593,
         }
+        # Exc: KeyError
+        return _gender_specific_bmr[_gender]
 
-        return func[_gender]()  # type: ignore
-
-    bmr = gender_specific(gender)
+    bmr = gender_specific_bmr(gender)
     tdee = bmr * (1 + activity_factor)
 
     return {
@@ -240,9 +241,104 @@ def bmr_harris_benedict(
 
 
 # ------------------------------------------------
+# Body fat
+# ------------------------------------------------
+def bf_navy(
+    gender: str, height: float, waist: float, neck: float, hip: float = None
+) -> float:
+    """
+    @param gender: {'MALE', 'FEMALE'}
+    @param height: cm
+    @param waist: cm
+    @param neck: cm
+    @param hip: (cm) Only required for "FEMALE" gender
+
+    @return: float (e.g. 0.17)
+    """
+
+    _gender_specific_denominator = {
+        "MALE": (
+            1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
+        ),
+        "FEMALE": (
+            1.29579
+            - 0.35004 * math.log10(waist + hip - neck)
+            + 0.22100 * math.log10(height)
+        ),
+    }
+
+    # Exc: KeyError
+    return round(495 / _gender_specific_denominator[gender] - 450, 2)
+
+
+def bf_3site(
+    gender: str,
+    age: float,
+    chest: float,
+    abd: float,
+    thigh: float,
+) -> float:
+    """
+    @param gender: {'MALE', 'FEMALE'}
+    @param age: (years) float
+    @param chest: (mm) Manifold
+    @param abd: (mm) Manifold
+    @param thigh: (mm) Manifold
+
+    @return: float (e.g. 0.17)
+    """
+
+    st3 = chest + abd + thigh
+
+    _gender_specific_denominator = {
+        "MALE": 1.10938 - 0.0008267 * st3 + 0.0000016 * st3 * st3 - 0.0002574 * age,
+        "FEMALE": 1.089733 - 0.0009245 * st3 + 0.0000025 * st3 * st3 - 0.0000979 * age,
+    }
+
+    # Exc: KeyError
+    return round(495 / _gender_specific_denominator[gender] - 450, 2)
+
+
+def bf_7site(
+    gender: str,
+    age: float,
+    chest: float,
+    abd: float,
+    thigh: float,
+    tricep: float,
+    sub: float,
+    sup: float,
+    mid: float,
+):
+    """
+    @param gender: {'MALE', 'FEMALE'}
+    @param age: (years) float
+    @param chest: (mm) Manifold
+    @param abd: (mm) Manifold
+    @param thigh: (mm) Manifold
+    @param tricep: (mm) Manifold
+    @param sub: (mm) Manifold
+    @param sup: (mm) Manifold
+    @param mid: (mm) Manifold
+
+    @return: float (e.g. 0.17)
+    """
+
+    st7 = chest + abd + thigh + tricep + sub + sup + mid
+
+    _gender_specific_denominator = {
+        "MALE": 1.112 - 0.00043499 * st7 + 0.00000055 * st7 * st7 - 0.00028826 * age,
+        "FEMALE": 1.097 - 0.00046971 * st7 + 0.00000056 * st7 * st7 - 0.00012828 * age,
+    }
+
+    # Exc: KeyError
+    return round(495 / _gender_specific_denominator[gender] - 450, 2)
+
+
+# ------------------------------------------------
 # Misc functions
 # ------------------------------------------------
-def _age(dob: int):
+def _age(dob: int) -> float:
     now = datetime.now().timestamp()
     years = (now - dob) / (365 * 24 * 3600)
     return years
