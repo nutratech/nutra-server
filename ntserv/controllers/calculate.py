@@ -13,7 +13,7 @@ from sanic import html
 from tabulate import tabulate
 
 import ntserv.services.calculate as calc
-from ntserv.utils import cache
+from ntserv.utils import Gender, cache
 from ntserv.utils.libserver import Success200Response
 
 # pylint: disable=invalid-name
@@ -96,36 +96,21 @@ def post_calc_bmr(request):
 
 
 def post_calc_body_fat(request):
+    """
+    Doesn't support imperial units yet.
+
+    @param request: HTTPRequest
+    @return: dict, with "navy", "three-site", and "seven-site",
+        with potential validation errors inside those objects.
+    """
     body = request.json
 
-    # TODO: make service level functions, reduce size of this method
-    # NOTE: doesn't support imperial units
-
-    gender = body["gender"]
-    age = body["age"]
-    height = body["height"]
-
-    # Navy measurements
-    waist = body.get("waist")
-    hip = body.get("hip", 0)  # Only applies if gender == "FEMALE"
-    neck = body.get("neck")
-
-    # 3-site calipers
-    chest = body.get("chest")
-    abd = body.get("ab")
-    thigh = body.get("thigh")
-
-    # 7-site calipers
-    tricep = body.get("tricep")
-    sub = body.get("sub")
-    sup = body.get("sup")
-    mid = body.get("mid")
+    gender = Gender(body["gender"])
 
     # Calculate 3 different body fat equations
-    navy = calc.bf_navy(body)
-    # navy = calc.bf_navy(gender, height, waist, neck, hip)
-    three_site = calc.bf_3site(gender, age, chest, abd, thigh)
-    seven_site = calc.bf_7site(gender, age, chest, abd, thigh, tricep, sub, sup, mid)
+    navy = calc.bf_navy(gender, body)
+    three_site = calc.bf_3site(gender, body)
+    seven_site = calc.bf_7site(gender, body)
 
     return Success200Response(
         data={"navy": navy, "three-site": three_site, "seven-site": seven_site}

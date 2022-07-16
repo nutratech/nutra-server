@@ -244,18 +244,24 @@ def bmr_harris_benedict(
 # ------------------------------------------------
 # Body fat
 # ------------------------------------------------
-def bf_navy(body: dict) -> float:
+def bf_navy(gender: Gender, body: dict) -> float:
     """
-    @param body: dict containing gender, height, waist, neck, and (if female) hip.
+    @param gender: MALE or FEMALE
+    @param body: Request dict containing: height, waist, neck, and (if female) hip.
         All values are in cm.
 
     @return: float (e.g. 0.17)
     """
 
-    # Shared values
-    gender = Gender(body["gender"]).value
+    def validate_inputs():
+        pass
 
-    # Navy-specific measurements
+    # Shared parameter for all 3 body fat tests
+    _gender = gender.value
+
+    # TODO: do validation for all 3 tests independently in helper method,
+    #  with try/catch
+    # Navy-specific parameters
     height = float(body["height"])
 
     waist = float(body["waist"])
@@ -274,23 +280,26 @@ def bf_navy(body: dict) -> float:
         ),
     }
 
-    return round(495 / _gender_specific_denominator[gender] - 450, 2)
+    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
 
 
-def bf_3site(body: dict) -> float:
+def bf_3site(gender: Gender, body: dict) -> float:
     """
-    @param body: dict containing gender, age, and skin manifolds (mm) for
+    @param gender: MALE or FEMALE
+    @param body: dict containing age, and skin manifolds (mm) for
         chest, abdominal, and thigh.
 
     @return: float (e.g. 0.17)
     """
 
-    # Shared values
-    gender = Gender(body["gender"]).value
+    # Shared parameter for all 3 body fat tests
+    _gender = gender.value
+
+    # Shared parameters for skin manifold 3 & 7 site tests
     age = float(body["age"])
 
     chest = float(body["chest"])
-    abd = float(body["ab"])
+    abd = float(body["abd"])
     thigh = float(body["thigh"])
 
     # Compute values
@@ -300,35 +309,35 @@ def bf_3site(body: dict) -> float:
         "FEMALE": 1.089733 - 0.0009245 * st3 + 0.0000025 * st3 * st3 - 0.0000979 * age,
     }
 
-    # Exc: KeyError
-    return round(495 / _gender_specific_denominator[gender] - 450, 2)
+    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
 
 
-def bf_7site(
-    gender: str,
-    age: float,
-    chest: float,
-    abd: float,
-    thigh: float,
-    tricep: float,
-    sub: float,
-    sup: float,
-    mid: float,
-):
+def bf_7site(gender: Gender, body: dict) -> float:
     """
-    @param gender: {'MALE', 'FEMALE'}
-    @param age: (years) float
-    @param chest: (mm) Manifold
-    @param abd: (mm) Manifold
-    @param thigh: (mm) Manifold
-    @param tricep: (mm) Manifold
-    @param sub: (mm) Manifold
-    @param sup: (mm) Manifold
-    @param mid: (mm) Manifold
+    @param gender: MALE or FEMALE
+    @param body: dict containing age, and skin manifolds (mm) for
+        chest, abdominal, thigh, triceps, sub, sup, and mid.
 
     @return: float (e.g. 0.17)
     """
 
+    # Shared parameter for all 3 body fat tests
+    _gender = gender.value
+
+    # Shared parameters for skin manifold 3 & 7 site tests
+    age = float(body["age"])
+
+    chest = float(body["chest"])
+    abd = float(body["abd"])
+    thigh = float(body["thigh"])
+
+    # 7site-specific parameters
+    tricep = float(body["tricep"])
+    sub = float(body["sub"])
+    sup = float(body["sup"])
+    mid = float(body["mid"])
+
+    # Compute values
     st7 = chest + abd + thigh + tricep + sub + sup + mid
 
     _gender_specific_denominator = {
@@ -336,8 +345,7 @@ def bf_7site(
         "FEMALE": 1.097 - 0.00046971 * st7 + 0.00000056 * st7 * st7 - 0.00012828 * age,
     }
 
-    # Exc: KeyError
-    return round(495 / _gender_specific_denominator[gender] - 450, 2)
+    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
 
 
 # ------------------------------------------------
