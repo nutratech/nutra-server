@@ -244,7 +244,7 @@ def bmr_harris_benedict(
 # Body fat
 # ------------------------------------------------
 def bf_navy(
-    gender: str, height: float, waist: float, neck: float, hip: float = None
+    gender: str, height: float, waist: float, neck: float, hip: float = 0
 ) -> float:
     """
     @param gender: {'MALE', 'FEMALE'}

@@ -106,7 +106,7 @@ def post_calc_body_fat(request):
 
     # Navy measurements
     waist = body.get("waist")
-    hip = body.get("hip")  # Only applies if gender == "FEMALE"
+    hip = body.get("hip", 0)  # Only applies if gender == "FEMALE"
     neck = body.get("neck")
 
     # 3-site calipers
@@ -120,6 +120,7 @@ def post_calc_body_fat(request):
     sup = body.get("sup")
     mid = body.get("mid")
 
+    # Calculate 3 different body fat equations
     navy = calc.bf_navy(gender, height, waist, neck, hip)
     three_site = calc.bf_3site(gender, age, chest, abd, thigh)
     seven_site = calc.bf_7site(gender, age, chest, abd, thigh, tricep, sub, sup, mid)
