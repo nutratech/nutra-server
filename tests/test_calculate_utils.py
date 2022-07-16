@@ -88,7 +88,7 @@ def test_bmr_mifflin_st_jeor(
 @pytest.mark.parametrize(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
-        ("MALE", 77, 177, 725864400, 0.55, {"bmr": 1802, "tdee": 2793}),
+        ("MALE", 77, 177, 725864400, 0.55, {"bmr": 1802, "tdee": 2792}),
         ("FEMALE", 77, 177, 725864400, 0.55, {"bmr": 1580, "tdee": 2449}),
     ],
 )
