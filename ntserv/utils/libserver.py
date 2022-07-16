@@ -42,8 +42,7 @@ def exc_req(func, req, response_type="JSON"):
     except Exception as err_generic:
         return ServerError500Response(
             data={
-                "error": "General server error",
-                "exception": repr(err_generic),
+                "err_msg": f"General server error — {repr(err_generic)}",
                 "stack": traceback.format_exc(),
             }
         )

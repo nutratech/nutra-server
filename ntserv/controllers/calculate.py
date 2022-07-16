@@ -39,6 +39,8 @@ def post_calc_1rm(request):
     reps = int(body["reps"])
     weight = float(body["weight"])
 
+    # Compute 3 one-rep max equations
+    # NOTE: each service-level call handles errors internally
     epley = calc.orm_epley(reps, weight)
     brzycki = calc.orm_brzycki(reps, weight)
     dos_remedios = calc.orm_dos_remedios(reps, weight)
@@ -58,11 +60,10 @@ def post_calc_bmr(request):
 
     # NOTE: doesn't support imperial units
 
-    # TODO: enum class for this?
+    # TODO: enum class for this? And gender?
     activity_factor = float(body["activity_factor"])
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
-    # TODO: validate accuracy of gender here, not deeper in service
     gender = body["gender"]  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
 
@@ -74,7 +75,7 @@ def post_calc_bmr(request):
         bf = float(body["bodyfat"])
         lbm = weight * (1 - bf)
 
-    # TODO: each of these methods returns a tuple: (bmr, tdee). Do we want a dict?
+    # Compute 3 different BMR equations
     katch_mcardle = calc.bmr_katch_mcardle(lbm, activity_factor)
     cunningham = calc.bmr_cunningham(lbm, activity_factor)
     mifflin_st_jeor = calc.bmr_mifflin_st_jeor(
@@ -121,7 +122,8 @@ def post_calc_body_fat(request):
     mid = body.get("mid")
 
     # Calculate 3 different body fat equations
-    navy = calc.bf_navy(gender, height, waist, neck, hip)
+    navy = calc.bf_navy(body)
+    # navy = calc.bf_navy(gender, height, waist, neck, hip)
     three_site = calc.bf_3site(gender, age, chest, abd, thigh)
     seven_site = calc.bf_7site(gender, age, chest, abd, thigh, tricep, sub, sup, mid)
 

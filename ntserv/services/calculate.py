@@ -9,6 +9,7 @@ import math
 import traceback
 from datetime import datetime
 
+from ntserv.utils import Gender
 from ntserv.utils.logger import get_logger
 
 # TODO: generalize activity level across BMR calcs, e.g. LIGHT, MODERATE, EXTREME
@@ -243,19 +244,25 @@ def bmr_harris_benedict(
 # ------------------------------------------------
 # Body fat
 # ------------------------------------------------
-def bf_navy(
-    gender: str, height: float, waist: float, neck: float, hip: float = 0
-) -> float:
+def bf_navy(body: dict) -> float:
     """
-    @param gender: {'MALE', 'FEMALE'}
-    @param height: cm
-    @param waist: cm
-    @param neck: cm
-    @param hip: (cm) Only required for "FEMALE" gender
+    @param body: dict containing gender, height, waist, neck, and (if female) hip.
+        All values are in cm.
 
     @return: float (e.g. 0.17)
     """
 
+    # Shared values
+    gender = Gender(body["gender"]).value
+
+    # Navy-specific measurements
+    height = float(body["height"])
+
+    waist = float(body["waist"])
+    hip = float(body.get("hip", 0))  # Only applies if gender == "FEMALE"
+    neck = float(body["neck"])
+
+    # Compute values
     _gender_specific_denominator = {
         "MALE": (
             1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
@@ -267,29 +274,27 @@ def bf_navy(
         ),
     }
 
-    # Exc: KeyError
     return round(495 / _gender_specific_denominator[gender] - 450, 2)
 
 
-def bf_3site(
-    gender: str,
-    age: float,
-    chest: float,
-    abd: float,
-    thigh: float,
-) -> float:
+def bf_3site(body: dict) -> float:
     """
-    @param gender: {'MALE', 'FEMALE'}
-    @param age: (years) float
-    @param chest: (mm) Manifold
-    @param abd: (mm) Manifold
-    @param thigh: (mm) Manifold
+    @param body: dict containing gender, age, and skin manifolds (mm) for
+        chest, abdominal, and thigh.
 
     @return: float (e.g. 0.17)
     """
 
-    st3 = chest + abd + thigh
+    # Shared values
+    gender = Gender(body["gender"]).value
+    age = float(body["age"])
 
+    chest = float(body["chest"])
+    abd = float(body["ab"])
+    thigh = float(body["thigh"])
+
+    # Compute values
+    st3 = chest + abd + thigh
     _gender_specific_denominator = {
         "MALE": 1.10938 - 0.0008267 * st3 + 0.0000016 * st3 * st3 - 0.0002574 * age,
         "FEMALE": 1.089733 - 0.0009245 * st3 + 0.0000025 * st3 * st3 - 0.0000979 * age,
