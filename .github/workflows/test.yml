@@ -89,6 +89,11 @@ jobs:
       - name: Install requirements
         run: make _deps
 
+      - name: Change Line Endings / LF
+        run: |
+          git config --global core.autocrlf input
+          git reset --hard
+
       - name: Run Tests
         run: make _test
 
