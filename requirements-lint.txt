@@ -6,5 +6,5 @@ flake8==4.0.1
 isort==5.10.1
 mypy==0.961
 pycodestyle==2.8.0
-pylint==2.14.3
-yamllint==1.26.3
+pylint==2.14.4
+yamllint==1.27.1

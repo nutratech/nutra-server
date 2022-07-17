@@ -50,7 +50,7 @@ def post_calc_1rm(request):
         data={
             "epley": epley,
             "brzycki": brzycki,
-            "dos_remedios": dos_remedios,
+            "dosRemedios": dos_remedios,
         }
     )
 
@@ -88,10 +88,10 @@ def post_calc_bmr(request):
 
     return Success200Response(
         data={
-            "Katch-McArdle": katch_mcardle,
-            "Cunningham": cunningham,
-            "Mifflin-St-Jeor": mifflin_st_jeor,
-            "Harris-Benedict": harris_benedict,
+            "katchMcArdle": katch_mcardle,
+            "cunningham": cunningham,
+            "mifflinStJeor": mifflin_st_jeor,
+            "harrisBenedict": harris_benedict,
         }
     )
 
@@ -101,7 +101,7 @@ def post_calc_body_fat(request):
     Doesn't support imperial units yet.
 
     @param request: HTTPRequest
-    @return: dict, with "navy", "three-site", and "seven-site",
+    @return: dict, with "navy", "threeSite", and "sevenSite",
         with potential validation errors inside those objects.
     """
     body = request.json
@@ -115,7 +115,7 @@ def post_calc_body_fat(request):
     except (KeyError, ValueError) as err:
         # TODO: helper method to bundle up exception errors on nested objects, like this
         navy = {
-            "err_msg": f"Bad request — {repr(err)}",
+            "errMsg": f"Bad request — {repr(err)}",
             "stack": traceback.format_exc(),
         }
     try:
@@ -123,7 +123,7 @@ def post_calc_body_fat(request):
     except (KeyError, ValueError) as err:
         # TODO: helper method to bundle up exception errors on nested objects, like this
         three_site = {
-            "err_msg": f"Bad request — {repr(err)}",
+            "errMsg": f"Bad request — {repr(err)}",
             "stack": traceback.format_exc(),
         }
     try:
@@ -131,12 +131,12 @@ def post_calc_body_fat(request):
     except (KeyError, ValueError) as err:
         # TODO: helper method to bundle up exception errors on nested objects, like this
         seven_site = {
-            "err_msg": f"Bad request — {repr(err)}",
+            "errMsg": f"Bad request — {repr(err)}",
             "stack": traceback.format_exc(),
         }
 
     return Success200Response(
-        data={"navy": navy, "three-site": three_site, "seven-site": seven_site}
+        data={"navy": navy, "threeSite": three_site, "sevenSite": seven_site}
     )
 
 
@@ -155,19 +155,19 @@ def post_calc_lb_limits(request):
     # ----------------
     # Martin Berkhan
     # ----------------
-    min = round((height - 102) * 2.205, 1)
-    max = round((height - 98) * 2.205, 1)
-    mb = {"notes": "Contest shape (5-6%)", "weight": f"{min} ~ {max} lbs"}
+    _min = round((height - 102) * 2.205, 1)
+    _max = round((height - 98) * 2.205, 1)
+    mb = {"notes": "Contest shape (5-6%)", "weight": f"{_min} ~ {_max} lbs"}
 
     # ----------------
     # Eric Helms
     # ----------------
     try:
-        min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-        max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
+        _min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        _max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{_min} ~ {_max} lbs"}
     except TypeError:
-        eh = {"error": "MISSING_INPUT", "requires": ["height", "desired-bf"]}
+        eh = {"errMsg": 'MISSING_INPUT — requires: ["height", "desired-bf"]'}
 
     # ----------------
     # Casey Butt, PhD
@@ -196,10 +196,10 @@ def post_calc_lb_limits(request):
         }
     except TypeError:
         cb = {
-            "error": "MISSING_INPUT",
-            "requires": ["height", "desired-bf", "wrist", "ankle"],
+            "errMsg": "MISSING_INPUT — "
+            + 'requires: ["height", "desired-bf", "wrist", "ankle"]',
         }
 
     return Success200Response(
-        data={"martin-berkhan": mb, "eric-helms": eh, "casey-butt": cb}
+        data={"martinBerkhan": mb, "ericHelms": eh, "caseyButt": cb}
     )

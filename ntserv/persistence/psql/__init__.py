@@ -29,7 +29,7 @@ class PgResult:
         """Used ONLY for ERRORS"""
 
         return ServerError500Response(
-            data={"error": "General PostgreSQL error", "stack": self.err_msg}
+            data={"errMsg": "General database error (Postgres)", "stack": self.err_msg}
         )
 
     def set_rows(self, cur: psycopg2._psycopg.cursor) -> None:
