@@ -77,25 +77,32 @@ jobs:
         uses: actions/checkout@v3
         # NOTE: skip submodules, we don't use DB. See below NOTE.
 
-      - name: Reload Cache / pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      # NOTE: skip Postgres setup for Windows, running w/o has value of its own
-      - name: Install requirements
-        run: make _deps
-
       - name: Change Line Endings / LF
         run: |
+          git ls-files --eol
           git config --global core.autocrlf input
           git reset --hard
+          git ls-files --eol
 
-      - name: Run Tests
-        run: make _test
+      - name: Test line endings
+        run: |
+          pip install doc8
+          doc8 -q README.rst
 
-      - name: Run linters
-        run: make _lint
+      # - name: Reload Cache / pip
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.cache/pip
+      #     key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pip-
+
+      # # NOTE: skip Postgres setup for Windows, running w/o has value of its own
+      # - name: Install requirements
+      #   run: make _deps
+
+      # - name: Run Tests
+      #   run: make _test
+
+      # - name: Run linters
+      #   run: make _lint
