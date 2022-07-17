@@ -14,18 +14,16 @@ _help:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # TODO: should this just be "python3"?
-PY_SYS_INTERPRETER ?= /usr/bin/python3
+PY_SYS_INTERPRETER ?= python3
 PY_VIRTUAL_INTERPRETER ?= python
 
 .PHONY: init
 init:	## Set up a Python virtual environment
 	git submodule update --init
-	if [ ! -d .venv ]; then \
-		$(PY_SYS_INTERPRETER) -m venv .venv; \
-	fi
+	$(PY_SYS_INTERPRETER) -m venv .venv
 	- direnv allow
-	@echo -e "\r\nNOTE: activate venv, and run 'make deps'\r\n"
-	@echo -e "HINT: run 'source .venv/bin/activate'"
+	@echo NOTE: activate venv, and run 'make deps'
+	@echo HINT: run 'source .venv/bin/activate'
 
 PYTHON ?= $(shell which python)
 PWD ?= $(shell pwd)
