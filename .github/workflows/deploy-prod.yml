@@ -5,6 +5,8 @@ name: deploy-prod
   push:
     branches: ["master"]
 
+concurrency: prod
+
 jobs:
   deploy-prod:
     runs-on: [self-hosted, vps76]

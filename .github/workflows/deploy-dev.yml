@@ -4,6 +4,8 @@ name: deploy-dev
   push:
     branches: ["dev"]
 
+concurrency: dev
+
 jobs:
   deploy-dev:
     runs-on: [self-hosted, dev-east]
