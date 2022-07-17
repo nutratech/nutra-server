@@ -92,6 +92,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      # NOTE: These two steps are NOT done in test-linux
+      - name: Init repo
+        run: make init
+
+      - name: Activate venv
+        run: call .venv/Scripts/activate.bat
+
       # NOTE: skip Postgres setup for Windows, running w/o has value of its own
       - name: Install requirements
         run: make _deps
