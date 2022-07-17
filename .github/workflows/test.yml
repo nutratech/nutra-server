@@ -75,8 +75,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
+        # NOTE: skip submodules, we don't use DB. See below NOTE.
 
       - name: Reload Cache / pip
         uses: actions/cache@v3
