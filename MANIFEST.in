@@ -1,6 +1,2 @@
 include requirements.txt
 include requirements-*.txt
-
-include ntserv/LICENSE
-include ntserv/CHANGELOG.md
-include ntserv/git-commit-info
