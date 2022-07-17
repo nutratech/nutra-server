@@ -155,19 +155,19 @@ def post_calc_lb_limits(request):
     # ----------------
     # Martin Berkhan
     # ----------------
-    min = round((height - 102) * 2.205, 1)
-    max = round((height - 98) * 2.205, 1)
-    mb = {"notes": "Contest shape (5-6%)", "weight": f"{min} ~ {max} lbs"}
+    _min = round((height - 102) * 2.205, 1)
+    _max = round((height - 98) * 2.205, 1)
+    mb = {"notes": "Contest shape (5-6%)", "weight": f"{_min} ~ {_max} lbs"}
 
     # ----------------
     # Eric Helms
     # ----------------
     try:
-        min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-        max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{min} ~ {max} lbs"}
+        _min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        _max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
+        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{_min} ~ {_max} lbs"}
     except TypeError:
-        eh = {"errMsg": "MISSING_INPUT", "requires": ["height", "desired-bf"]}
+        eh = {"errMsg": 'MISSING_INPUT — requires: ["height", "desired-bf"]'}
 
     # ----------------
     # Casey Butt, PhD
@@ -196,8 +196,8 @@ def post_calc_lb_limits(request):
         }
     except TypeError:
         cb = {
-            "errMsg": "MISSING_INPUT",
-            "requires": ["height", "desired-bf", "wrist", "ankle"],
+            "errMsg": "MISSING_INPUT — "
+            + 'requires: ["height", "desired-bf", "wrist", "ankle"]',
         }
 
     return Success200Response(
