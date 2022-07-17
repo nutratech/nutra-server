@@ -33,24 +33,13 @@ init:	## Set up a Python virtual environment
 	@echo HINT: run 'source .venv/bin/activate'
 
 
-ifeq ($(OS),Windows_NT)
-	echo %CD%
-	PWD = $(shell echo %CD%)
-	PYTHON = $(shell where python)
-	echo $(PWD)
-else
-	PYTHON ?= $(shell which python)
-	PWD ?= $(shell pwd)
-endif
+PYTHON ?= $(shell which python)
+PWD ?= $(shell pwd)
 
 .PHONY: _venv
 _venv:
 	: # Test to enforce venv usage across important make targets
-ifeq ($(OS),Windows_NT)
-	if NOT !$(shell set /p where python)! == !$(PWD)/.venv/Scripts/python! (EXIT /b 3)
-else
-	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
-endif
+	[[ "$(PYTHON)" =~ ".venv/bin/python" ]] || [[ "$(PYTHON)" =~ ".venv/Scripts/python" ]]
 
 PIP ?= $(PY_VIRTUAL_INTERPRETER) -m pip
 .PHONY: _deps
