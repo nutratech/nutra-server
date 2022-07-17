@@ -5,9 +5,11 @@ Created on Tue Aug 11 20:53:14 2020
 
 @author: shane
 """
+import math
 import traceback
 from datetime import datetime
 
+from ntserv.utils import Gender
 from ntserv.utils.logger import get_logger
 
 # TODO: generalize activity level across BMR calcs, e.g. LIGHT, MODERATE, EXTREME
@@ -182,17 +184,17 @@ def bmr_mifflin_st_jeor(
     Source: https://www.myfeetinmotion.com/mifflin-st-jeor-equation/
     """
 
-    def gender_specific(_gender: str, _bmr: float) -> float:
-        func = {
-            "MALE": lambda x: x + 5,
-            "FEMALE": lambda x: x - 161,
+    def gender_specific_bmr(_gender: str, _bmr: float) -> float:
+        _second_term = {
+            "MALE": 5,
+            "FEMALE": -161,
         }
-        # TODO: would we rather enforce gender, or avoid mypy "errors" with lambdas
-        return func[_gender](_bmr)  # type: ignore
+        # Exc: KeyError
+        return _bmr + _second_term[gender]
 
     bmr = 10 * weight + 6.25 + 6.25 * height - 5 * _age(dob)
 
-    bmr = gender_specific(gender, bmr)
+    bmr = gender_specific_bmr(gender, bmr)
     tdee = bmr * (1 + activity_factor)
 
     return {
@@ -203,7 +205,7 @@ def bmr_mifflin_st_jeor(
 
 def bmr_harris_benedict(
     gender: str, weight: float, height: float, dob: int, activity_factor: float
-):
+) -> dict:
     """
     @param gender: {'MALE', 'FEMALE'}
     @param weight: kg
@@ -220,17 +222,17 @@ def bmr_harris_benedict(
     Source: https://tdeecalculator.net/about.php
     """
 
-    def gender_specific(_gender: str) -> float:
+    def gender_specific_bmr(_gender: str) -> float:
         age = _age(dob)
 
-        func = {
-            "MALE": lambda: (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362,
-            "FEMALE": lambda: (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593,
+        _gender_specific_bmr = {
+            "MALE": (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362,
+            "FEMALE": (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593,
         }
+        # Exc: KeyError
+        return _gender_specific_bmr[_gender]
 
-        return func[_gender]()  # type: ignore
-
-    bmr = gender_specific(gender)
+    bmr = gender_specific_bmr(gender)
     tdee = bmr * (1 + activity_factor)
 
     return {
@@ -240,9 +242,111 @@ def bmr_harris_benedict(
 
 
 # ------------------------------------------------
+# Body fat
+# ------------------------------------------------
+def bf_navy(gender: Gender, body: dict) -> float:
+    """
+    @param gender: MALE or FEMALE
+    @param body: Request dict containing: height, waist, neck, and (if female) hip.
+        All values are in cm.
+
+    @return: float (e.g. 0.17)
+    """
+
+    # Shared parameter for all 3 body fat tests
+    _gender = gender.value
+
+    # Navy-specific parameters
+    height = float(body["height"])
+
+    waist = float(body["waist"])
+    hip = float(body.get("hip", 0))  # Only applies if gender == "FEMALE"
+    neck = float(body["neck"])
+
+    # Compute values
+    _gender_specific_denominator = {
+        "MALE": (
+            1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
+        ),
+        "FEMALE": (
+            1.29579
+            - 0.35004 * math.log10(waist + hip - neck)
+            + 0.22100 * math.log10(height)
+        ),
+    }
+
+    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
+
+
+def bf_3site(gender: Gender, body: dict) -> float:
+    """
+    @param gender: MALE or FEMALE
+    @param body: dict containing age, and skin manifolds (mm) for
+        chest, abdominal, and thigh.
+
+    @return: float (e.g. 0.17)
+    """
+
+    # Shared parameter for all 3 body fat tests
+    _gender = gender.value
+
+    # Shared parameters for skin manifold 3 & 7 site tests
+    age = float(body["age"])
+
+    chest = float(body["chest"])
+    abd = float(body["abd"])
+    thigh = float(body["thigh"])
+
+    # Compute values
+    st3 = chest + abd + thigh
+    _gender_specific_denominator = {
+        "MALE": 1.10938 - 0.0008267 * st3 + 0.0000016 * st3 * st3 - 0.0002574 * age,
+        "FEMALE": 1.089733 - 0.0009245 * st3 + 0.0000025 * st3 * st3 - 0.0000979 * age,
+    }
+
+    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
+
+
+def bf_7site(gender: Gender, body: dict) -> float:
+    """
+    @param gender: MALE or FEMALE
+    @param body: dict containing age, and skin manifolds (mm) for
+        chest, abdominal, thigh, triceps, sub, sup, and mid.
+
+    @return: float (e.g. 0.17)
+    """
+
+    # Shared parameter for all 3 body fat tests
+    _gender = gender.value
+
+    # Shared parameters for skin manifold 3 & 7 site tests
+    age = float(body["age"])
+
+    chest = float(body["chest"])
+    abd = float(body["abd"])
+    thigh = float(body["thigh"])
+
+    # 7site-specific parameters
+    tricep = float(body["tricep"])
+    sub = float(body["sub"])
+    sup = float(body["sup"])
+    mid = float(body["mid"])
+
+    # Compute values
+    st7 = chest + abd + thigh + tricep + sub + sup + mid
+
+    _gender_specific_denominator = {
+        "MALE": 1.112 - 0.00043499 * st7 + 0.00000055 * st7 * st7 - 0.00028826 * age,
+        "FEMALE": 1.097 - 0.00046971 * st7 + 0.00000056 * st7 * st7 - 0.00012828 * age,
+    }
+
+    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
+
+
+# ------------------------------------------------
 # Misc functions
 # ------------------------------------------------
-def _age(dob: int):
+def _age(dob: int) -> float:
     now = datetime.now().timestamp()
     years = (now - dob) / (365 * 24 * 3600)
     return years

@@ -20,8 +20,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      # NOTE: container lacks OS dist for testresources/launchpadlib
       - name: Install requirements
-        # NOTE: container lacks OS dist for testresources/launchpadlib
         run: |
           pip install testresources==2.0.1
           make _deps

@@ -7,13 +7,14 @@ Created on Tue Aug 11 16:47:18 2020
 """
 
 import math
+import traceback
 
 import sanic.response
 from sanic import html
 from tabulate import tabulate
 
-import ntserv.utils.calculate as calc
-from ntserv.utils import cache
+import ntserv.services.calculate as calc
+from ntserv.utils import Gender, cache
 from ntserv.utils.libserver import Success200Response
 
 # pylint: disable=invalid-name
@@ -39,6 +40,8 @@ def post_calc_1rm(request):
     reps = int(body["reps"])
     weight = float(body["weight"])
 
+    # Compute 3 one-rep max equations
+    # NOTE: each service-level call handles errors internally
     epley = calc.orm_epley(reps, weight)
     brzycki = calc.orm_brzycki(reps, weight)
     dos_remedios = calc.orm_dos_remedios(reps, weight)
@@ -58,11 +61,10 @@ def post_calc_bmr(request):
 
     # NOTE: doesn't support imperial units
 
-    # TODO: enum class for this?
+    # TODO: enum class for this? And gender?
     activity_factor = float(body["activity_factor"])
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
-    # TODO: validate accuracy of gender here, not deeper in service
     gender = body["gender"]  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
 
@@ -74,7 +76,7 @@ def post_calc_bmr(request):
         bf = float(body["bodyfat"])
         lbm = weight * (1 - bf)
 
-    # TODO: each of these methods returns a tuple: (bmr, tdee). Do we want a dict?
+    # Compute 3 different BMR equations
     katch_mcardle = calc.bmr_katch_mcardle(lbm, activity_factor)
     cunningham = calc.bmr_cunningham(lbm, activity_factor)
     mifflin_st_jeor = calc.bmr_mifflin_st_jeor(
@@ -95,72 +97,43 @@ def post_calc_bmr(request):
 
 
 def post_calc_body_fat(request):
+    """
+    Doesn't support imperial units yet.
+
+    @param request: HTTPRequest
+    @return: dict, with "navy", "three-site", and "seven-site",
+        with potential validation errors inside those objects.
+    """
     body = request.json
 
-    gender = body["gender"]
-    age = body["age"]
-    height = body["height"]
+    # TODO: register this as 400 error, populate similar err_msg property as 500 does
+    gender = Gender(body["gender"])
 
-    # Navy measurements
-    waist = body.get("waist")
-    if gender == "FEMALE":
-        hip = body.get("hip")
-    neck = body.get("neck")
-
-    # 3-site calipers
-    chest = body.get("chest")
-    ab = body.get("ab")
-    thigh = body.get("thigh")
-
-    # 7-site calipers
-    tricep = body.get("tricep")
-    sub = body.get("sub")
-    sup = body.get("sup")
-    mid = body.get("mid")
-
-    # NOTE: doesn't support imperial units
-    # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)
-
-    # ----------------
-    # Navy test
-    # ----------------
-    if gender == "MALE":
-        denom = (
-            1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
-        )
-    elif gender == "FEMALE":
-        denom = (
-            1.29579
-            - 0.35004 * math.log10(waist + hip - neck)
-            + 0.22100 * math.log10(height)
-        )
-    else:
-        denom = 1
-    navy = round(495 / denom - 450, 2)
-
-    # ----------------
-    # 3-site test
-    # ----------------
-    s3 = chest + ab + thigh
-    if gender == "MALE":
-        denom = 1.10938 - 0.0008267 * s3 + 0.0000016 * s3 * s3 - 0.0002574 * age
-    elif gender == "FEMALE":
-        denom = 1.089733 - 0.0009245 * s3 + 0.0000025 * s3 * s3 - 0.0000979 * age
-    else:
-        denom = 1
-    three_site = round(495 / denom - 450, 2)
-
-    # ----------------
-    # 7-site test
-    # ----------------
-    s7 = chest + ab + thigh + tricep + sub + sup + mid
-    if gender == "MALE":
-        denom = 1.112 - 0.00043499 * s7 + 0.00000055 * s7 * s7 - 0.00028826 * age
-    elif gender == "FEMALE":
-        denom = 1.097 - 0.00046971 * s7 + 0.00000056 * s7 * s7 - 0.00012828 * age
-    else:
-        denom = 1
-    seven_site = round(495 / denom - 450, 2)
+    # Calculate 3 different body fat equations
+    try:
+        navy = calc.bf_navy(gender, body)
+    except (KeyError, ValueError) as err:
+        # TODO: helper method to bundle up exception errors on nested objects, like this
+        navy = {
+            "err_msg": f"Bad request — {repr(err)}",
+            "stack": traceback.format_exc(),
+        }
+    try:
+        three_site = calc.bf_3site(gender, body)
+    except (KeyError, ValueError) as err:
+        # TODO: helper method to bundle up exception errors on nested objects, like this
+        three_site = {
+            "err_msg": f"Bad request — {repr(err)}",
+            "stack": traceback.format_exc(),
+        }
+    try:
+        seven_site = calc.bf_7site(gender, body)
+    except (KeyError, ValueError) as err:
+        # TODO: helper method to bundle up exception errors on nested objects, like this
+        seven_site = {
+            "err_msg": f"Bad request — {repr(err)}",
+            "stack": traceback.format_exc(),
+        }
 
     return Success200Response(
         data={"navy": navy, "three-site": three_site, "seven-site": seven_site}

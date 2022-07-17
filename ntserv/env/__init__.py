@@ -29,31 +29,21 @@ SERVER_HOST_PROD = "https://nutra.tk/api"
 BASE_HOST_DEV = "https://dev.nutra.tk"
 SERVER_HOST_DEV = "https://dev.nutra.tk/api"
 
-ALLOWED_ORIGINS = ["http://localhost:3000", "https://nutra.tk", "https://dev.nutra.tk"]
+ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://localhost:3000",
+    "https://nutra.tk",
+    "https://dev.nutra.tk",
+]
 
 UI_PORT = 3000
 SERVER_PORT = 20000
 BLOG_PORT = 2368
-UI_HOST = (
-    f"{BASE_HOST}:{UI_PORT}" if DEBUG
-    else BASE_HOST
-)
-SERVER_HOST_BASE = (
-    f"{BASE_HOST}:{SERVER_PORT}" if DEBUG
-    else f"{BASE_HOST}"
-)
-SERVER_HOST = (
-    f"{BASE_HOST}:{SERVER_PORT}/api" if DEBUG
-    else f"{BASE_HOST}/api"
-)
-BLOG_HOST = (
-    f"{BASE_HOST}:{BLOG_PORT}" if DEBUG
-    else f"{BASE_HOST}/blog"
-)
-UI_HOST = (
-    f"http://127.0.0.1:{UI_PORT}" if DEBUG
-    else BASE_HOST
-)
+UI_HOST = f"{BASE_HOST}:{UI_PORT}" if DEBUG else BASE_HOST
+SERVER_HOST_BASE = f"{BASE_HOST}:{SERVER_PORT}" if DEBUG else f"{BASE_HOST}"
+SERVER_HOST = f"{BASE_HOST}:{SERVER_PORT}/api" if DEBUG else f"{BASE_HOST}/api"
+BLOG_HOST = f"{BASE_HOST}:{BLOG_PORT}" if DEBUG else f"{BASE_HOST}/blog"
+UI_HOST = f"http://127.0.0.1:{UI_PORT}" if DEBUG else BASE_HOST
 
 # PostgreSQL
 PSQL_DATABASE = os.getenv("NTSERV_PSQL_DB_NAME", "nt")

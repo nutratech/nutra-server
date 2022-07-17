@@ -42,8 +42,7 @@ def exc_req(func, req, response_type="JSON"):
     except Exception as err_generic:
         return ServerError500Response(
             data={
-                "error": "General server error",
-                "exception": repr(err_generic),
+                "err_msg": f"General server error — {repr(err_generic)}",
                 "stack": traceback.format_exc(),
             }
         )
@@ -54,15 +53,18 @@ def exc_req(func, req, response_type="JSON"):
 # ------------------------
 # TODO: fix dict to accept either dict or list
 def _response(
-    err_msg: str = None, data: Union[dict, list] = None, code=-1
+    err_msg=str(), stack: str = None, data: Union[dict, list] = None, code=-1
 ) -> sanic.HTTPResponse:
     """Creates a response object for the client"""
 
     if not data:
         data = {}
 
+    # TODO: separate methods for data as dict, vs. data as list
     if err_msg:
         data["error"] = err_msg  # type: ignore
+    if stack:
+        data["stack"] = stack  # type: ignore
 
     return sanic.response.json(
         {
@@ -93,8 +95,8 @@ def MultiStatus207Response(data: dict = None) -> sanic.HTTPResponse:
 # ------------------------------------------------
 # Client errors
 # ------------------------------------------------
-def BadRequest400Response(err_msg="Bad request") -> sanic.HTTPResponse:
-    return _response(err_msg=err_msg, code=400)
+def BadRequest400Response(err_msg="Bad request", stack=str()) -> sanic.HTTPResponse:
+    return _response(err_msg=err_msg, stack=stack, code=400)
 
 
 def Unauthenticated401Response(err_msg="Unauthenticated"):
