@@ -5,7 +5,14 @@ SHELL=/bin/bash
 # NOTE: must put a <TAB> character and two pound "\t##" to show up in this list.  Keep it brief! IGNORE_ME
 .PHONY: _help
 _help:
+ifeq ($(OS),Windows_NT)
+	@echo Our make _help target does not support Windows right now,
+	@echo   but every other target should work!
+	@echo To list targets, use Git Bash: 'OS=unix make',
+	@echo   linux subsystem, or look inside the Makefile.
+else
 	@grep -h "##" $(MAKEFILE_LIST) | grep -v IGNORE_ME | sed -e 's/##//' | column -t -s $$'\t'
+endif
 
 
 
@@ -29,8 +36,12 @@ PYTHON ?= $(shell which python)
 PWD ?= $(shell pwd)
 .PHONY: _venv
 _venv:
-	# Test to enforce venv usage across important make targets
+	: # Test to enforce venv usage across important make targets
+ifeq ($(OS),Windows_NT)
+	if [%PYTHON%] != "$(PWD)/.venv/Scripts/python" (EXIT /b 3)
+else
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
+endif
 
 PIP ?= $(PY_VIRTUAL_INTERPRETER) -m pip
 .PHONY: _deps
