@@ -253,14 +253,9 @@ def bf_navy(gender: Gender, body: dict) -> float:
     @return: float (e.g. 0.17)
     """
 
-    def validate_inputs():
-        pass
-
     # Shared parameter for all 3 body fat tests
     _gender = gender.value
 
-    # TODO: do validation for all 3 tests independently in helper method,
-    #  with try/catch
     # Navy-specific parameters
     height = float(body["height"])
 

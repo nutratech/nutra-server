@@ -7,6 +7,7 @@ Created on Tue Aug 11 16:47:18 2020
 """
 
 import math
+import traceback
 
 import sanic.response
 from sanic import html
@@ -105,12 +106,34 @@ def post_calc_body_fat(request):
     """
     body = request.json
 
+    # TODO: register this as 400 error, populate similar err_msg property as 500 does
     gender = Gender(body["gender"])
 
     # Calculate 3 different body fat equations
-    navy = calc.bf_navy(gender, body)
-    three_site = calc.bf_3site(gender, body)
-    seven_site = calc.bf_7site(gender, body)
+    try:
+        navy = calc.bf_navy(gender, body)
+    except (KeyError, ValueError) as err:
+        # TODO: helper method to bundle up exception errors on nested objects, like this
+        navy = {
+            "err_msg": f"Bad request — {repr(err)}",
+            "stack": traceback.format_exc(),
+        }
+    try:
+        three_site = calc.bf_3site(gender, body)
+    except (KeyError, ValueError) as err:
+        # TODO: helper method to bundle up exception errors on nested objects, like this
+        three_site = {
+            "err_msg": f"Bad request — {repr(err)}",
+            "stack": traceback.format_exc(),
+        }
+    try:
+        seven_site = calc.bf_7site(gender, body)
+    except (KeyError, ValueError) as err:
+        # TODO: helper method to bundle up exception errors on nested objects, like this
+        seven_site = {
+            "err_msg": f"Bad request — {repr(err)}",
+            "stack": traceback.format_exc(),
+        }
 
     return Success200Response(
         data={"navy": navy, "three-site": three_site, "seven-site": seven_site}
