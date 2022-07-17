@@ -80,7 +80,7 @@ jobs:
       - name: Change Line Endings / LF
         run: |
           git ls-files --eol
-          git config --global core.autocrlf input
+          git config core.autocrlf input
           git reset --hard
           git ls-files --eol
 
