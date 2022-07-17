@@ -30,7 +30,8 @@ init:	## Set up a Python virtual environment
 	$(PY_SYS_INTERPRETER) -m venv .venv
 	- direnv allow
 	@echo NOTE: activate venv, and run 'make deps'
-	@echo HINT: run 'source .venv/bin/activate'
+	@echo HINT:  run 'source .venv/bin/activate'
+	@echo  on Win32  'call .venv\Scripts\activate.bat'
 
 
 PYTHON ?= $(shell which python)
