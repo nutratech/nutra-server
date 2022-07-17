@@ -50,7 +50,7 @@ def post_calc_1rm(request):
         data={
             "epley": epley,
             "brzycki": brzycki,
-            "dos_remedios": dos_remedios,
+            "dosRemedios": dos_remedios,
         }
     )
 
@@ -88,10 +88,10 @@ def post_calc_bmr(request):
 
     return Success200Response(
         data={
-            "Katch-McArdle": katch_mcardle,
-            "Cunningham": cunningham,
-            "Mifflin-St-Jeor": mifflin_st_jeor,
-            "Harris-Benedict": harris_benedict,
+            "katchMcArdle": katch_mcardle,
+            "cunningham": cunningham,
+            "mifflinStJeor": mifflin_st_jeor,
+            "harrisBenedict": harris_benedict,
         }
     )
 
@@ -201,5 +201,5 @@ def post_calc_lb_limits(request):
         }
 
     return Success200Response(
-        data={"martin-berkhan": mb, "eric-helms": eh, "casey-butt": cb}
+        data={"martinBerkhan": mb, "ericHelms": eh, "caseyButt": cb}
     )

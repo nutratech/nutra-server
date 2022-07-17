@@ -104,7 +104,7 @@ def orm_dos_remedios(reps: int, weight: float) -> dict:
         valid_reps = list(_common_n_reps.keys())
         return {
             "errMsg": "INVALID_RANGE — "
-            + f"requires: reps in {valid_reps}, got {reps}]",
+            + f"requires: reps in {valid_reps}, got {reps}",
         }
 
     def max_weight(target_reps: int) -> float:
