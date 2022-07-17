@@ -32,13 +32,21 @@ init:	## Set up a Python virtual environment
 	@echo NOTE: activate venv, and run 'make deps'
 	@echo HINT: run 'source .venv/bin/activate'
 
-PYTHON ?= $(shell which python)
-PWD ?= $(shell pwd)
+
+ifeq ($(OS),Windows_NT)
+	echo %CD%
+	PWD = $(shell echo %CD%)
+	echo $(PWD)
+else
+	PYTHON ?= $(shell which python)
+	PWD ?= $(shell pwd)
+endif
+
 .PHONY: _venv
 _venv:
 	: # Test to enforce venv usage across important make targets
 ifeq ($(OS),Windows_NT)
-	if [%PYTHON%] != "$(PWD)/.venv/Scripts/python" (EXIT /b 3)
+	if NOT !PYTHON! == !$(PWD)/.venv/Scripts/python! (EXIT /b 3)
 else
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 endif
