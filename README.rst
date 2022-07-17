@@ -33,8 +33,6 @@ You will need to install the following, or newer.
 
 - Python 3.7.0 (with ``venv`` support)
 - PostgreSQL 12 (with ``dev`` library, see ``db`` for details)
-- ``python3-dev`` for building ``Levenshtein/_levenshtein.c`` extension
-  (optional)
 
 Initialize Database
 ###################
