@@ -4,7 +4,7 @@ name: CI
   push: {}
 
 jobs:
-  test:
+  test-linux:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -68,3 +68,30 @@ jobs:
           curl -I -X GET localhost:20000/api
           curl localhost:20000/api/pg/version | jq
           curl localhost:20000/api/nutrients  | jq
+
+  # Windows integration tests: Makefile, Sanic lint/test
+  test-win32:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Reload Cache / pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # NOTE: skip Postgres setup for Windows, running w/o has value of its own
+      - name: Install requirements
+        run: make _deps
+
+      - name: Run Tests
+        run: make _test
+
+      - name: Run linters
+        run: make _lint

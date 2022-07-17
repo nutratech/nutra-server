@@ -4,6 +4,8 @@ venv
 .mypy_cache
 .pytest_cache
 
+build
+
 # Postman assets
 resources/
 
