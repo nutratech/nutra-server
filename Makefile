@@ -8,10 +8,12 @@ _help:
 	@grep -h "##" $(MAKEFILE_LIST) | grep -v IGNORE_ME | sed -e 's/##//' | column -t -s $$'\t'
 
 
-# ---------------------------------------
-# init, venv, and deps
-# ---------------------------------------
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# init, venv, and deps
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: should this just be "python3"?
 PY_SYS_INTERPRETER ?= /usr/bin/python3
 PY_VIRTUAL_INTERPRETER ?= python
 
@@ -45,9 +47,10 @@ deps: _venv	## Install requirements
 deps: _deps
 
 
-# ---------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Test
-# ---------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TEST_HOME := tests/
 IT_HOME := tests/integration/it*
@@ -61,9 +64,10 @@ test: _venv	## Run unit tests
 test: _test
 
 
-# ---------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Lint
-# ---------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .PHONY: _format
 _format:
@@ -75,10 +79,12 @@ _format:
 format: _venv	## Format Python files
 format: _format
 
+
 APP_HOME := ntserv/
 LINT_LOCS := $(APP_HOME) $(TEST_HOME) setup.py
 YAML_LOCS := .*.yml .github/
 RST_LOCS := *.rst
+
 .PHONY: _lint
 _lint:
 	# check formatting: Python
@@ -101,27 +107,29 @@ lint: _venv	## Lint code and documentation
 lint: _lint
 
 
-# ---------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Run
-# ---------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .PHONY: _run
 _run:
 	$(PY_VIRTUAL_INTERPRETER) -m ntserv
-
 
 .PHONY: run
 run: _venv	## Start the server
 run: _run
 
 
-# ---------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Build & Install
-# ---------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .PHONY: build
 build: _venv	## Create an sdist
 	$(PY_VIRTUAL_INTERPRETER) setup.py sdist
+
 
 .PHONY: install
 install:	## Pip install (user)
@@ -130,9 +138,10 @@ install:	## Pip install (user)
 	$(PY_SYS_INTERPRETER) -m pip install .
 
 
-# ---------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Clean
-# ---------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .PHONY: clean
 clean:	## Clean up __pycache__ and leftover bits
@@ -141,11 +150,13 @@ clean:	## Clean up __pycache__ and leftover bits
 	find $(APP_HOME) $(TEST_HOME) -name __pycache__ -o -name .pytest_cache | xargs rm -rf
 
 
-# ---------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Extras
-# ---------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CLOC_ARGS ?=
+
 .PHONY: extras/cloc
 extras/cloc:	## Count lines of source code
 	- cloc \

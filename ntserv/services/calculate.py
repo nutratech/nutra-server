@@ -16,9 +16,9 @@ from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
 
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 1 rep max
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 common_n_reps = (1, 2, 3, 5, 6, 8, 10, 12, 15, 20)
 
@@ -115,9 +115,9 @@ def orm_dos_remedios(reps: int, weight: float) -> dict:
     return {n_reps: max_weight(n_reps) for n_reps in _common_n_reps}
 
 
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # BMR
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def bmr_katch_mcardle(lbm: float, activity_factor: float):
     """
     @param lbm: lean mass in kg
@@ -207,7 +207,7 @@ def bmr_harris_benedict(
     gender: str, weight: float, height: float, dob: int, activity_factor: float
 ) -> dict:
     """
-    @param gender: {'MALE', 'FEMALE'}
+    @param gender: MALE, FEMALE
     @param weight: kg
     @param height: cm
     @param dob: int, unix timestamp (seconds)
@@ -217,7 +217,7 @@ def bmr_harris_benedict(
 
     Harris-Benedict = (9.247m + 3.098h - 4.330a) + 447.593 (WOMEN)
 
-    m is mass in kg, h is height in cm, a is age in years
+    m: mass (kg), h: height (cm), a: age (years)
 
     Source: https://tdeecalculator.net/about.php
     """
@@ -241,9 +241,9 @@ def bmr_harris_benedict(
     }
 
 
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Body fat
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def bf_navy(gender: Gender, body: dict) -> float:
     """
     @param gender: MALE or FEMALE
@@ -343,9 +343,9 @@ def bf_7site(gender: Gender, body: dict) -> float:
     return round(495 / _gender_specific_denominator[_gender] - 450, 2)
 
 
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Misc functions
-# ------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def _age(dob: int) -> float:
     now = datetime.now().timestamp()
     years = (now - dob) / (365 * 24 * 3600)
