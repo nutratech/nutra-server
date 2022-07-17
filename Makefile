@@ -157,4 +157,3 @@ extras/cloc:	## Count lines of source code
 	--exclude-ext=svg \
 	$(CLOC_ARGS) \
 	.
-
