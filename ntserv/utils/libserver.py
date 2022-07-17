@@ -42,7 +42,7 @@ def exc_req(func, req, response_type="JSON"):
     except Exception as err_generic:
         return ServerError500Response(
             data={
-                "err_msg": f"General server error — {repr(err_generic)}",
+                "errMsg": f"General server error — {repr(err_generic)}",
                 "stack": traceback.format_exc(),
             }
         )
@@ -62,7 +62,7 @@ def _response(
 
     # TODO: separate methods for data as dict, vs. data as list
     if err_msg:
-        data["error"] = err_msg  # type: ignore
+        data["errMsg"] = err_msg  # type: ignore
     if stack:
         data["stack"] = stack  # type: ignore
 

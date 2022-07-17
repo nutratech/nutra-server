@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use camelcase in `Response` attributes, e.g. `errMsg` instead of `err_msg`
+
+### Fixed
+
+- Body fat endpoints accept generic inputs now, and process atomically. One error
+  does not cause the others to fail, or return empty.
+
 ## [0.1.0] - 2022-07-16
 
 ### Changed
@@ -47,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shop functions (controller for orders/products, `cache` layer, Postman collection)
 - Specific `/bmr/<name_of_equation>` endpoints, in favor of a general `/bmr` one
 - Slack message integrations (not the most production worthy mechanism)
-- Packages usps, py3dbp (and other references to Flask.. gunicorn, Werkzeug)
+- Packages `usps`, `py3dbp` (and other references to `Flask`.. `gunicorn`, `Werkzeug`)
 
 ## [0.0.38] - 2020-08-02
 

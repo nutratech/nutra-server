@@ -74,7 +74,7 @@ def orm_dos_remedios(reps: int, weight: float) -> dict:
     Returns dict {n_reps: max_weight, ...}
         for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15)
 
-    Or an {"error": "INVALID_RANGE", ...}
+    Or an {"errMsg": "INVALID_RANGE", ...}
 
     Source:
         https://www.peterrobertscoaching.com/blog/the-best-way-to-calculate-1-rep-max
@@ -103,7 +103,7 @@ def orm_dos_remedios(reps: int, weight: float) -> dict:
         _logger.debug(traceback.format_exc())
         valid_reps = list(_common_n_reps.keys())
         return {
-            "error": "INVALID_RANGE",
+            "errMsg": "INVALID_RANGE",
             "requires": ["reps", "in", valid_reps, "got", reps],
         }
 
