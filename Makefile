@@ -36,6 +36,7 @@ init:	## Set up a Python virtual environment
 ifeq ($(OS),Windows_NT)
 	echo %CD%
 	PWD = $(shell echo %CD%)
+	PYTHON = $(shell where python)
 	echo $(PWD)
 else
 	PYTHON ?= $(shell which python)
@@ -46,7 +47,7 @@ endif
 _venv:
 	: # Test to enforce venv usage across important make targets
 ifeq ($(OS),Windows_NT)
-	if NOT !PYTHON! == !$(PWD)/.venv/Scripts/python! (EXIT /b 3)
+	if NOT !$(shell set /p where python)! == !$(PWD)/.venv/Scripts/python! (EXIT /b 3)
 else
 	[ "$(PYTHON)" = "$(PWD)/.venv/bin/python" ] || [ "$(PYTHON)" = "$(PWD)/.venv/Scripts/python" ]
 endif
