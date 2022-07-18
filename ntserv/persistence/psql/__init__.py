@@ -151,7 +151,10 @@ def psql(query, params=None) -> PgResult:
 
 def verify_db_version_compat() -> bool:
     # FIXME: use this to verify, e.g. cache reload(), and prior to any SQL operation
+    # NOTE: Should this cause any other failures, if version isn't equal?
     pg_result = psql("SELECT * FROM version")
+    if pg_result.err_msg:
+        _logger.warning(f"PgResult err_msg: {pg_result.err_msg}")
     return __db_target_ntdb__ == pg_result.row["version"]
 
 
