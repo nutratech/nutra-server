@@ -8,5 +8,8 @@ mypy==0.961
 pycodestyle==2.8.0
 pylint==2.14.4
 sphinx==5.0.2
+types-aiofiles==0.8.9
+types-tabulate==0.8.11
+types-ujson==5.4.0
 yamllint==1.27.1
 
