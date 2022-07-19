@@ -149,8 +149,7 @@ def post_login(request: sanic.Request) -> sanic.HTTPResponse:
         return Success200Response(
             data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
-    else:
-        return BadRequest400Response(error)
+    return BadRequest400Response(error)
 
 
 def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
@@ -256,7 +255,7 @@ RETURNING
 def get_email_change(
     request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
 ) -> sanic.HTTPResponse:
-    email: str = request.args["email"]
+    _: str = request.args["email"]
     password: str = request.args["password"]
 
     # Require additional password check

@@ -23,7 +23,7 @@ def opt_sync(
 
         profiles = sql_unsynced_rows(profile_guid, synced)
         return Success200Response(data={"profiles": profiles})
-    elif method == "POST":
+    if method == "POST":
         profile_guid = request.json["uid"]
         entities = request.json["entities"]
         sql_update_entities(profile_guid, entities)
