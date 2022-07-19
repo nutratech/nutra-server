@@ -10,7 +10,8 @@ cache: pip
 
 install:
   - python -m pip install coveralls
-  - make _deps
+  - python -m pip install -r requirements.txt
+  - python -m pip install -r requirements-test.txt
 
 script:
   - make _test
