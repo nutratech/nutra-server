@@ -163,8 +163,8 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     email: str = request.json["email"]
     password: str = request.json["password"]
 
-    # TODO: fix this, broke during migration from Flask to Sanic
-    user_agent: str = request.user_agent.string
+    # FIXME: fix this, broke during migration from Flask to Sanic
+    user_agent: str = request.user_agent.string  # type: ignore
     oper_sys: str = request.json["os"]
     username: str = request.json.get("username", str())
     hostname: str = request.json.get("hostname", str())

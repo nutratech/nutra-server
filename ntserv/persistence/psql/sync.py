@@ -5,7 +5,7 @@ from ntserv.persistence.psql import psql
 
 def sql_unsynced_rows(profile_guid: str, synced: int) -> list:
     pg_result = psql(
-        "SELECT * FROM profiles WHERE guid=%s AND updated>%s", [profile_guid, synced]
+        "SELECT * FROM profile WHERE guid=%s AND updated>%s", [profile_guid, synced]
     )
 
     profiles = pg_result.rows

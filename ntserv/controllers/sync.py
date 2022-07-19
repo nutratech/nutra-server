@@ -14,8 +14,8 @@ def opt_sync(
 ) -> sanic.HTTPResponse:
     """Used to GET and POST local saved data to remote"""
 
-    # TODO: fix this, broke during migration from Flask to Sanic
-    method = request.environ["REQUEST_METHOD"]
+    # FIXME: fix this, broke during migration from Flask to Sanic
+    method = request.environ["REQUEST_METHOD"]  # type: ignore
 
     if method == "GET":
         profile_guid = request.args["uid"]
