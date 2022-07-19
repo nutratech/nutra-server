@@ -24,6 +24,7 @@ jobs:
       # NOTE: container lacks OS dist for testresources/launchpadlib
       - name: Install requirements
         run: |
+          pip install coveralls==3.3.1
           pip install testresources==2.0.1
           make _deps
           pip install -r db/requirements.txt
@@ -45,6 +46,9 @@ jobs:
 
       - name: Run Tests
         run: make _test
+
+      - name: Submit coverage report / coveralls
+        run: coveralls
 
       - name: Run linters
         run: make _lint
