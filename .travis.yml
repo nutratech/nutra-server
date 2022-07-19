@@ -1,9 +1,9 @@
 ---
-dist: xenial
-os: ["linux"]
+dist: focal
+os: [linux]
 language: python
 python:
-  - 3.7
+  - 3.8
 git:
   submodules: true
 cache: pip
