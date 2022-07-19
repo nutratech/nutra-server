@@ -2,7 +2,6 @@ bcrypt==3.2.2
 psycopg2==2.9.3
 PyJWT==2.4.0
 python-dotenv==0.20.0
-requests==2.28.1
 sanic==22.6.0
 sanic_ext==22.6.2
 tabulate==0.8.10

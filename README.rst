@@ -5,6 +5,9 @@
 .. image:: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml/badge.svg
     :target: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml
     :alt: CI status: unknown
+.. image:: https://coveralls.io/repos/github/nutratech/server/badge.svg
+    :target: https://coveralls.io/github/nutratech/server
+    :alt: Coverage status
 .. image:: https://github.com/nutratech/nutra-server/actions/workflows/deploy-dev.yml/badge.svg
     :target: https://github.com/nutratech/nutra-server/actions/workflows/deploy-dev.yml
     :alt: deploy-dev status: unknown
