@@ -1,3 +1,5 @@
+from typing import Union
+
 import psycopg2
 import psycopg2.extras
 import sanic.response
@@ -11,7 +13,7 @@ _logger = get_logger(__name__)
 
 
 class PgResult:
-    def __init__(self, query: str, err_msg=str()) -> None:
+    def __init__(self, query: str, err_msg: str = str()) -> None:
         """Defines a convenient result for `psql()`"""
 
         self.query = query
@@ -57,13 +59,13 @@ class PgResult:
 
 
 def build_con(
-    database=PSQL_DATABASE,
-    user=PSQL_USER,
-    password=PSQL_PASSWORD,
-    host=PSQL_HOST,
-    port="5432",
-    options=f"-c search_path={PSQL_SCHEMA}",
-    connect_timeout=8,
+    database: str = PSQL_DATABASE,
+    user: str = PSQL_USER,
+    password: str = PSQL_PASSWORD,
+    host: str = PSQL_HOST,
+    port: str = "5432",
+    options: str = f"-c search_path={PSQL_SCHEMA}",
+    connect_timeout: float = 8,
 ) -> psycopg2._psycopg.connection:
     """Build and return con"""
     con = psycopg2.connect(
@@ -82,7 +84,7 @@ def build_con(
     return con
 
 
-def psql(query, params=None) -> PgResult:
+def psql(query: str, params: Union[list, tuple, None] = None) -> PgResult:
     # TODO:  mandatory "RETURNING id" after all "INSERTS"
 
     # Initialize connection
@@ -154,11 +156,11 @@ def verify_db_version_compat() -> bool:
     # NOTE: Should this cause any other failures, if version isn't equal?
     pg_result = psql("SELECT * FROM version")
     if pg_result.err_msg:
-        _logger.warning(f"PgResult err_msg: {pg_result.err_msg}")
-    return __db_target_ntdb__ == pg_result.row["version"]
+        _logger.warning("PgResult err_msg: %s", pg_result.err_msg)
+    return bool(__db_target_ntdb__ == pg_result.row["version"])
 
 
-def get_pg_version(**kwargs):
+def get_pg_version(**kwargs: dict) -> sanic.HTTPResponse:
     _ = kwargs
 
     pg_result = psql("SELECT * FROM version")

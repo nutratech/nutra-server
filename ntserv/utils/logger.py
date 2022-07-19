@@ -5,7 +5,7 @@ from ntserv.env import LOG_LEVEL
 FMT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)\n"
 
 
-def get_logger(name) -> logging.Logger:
+def get_logger(name: str) -> logging.Logger:
     """
     Return a logger.
     Configure NTSERV_LOG_LEVEL in `.env` to filter logs.

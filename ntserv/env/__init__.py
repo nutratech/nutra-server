@@ -59,8 +59,9 @@ JWT_SECRET = os.getenv("NTSERV_JWT_SECRET", "secret123")
 PROXY_SECRET = os.getenv("NTSERV_PROXY_SECRET", "secret123")
 
 # Email creds
-PROD_EMAIL = os.getenv("NTSERV_PROD_EMAIL")
-PROD_EMAIL_PASS = os.getenv("NTSERV_PROD_EMAIL_PASS")
+# TODO: warning message if undefined or empty str()
+PROD_EMAIL = os.getenv("NTSERV_PROD_EMAIL", str())
+PROD_EMAIL_PASS = os.getenv("NTSERV_PROD_EMAIL_PASS", str())
 
 # NOTE: are these used?
 # Other configurations
