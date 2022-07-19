@@ -7,7 +7,6 @@ isort==5.10.1
 mypy==0.961
 pycodestyle==2.8.0
 pylint>=2.13.9
-sphinx==5.0.2
 types-aiofiles==0.8.9
 types-tabulate==0.8.11
 types-ujson==5.4.0
