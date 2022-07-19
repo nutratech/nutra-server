@@ -3,7 +3,7 @@ from ntserv.persistence.psql import psql
 # NOTE: wip
 
 
-def sql_unsynced_rows(profile_guid, synced):
+def sql_unsynced_rows(profile_guid: str, synced: int) -> list:
     pg_result = psql(
         "SELECT * FROM profiles WHERE guid=%s AND updated>%s", [profile_guid, synced]
     )
@@ -13,6 +13,5 @@ def sql_unsynced_rows(profile_guid, synced):
     return profiles
 
 
-def sql_update_entities(profile_guid, entities):
+def sql_update_entities(profile_guid: str, entities: list) -> None:
     print("sql_update_entities() not implemented")
-    return None

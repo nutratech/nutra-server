@@ -8,6 +8,7 @@ Created on Tue Aug 11 20:53:14 2020
 import math
 import traceback
 from datetime import datetime
+from typing import Dict, Union
 
 from ntserv.utils import Gender
 from ntserv.utils.logger import get_logger
@@ -23,7 +24,7 @@ _logger = get_logger(__name__)
 common_n_reps = (1, 2, 3, 5, 6, 8, 10, 12, 15, 20)
 
 
-def orm_epley(reps: float, weight: float) -> dict:
+def orm_epley(reps: float, weight: float) -> Dict[int, float]:
     """
     Returns a dict {n_reps: max_weight, ...}
         for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15, 20)
@@ -45,7 +46,7 @@ def orm_epley(reps: float, weight: float) -> dict:
     return maxes
 
 
-def orm_brzycki(reps: float, weight: float) -> dict:
+def orm_brzycki(reps: float, weight: float) -> Dict[int, float]:
     """
     Returns a dict {n_reps: max_weight, ...}
         for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15)
@@ -69,7 +70,9 @@ def orm_brzycki(reps: float, weight: float) -> dict:
     return maxes
 
 
-def orm_dos_remedios(reps: int, weight: float) -> dict:
+def orm_dos_remedios(
+    reps: int, weight: float
+) -> Dict[Union[int, str], Union[float, str]]:
     """
     Returns dict {n_reps: max_weight, ...}
         for n_reps: (1, 2, 3, 5, 6, 8, 10, 12, 15)
@@ -118,7 +121,7 @@ def orm_dos_remedios(reps: int, weight: float) -> dict:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # BMR
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def bmr_katch_mcardle(lbm: float, activity_factor: float):
+def bmr_katch_mcardle(lbm: float, activity_factor: float) -> Dict[str, float]:
     """
     @param lbm: lean mass in kg
     @param activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
@@ -138,7 +141,7 @@ def bmr_katch_mcardle(lbm: float, activity_factor: float):
     }
 
 
-def bmr_cunningham(lbm: float, activity_factor: float):
+def bmr_cunningham(lbm: float, activity_factor: float) -> Dict[str, float]:
     """
     @param lbm: lean mass in kg
     @param activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
@@ -157,7 +160,7 @@ def bmr_cunningham(lbm: float, activity_factor: float):
 
 def bmr_mifflin_st_jeor(
     gender: str, weight: float, height: float, dob: int, activity_factor: float
-) -> dict:
+) -> Dict[str, float]:
     """
     @param gender: {'MALE', 'FEMALE'}
     @param weight: kg
@@ -205,7 +208,7 @@ def bmr_mifflin_st_jeor(
 
 def bmr_harris_benedict(
     gender: str, weight: float, height: float, dob: int, activity_factor: float
-) -> dict:
+) -> Dict[str, float]:
     """
     @param gender: MALE, FEMALE
     @param weight: kg

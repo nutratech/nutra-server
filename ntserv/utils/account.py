@@ -15,37 +15,40 @@ from ntserv.persistence.psql import psql
 # ----------------------
 # get user_id funcs
 # ----------------------
-def user_id_from_username_or_email(identifier):
+def user_id_from_username_or_email(identifier: str) -> int:
     pg_result = psql("SELECT * FROM find_user(%s)", [identifier])
     if pg_result.err_msg or not pg_result.rows:
-        return None
+        # TODO: magic number
+        return -65536
 
-    return pg_result.row["id"]
+    return int(pg_result.row["id"])
 
 
-def user_id_from_username(username):
-    pg_result = psql("SELECT id FROM users WHERE username=%s", [username])
+def user_id_from_username(username: str) -> int:
+    pg_result = psql('SELECT id FROM "user" WHERE username=%s', [username])
     if pg_result.err_msg or not pg_result.rows:
-        return None
+        # TODO: magic number
+        return -65536
 
-    return pg_result.row["id"]
+    return int(pg_result.row["id"])
 
 
-def user_id_from_unver_email(email):
+def user_id_from_unver_email(_email: str) -> int:
     pg_result = psql(
-        "SELECT user_id from emails WHERE email=%s AND activated='f'", [email]
+        "SELECT user_id from email WHERE email=%s AND activated='f'", [_email]
     )
     if pg_result.err_msg or not pg_result.rows:
-        return None
+        # TODO: magic number
+        return -65536
 
-    return pg_result.row["user_id"]
+    return int(pg_result.row["user_id"])
 
 
 # ----------------------
 # password comparator
 # ----------------------
-def cmp_pass(user_id, password):
-    pg_result = psql("SELECT passwd FROM users WHERE user_id=%s", [user_id])
+def cmp_pass(user_id: int, password: str) -> bool:
+    pg_result = psql('SELECT passwd FROM "user" WHERE id=%s', [user_id])
     passwd = pg_result.row["passwd"]
     return bcrypt.checkpw(password.encode(), passwd.encode())
 
@@ -53,7 +56,7 @@ def cmp_pass(user_id, password):
 # ----------------------
 # Sending emails
 # ----------------------
-def email(recipient, subject, body):
+def email(recipient: str, subject: str, body: str) -> None:
     """Sends an email to ourselves"""
 
     port = 465  # For SSL
@@ -80,7 +83,7 @@ def email(recipient, subject, body):
         server.send_message(msg)
 
 
-def send_activation_email(recipient, token):
+def send_activation_email(recipient: str, token: str) -> None:
     """Sends an on-boarding email"""
 
     email(

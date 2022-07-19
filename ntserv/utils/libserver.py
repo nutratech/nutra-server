@@ -1,7 +1,7 @@
 import time
 import traceback
 from datetime import datetime
-from typing import Union
+from typing import Callable, Union
 
 import sanic.response
 from sanic import Sanic
@@ -20,7 +20,11 @@ from ntserv.env import (
 # pylint: disable=invalid-name
 
 
-def exc_req(func, req, response_type="JSON"):
+def exc_req(
+    func: Callable[..., sanic.HTTPResponse],
+    req: sanic.Request,
+    response_type: str = "JSON",
+) -> sanic.HTTPResponse:
     """Makes a request and handles global exceptions, always returning a `Response()`"""
 
     # TODO: do we want to use named arguments here?
@@ -53,7 +57,10 @@ def exc_req(func, req, response_type="JSON"):
 # ------------------------
 # TODO: fix dict to accept either dict or list
 def _response(
-    err_msg=str(), stack: str = None, data: Union[dict, list] = None, code=-1
+    err_msg: str = str(),
+    stack: str = str(),
+    data: Union[dict, list] = None,
+    code: int = -1,
 ) -> sanic.HTTPResponse:
     """Creates a response object for the client"""
 
@@ -95,15 +102,17 @@ def MultiStatus207Response(data: dict = None) -> sanic.HTTPResponse:
 # ------------------------------------------------
 # Client errors
 # ------------------------------------------------
-def BadRequest400Response(err_msg="Bad request", stack=str()) -> sanic.HTTPResponse:
+def BadRequest400Response(
+    err_msg: str = "Bad request", stack: str = str()
+) -> sanic.HTTPResponse:
     return _response(err_msg=err_msg, stack=stack, code=400)
 
 
-def Unauthenticated401Response(err_msg="Unauthenticated"):
+def Unauthenticated401Response(err_msg: str = "Unauthenticated") -> sanic.HTTPResponse:
     return _response(err_msg=err_msg, code=401)
 
 
-def Forbidden403Response(err_msg="Forbidden") -> sanic.HTTPResponse:
+def Forbidden403Response(err_msg: str = "Forbidden") -> sanic.HTTPResponse:
     return _response(err_msg=err_msg, code=403)
 
 
@@ -115,14 +124,14 @@ def ServerError500Response(data: dict) -> sanic.HTTPResponse:
     return _response(data=data, code=500)
 
 
-def NotImplemented501Response(err_msg="Not Implemented") -> sanic.HTTPResponse:
+def NotImplemented501Response(err_msg: str = "Not Implemented") -> sanic.HTTPResponse:
     return _response(err_msg=err_msg, code=501)
 
 
 # ------------------------
 # Misc functions
 # ------------------------
-def a_href(link: str, target=str()) -> str:
+def a_href(link: str, target: str = str()) -> str:
     if target:
         return f'<a href="{link}" target="{target}">{link}</a>'
     return f'<a href="{link}">{link}</a>'
@@ -212,7 +221,7 @@ def self_route_rules(app: Sanic) -> str:
     """Gets human friendly url_map"""
 
     routes = list(app.router.routes)
-    routes.sort(key=lambda x: x.uri)
+    routes.sort(key=lambda x: x.uri)  # type: ignore
 
     rules = []
 

@@ -8,6 +8,7 @@ Created on Tue Aug 11 16:47:18 2020
 
 import math
 import traceback
+from typing import Dict, Union
 
 import sanic.response
 from sanic import html
@@ -22,7 +23,7 @@ from ntserv.utils.libserver import Success200Response
 # TODO: import the above and reference from e.g. libserver.Success200Response
 
 
-def get_nutrients(**kwargs) -> sanic.HTTPResponse:
+def get_nutrients(**kwargs: dict) -> sanic.HTTPResponse:
     response_type = kwargs.get("response_type")
     nutrients = list(cache.NUTRIENTS.values())
 
@@ -33,7 +34,7 @@ def get_nutrients(**kwargs) -> sanic.HTTPResponse:
     return Success200Response(data=nutrients)
 
 
-def post_calc_1rm(request):
+def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
     """Calculates a few different 1 rep max possibilities"""
     body = request.json
 
@@ -55,7 +56,7 @@ def post_calc_1rm(request):
     )
 
 
-def post_calc_bmr(request):
+def post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
     """Calculates all types of BMR for comparison"""
     body = request.json
 
@@ -96,7 +97,7 @@ def post_calc_bmr(request):
     )
 
 
-def post_calc_body_fat(request):
+def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
     """
     Doesn't support imperial units yet.
 
@@ -108,6 +109,11 @@ def post_calc_body_fat(request):
 
     # TODO: register this as 400 error, populate similar err_msg property as 500 does
     gender = Gender(body["gender"])
+
+    # TODO: is this best?
+    navy: Union[Dict[str, str], float]
+    three_site: Union[Dict[str, str], float]
+    seven_site: Union[Dict[str, str], float]
 
     # Calculate 3 different body fat equations
     try:
@@ -140,14 +146,14 @@ def post_calc_body_fat(request):
     )
 
 
-def post_calc_lb_limits(request):
-    body = request.json
+def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
+    body: dict = request.json
     height = float(body["height"])
 
-    desired_bf = body.get("desired-bf")
+    desired_bf = float(body.get("desired-bf", -1))
 
-    wrist = body.get("wrist")
-    ankle = body.get("ankle")
+    wrist = float(body.get("wrist", -1))
+    ankle = float(body.get("ankle", -1))
 
     # NOTE: doesn't support SI / metrics units
     # TODO: move to calculate.py in utils, not controllers. Add docstrings and source(s)

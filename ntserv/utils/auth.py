@@ -1,9 +1,10 @@
 import traceback
 from datetime import datetime
-from typing import Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import bcrypt
 import jwt
+import sanic
 
 from ntserv.env import JWT_SECRET, TOKEN_EXPIRY
 from ntserv.persistence.psql import psql
@@ -25,20 +26,20 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 
 
 class AuthResult:
-    def __init__(self, token: dict = None, err_msg=str()) -> None:
-        self.user_id = token["id"]
+    def __init__(self, token: dict, err_msg: str = str()) -> None:
+        self.user_id: int = token["id"]
 
-        self.auth_level = token["auth-level"]
-        self.expires = token["expires"]
+        self.auth_level: int = token["auth-level"]
+        self.expires: float = token["expires"]
 
-        self.err_msg = err_msg
+        self.err_msg: str = err_msg
 
     @property
-    def expired(self):
+    def expired(self) -> bool:
         return datetime.now().timestamp() > self.expires
 
 
-def issue_jwt_token(user_id, password) -> tuple:
+def issue_jwt_token(user_id: int, password: str) -> tuple:
     """Returns tuple: (token, auth_level, err_msg)"""
 
     # --------------------------------------------
@@ -66,7 +67,7 @@ def issue_jwt_token(user_id, password) -> tuple:
         return None, AUTH_LEVEL_READ_ONLY, repr(err)
 
 
-def get_auth_level(user_id) -> tuple:
+def get_auth_level(user_id: int) -> tuple:
     """Returns same tuple: (token, auth_level, error)"""
 
     # NOTE: is this the right level to start with here?
@@ -100,7 +101,7 @@ def get_auth_level(user_id) -> tuple:
     return jwt_token(user_id, auth_level), auth_level, None
 
 
-def jwt_token(user_id, auth_level) -> str:
+def jwt_token(user_id: int, auth_level: int) -> str:
     """Creates a JWT (token) for subsequent authorized requests"""
 
     expires_at = datetime.now() + TOKEN_EXPIRY
@@ -117,13 +118,13 @@ def jwt_token(user_id, auth_level) -> str:
     return token
 
 
-def check_token(token) -> Tuple[AuthResult, str]:
+def check_token(_token: str) -> Tuple[AuthResult, str]:
     """Checks auth level from pre-issued token"""
 
     try:
-        token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        token = jwt.decode(_token, JWT_SECRET, algorithms=["HS256"])
         auth_result = AuthResult(token)
-        error = None
+        error = str()
 
         if auth_result.expired:
             error = "LOGIN_TOKEN_EXPIRED"
@@ -131,26 +132,31 @@ def check_token(token) -> Tuple[AuthResult, str]:
 
     except jwt.DecodeError as decode_err:
         _logger.debug(traceback.format_exc())
-        return AuthResult(), repr(decode_err)
+        return AuthResult({}), repr(decode_err)
 
 
-def check_request(request) -> tuple:
+def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
     try:
         token = request.headers["authorization"].split()[1]
         return check_token(token)
 
-    except Exception as err:
+    # TODO: check for other types of exceptions that can be thrown?
+    except (KeyError, jwt.DecodeError) as err:
         _logger.debug(traceback.format_exc())
-        return None, repr(err)
+        return AuthResult({}), repr(err)
 
 
 # ------------------------------------------------
 # Auth Decorator
 # ------------------------------------------------
-def auth(og_func, level=None):
+# TODO: handle level with **kwargs?
+def auth(
+    og_func: Callable[..., sanic.HTTPResponse],
+    level: int = AUTH_LEVEL_UNAUTHED,
+) -> Callable[..., sanic.HTTPResponse]:
     """Auth decorator, use to send 401s"""
 
-    def func(request):
+    def func(request: sanic.Request) -> sanic.HTTPResponse:
         # Check authorization
         authr, err_msg = check_request(request)
         if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:

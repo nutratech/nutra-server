@@ -1,7 +1,9 @@
 import re
 import uuid
+from typing import Tuple
 
 import bcrypt
+import sanic
 
 from ntserv.persistence.psql import psql
 from ntserv.utils.account import (
@@ -10,7 +12,12 @@ from ntserv.utils.account import (
     user_id_from_unver_email,
     user_id_from_username_or_email,
 )
-from ntserv.utils.auth import AUTH_LEVEL_UNCONFIRMED, auth, issue_jwt_token
+from ntserv.utils.auth import (
+    AUTH_LEVEL_UNAUTHED,
+    AUTH_LEVEL_UNCONFIRMED,
+    auth,
+    issue_jwt_token,
+)
 from ntserv.utils.libserver import (
     BadRequest400Response,
     MultiStatus207Response,
@@ -20,15 +27,15 @@ from ntserv.utils.libserver import (
 )
 
 
-def post_register(request):
+def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     # Parse incoming request
-    body = request.json
-    email = body["email"]
+    body: dict = request.json
+    email: str = body["email"]
     # TODO: notify ourselves, via email, of USER REGISTER? This used to be slack_msg()
 
-    username = body.get("username")
-    password = body.get("password")
-    password_confirm = body.get("password-confirm")
+    username: str = body.get("username", str())
+    password: str = body.get("password", str())
+    password_confirm: str = body.get("password-confirm", str())
 
     # TODO: break up below block into "service-level" function
 
@@ -48,12 +55,12 @@ def post_register(request):
         return BadRequest400Response("Email address not recognizable")
     # Allow "guest" registration with email only
     # Email exists already?
-    pg_result = psql("SELECT user_id FROM emails WHERE email=%s", [email])
+    pg_result = psql("SELECT user_id FROM email WHERE email=%s", [email])
     if pg_result.rows:
         return MultiStatus207Response(data={"user_id": pg_result.row["user_id"]})
     ##########
     # Username
-    elif username and (
+    if username and (
         len(username) < 6
         or len(username) > 18
         or not re.match("^[0-9a-z_]+$", username)
@@ -64,9 +71,9 @@ def post_register(request):
         )
     ##########
     # Password
-    elif password and password_confirm != password:
+    if password and password_confirm != password:
         return BadRequest400Response("Passwords do NOT match")
-    elif password and (
+    if password and (
         len(password) < 6
         or len(password) > 40
         or not re.findall(r"""[~`!#$%\^&*+=\-\[\]\\',/{}|\\":<>\?]""", password)
@@ -125,7 +132,7 @@ def post_register(request):
     )
 
 
-def post_login(request):
+def post_login(request: sanic.Request) -> sanic.HTTPResponse:
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
@@ -146,19 +153,21 @@ def post_login(request):
         return BadRequest400Response(error)
 
 
-def post_v2_login(request):
-    def issue_oauth_token(*args):
+def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
+    def issue_oauth_token(
+        user_id: int, passwd: str, device_id: str
+    ) -> Tuple[int, int, str]:
         # TODO: complete this in another module
-        _ = args
-        return None, None, None
+        return -65536, AUTH_LEVEL_UNAUTHED, str()
 
-    email = request.json["email"]
-    password = request.json["password"]
+    email: str = request.json["email"]
+    password: str = request.json["password"]
 
-    user_agent = request.user_agent.string
-    oper_sys = request.json["os"]
-    username = request.json.get("username")
-    hostname = request.json.get("hostname")
+    # TODO: fix this, broke during migration from Flask to Sanic
+    user_agent: str = request.user_agent.string
+    oper_sys: str = request.json["os"]
+    username: str = request.json.get("username", str())
+    hostname: str = request.json.get("hostname", str())
 
     device_id = f"{oper_sys} {username}@{hostname} {user_agent}"
 
@@ -178,15 +187,18 @@ def post_v2_login(request):
     return BadRequest400Response(error)
 
 
+# TODO: resolve unused keywords with **kwargs ?
 @auth
-def get_user_details(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def get_user_details(
+    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
+) -> sanic.HTTPResponse:
     # TODO: if not user_id: return err
     # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
     pg_result = psql("SELECT * FROM users(%s)", [user_id])
     return Success200Response(data=pg_result.row)
 
 
-def get_confirm_email(request):
+def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
     # TODO: redirect code with user-friendly, non-JSON output
 
     email = request.args["email"]
@@ -241,20 +253,25 @@ RETURNING
 
 
 @auth
-def get_email_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
-    email = request.args["email"]
-    password = request.args["password"]
+def get_email_change(
+    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
+) -> sanic.HTTPResponse:
+    email: str = request.args["email"]
+    password: str = request.args["password"]
 
     # Require additional password check
     if not cmp_pass(user_id, password):
         return Unauthenticated401Response("Invalid password")
 
     # TODO: implement
-    return NotImplemented501Response(data={"email": email})
+    # return NotImplemented501Response(data={"email": email})
+    return NotImplemented501Response()
 
 
 @auth
-def get_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def get_password_change(
+    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
+) -> sanic.HTTPResponse:
     password_old = request.args["password_old"]
     password = request.args["password"]
     password_confirm = request.args["password_confirm"]
@@ -270,7 +287,7 @@ def get_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
     # TODO: Unable to resolve column 'user_id'
     psql(
-        "UPDATE users SET passwd=%s WHERE user_id=%s RETURNING user_id",
+        "UPDATE user SET passwd = %s WHERE id=%s RETURNING id",
         [passwd, user_id],
     )
 
@@ -278,15 +295,15 @@ def get_password_change(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
     return Success200Response()
 
 
-def post_username_forgot(request):
+def post_username_forgot(request: sanic.Request) -> sanic.HTTPResponse:
     return NotImplemented501Response()
 
 
-def post_password_new_request(request):
+def post_password_new_request(request: sanic.Request) -> sanic.HTTPResponse:
     return NotImplemented501Response()
 
 
-def post_password_new_reset(request):
+def post_password_new_reset(request: sanic.Request) -> sanic.HTTPResponse:
     return NotImplemented501Response()
 
 
@@ -294,7 +311,9 @@ def post_password_new_reset(request):
 # File a report
 # ---------------
 @auth
-def POST_report(request, level=AUTH_LEVEL_UNCONFIRMED, user_id=None):
+def post_report(
+    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
+) -> sanic.HTTPResponse:
     report_type = request.json["report_type"]
     report_message = request.json["report_message"]
 
