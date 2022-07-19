@@ -28,7 +28,7 @@ import os
 
 try:
     from ntserv.__sha__ import COMMIT_DATE, COMMIT_SHA
-except ModuleNotFoundError:
+except ImportError:
     print("Error reading git info, this is fine in development.")
     COMMIT_SHA = str()
     COMMIT_DATE = str()

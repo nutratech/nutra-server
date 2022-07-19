@@ -154,6 +154,7 @@ install:	## Pip install (user)
 .PHONY: clean
 clean:	## Clean up __pycache__ and leftover bits
 	rm -f .coverage
+	rm -f ntserv/__sha__.py
 	rm -rf .mypy_cache/ .pytest_cache/
 	find $(APP_HOME) $(TEST_HOME) -name __pycache__ -o -name .pytest_cache | xargs rm -rf
 
