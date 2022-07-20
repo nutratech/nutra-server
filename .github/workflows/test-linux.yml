@@ -25,7 +25,7 @@ jobs:
 
       - name: Downgrade jsonschema on Python 3.7
         if: ${{ matrix.python-version }} == '3.7'
-        run: pip install jsonschema==3.0.2
+        run: pip install jsonschema==3.2.0
 
       - name: Reload Cache / pip
         uses: actions/cache@v3
