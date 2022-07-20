@@ -177,7 +177,7 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     user_agent = str(request.headers["user-agent"])
     # FIXME: Are these proper? Do we need an app_type too (e.g. web, cli, android)?
     oper_sys = str(request.json["os"])
-    hostname = str(request.json.get("hostname", str()))
+    hostname = str(request.json["hostname"])
 
     device_id = f"{oper_sys}-{username}@{hostname}-{user_agent}"
 
