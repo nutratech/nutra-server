@@ -98,7 +98,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         'INSERT INTO "user" (username, passwd) VALUES (%s, %s) RETURNING id',
         [username, passwd],
     )
-    # ERRORs
+    # ERRORS
     if pg_result.err_msg:
         return pg_result.http_response_error
     user_id = pg_result.row["id"]
@@ -163,22 +163,23 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
         """
         # TODO: complete this in another module
 
-        _user_id = int(args[0])
-        _passwd = str(args[1])
-        _device_id = str(args[2])
+        # _user_id, _passwd, _device_id
+        _ = int(args[0])
+        _ = str(args[1])
+        _ = str(args[2])
 
         return -65536, AUTH_LEVEL_UNAUTHED, str()
 
-    email: str = request.json["email"]
-    password: str = request.json["password"]
+    username = str(request.json.get("username", str()))
+    email = str(request.json.get("email", str()))
+    password = str(request.json["password"])
 
-    # FIXME: fix this, broke during migration from Flask to Sanic
-    user_agent: str = request.user_agent.string  # type: ignore
-    oper_sys: str = request.json["os"]
-    username: str = request.json.get("username", str())
-    hostname: str = request.json.get("hostname", str())
+    user_agent = str(request.headers["user-agent"])
+    # FIXME: Are these proper? Do we need an app_type too (e.g. web, cli, android)?
+    oper_sys = str(request.json["os"])
+    hostname = str(request.json.get("hostname", str()))
 
-    device_id = f"{oper_sys} {username}@{hostname} {user_agent}"
+    device_id = f"{oper_sys}-{username}@{hostname}-{user_agent}"
 
     #
     # See if user exists
