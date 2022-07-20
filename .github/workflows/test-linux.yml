@@ -6,7 +6,6 @@ name: test-linux
 
 jobs:
   python:
-    runs-on: ubuntu-latest
 
     strategy:
       matrix:
