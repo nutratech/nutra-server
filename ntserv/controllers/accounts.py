@@ -95,7 +95,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     else:
         passwd = None
     pg_result = psql(
-        "INSERT INTO users (username, passwd) VALUES (%s, %s) RETURNING id",
+        "INSERT INTO user (username, passwd) VALUES (%s, %s) RETURNING id",
         [username, passwd],
     )
     # ERRORs
@@ -104,23 +104,23 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     user_id = pg_result.row["id"]
     # Insert emails
     pg_result = psql(
-        "INSERT INTO emails (user_id, email, main) VALUES (%s, %s, %s) RETURNING email",
+        "INSERT INTO email (user_id, email, main) VALUES (%s, %s, %s) RETURNING email",
         [user_id, email, True],
     )
     # ERRORs
     if pg_result.err_msg:
-        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
+        psql("DELETE FROM user WHERE id=%s RETURNING id", [user_id])
         return pg_result.http_response_error
     # Insert tokens
     token = str(uuid.uuid4()).replace("-", "")
     pg_result = psql(
-        "INSERT INTO tokens (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
+        "INSERT INTO token (user_id, token, type) VALUES (%s, %s, %s) RETURNING token",
         [user_id, token, "EMAIL_TOKEN_ACTIVATE"],
     )
     # ERRORs
     if pg_result.err_msg:
-        psql("DELETE FROM emails WHERE user_id=%s RETURNING email", [user_id])
-        psql("DELETE FROM users WHERE id=%s RETURNING id", [user_id])
+        psql("DELETE FROM email WHERE user_id=%s RETURNING email", [user_id])
+        psql("DELETE FROM user WHERE id=%s RETURNING id", [user_id])
         return pg_result.http_response_error
     #
     # Send activation email
@@ -193,7 +193,8 @@ def get_user_details(
 ) -> sanic.HTTPResponse:
     # TODO: if not user_id: return err
     # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
-    pg_result = psql("SELECT * FROM users(%s)", [user_id])
+    # NOTE: this IS valid syntax, it DOES work. Pycharm is wrong to complain I guess
+    pg_result = psql('SELECT * FROM "user"(%s)', [user_id])
     return Success200Response(data=pg_result.row)
 
 
@@ -210,7 +211,7 @@ def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
 
     # Grab token(s)
     pg_result = psql(
-        "SELECT token FROM tokens WHERE user_id=%s AND type='EMAIL_TOKEN_ACTIVATE'",
+        "SELECT token FROM token WHERE user_id=%s AND type='EMAIL_TOKEN_ACTIVATE'",
         [user_id],
     )
     if pg_result.err_msg or not pg_result.rows:
@@ -226,7 +227,7 @@ def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
     _ = psql(
         """
 UPDATE
-  emails
+  email
 SET
   activated = 't'
 WHERE
@@ -239,9 +240,9 @@ RETURNING
     )
     _ = psql(
         """
-DELETE FROM tokens
+DELETE FROM token
 WHERE user_id = %s
-  AND TYPE = 'EMAIL_TOKEN_ACTIVATE'
+  AND type = 'EMAIL_TOKEN_ACTIVATE'
 RETURNING
   user_id
         """,
@@ -313,17 +314,23 @@ def post_password_new_reset(request: sanic.Request) -> sanic.HTTPResponse:
 def post_report(
     request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
 ) -> sanic.HTTPResponse:
-    report_type = request.json["report_type"]
-    report_message = request.json["report_message"]
+    """
+    Used for submitting bug reports over CLI, web, or Android
+    """
+
+    client_app_name = request.json["clientAppName"]
+    client_app_version = request.json["clientAppVersion"]
+    client_app_release = request.json["clientAppRelease"]
+    client_info = dict(request.json["clientInfo"])
 
     psql(
         """
-INSERT INTO reports (user_id, report_type, report_message)
+INSERT INTO bug (client_app_name, "version", "release")
   VALUES (%s, %s, %s)
 RETURNING
-  user_id
+  id, guid
         """,
-        [user_id, report_type, report_message],
+        [client_app_name, client_app_version, client_app_release, client_info],
     )
 
     return Success200Response()

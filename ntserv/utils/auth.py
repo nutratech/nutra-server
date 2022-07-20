@@ -27,11 +27,11 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 
 
 class AuthResult:
-    def __init__(self, token: dict, err_msg: str = str()) -> None:
+    def __init__(self, token: dict = None, err_msg: str = str()) -> None:
         if token:
-            self.user_id = int(token["id"])
-            self.auth_level = int(token["auth-level"])
-            self.expires = float(token["expires"])
+            self.user_id = int(token["userId"])
+            self.auth_level = int(token["authLevel"])
+            self.expires = float(token["expiresAt"])
         else:
             self.user_id = -65536
             self.auth_level = AUTH_LEVEL_UNAUTHED
@@ -50,7 +50,7 @@ def issue_jwt_token(user_id: int, password: str) -> tuple:
     # --------------------------------------------
     # Get hash
     # --------------------------------------------
-    pg_result = psql("SELECT passwd FROM users WHERE id=%s", [user_id])
+    pg_result = psql('SELECT passwd FROM "user" WHERE id=%s', [user_id])
 
     # --------------------------------------------
     # Compare password
@@ -82,7 +82,7 @@ def get_auth_level(user_id: int) -> tuple:
     # Check if email activated
     # --------------------------------------------
     pg_result = psql(
-        "SELECT email FROM emails WHERE user_id=%s AND activated='t'", [user_id]
+        "SELECT email FROM email WHERE user_id=%s AND activated='t'", [user_id]
     )
     try:
         # FIXME: this is unused, email
@@ -137,7 +137,7 @@ def check_token(_token: str) -> Tuple[AuthResult, str]:
 
     except jwt.DecodeError as decode_err:
         _logger.debug(traceback.format_exc())
-        return AuthResult({}), repr(decode_err)
+        return AuthResult(), repr(decode_err)
 
 
 def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
@@ -148,7 +148,7 @@ def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
     # TODO: check for other types of exceptions that can be thrown?
     except (KeyError, jwt.DecodeError) as err:
         _logger.debug(traceback.format_exc())
-        return AuthResult({}), repr(err)
+        return AuthResult(), repr(err)
 
 
 # ------------------------------------------------
