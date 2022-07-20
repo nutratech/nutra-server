@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Downgrade jsonschema on Python 3.7
-        if: '"$(python --version)" =~ "3.8"'
+        if: ${{ matrix.python-version }} == '3.8'
         run: pip install jsonschema==3.0.2
 
       - name: Reload Cache / pip
@@ -66,7 +66,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PY_VER_REPORT: "3.8"
-        if: '"$(python --version)" =~ "$PY_VER_REPORT"'
+        if: ${{ matrix.python-version }} == $PY_VER_REPORT
         run: coveralls --service=github
 
       - name: Run linters
