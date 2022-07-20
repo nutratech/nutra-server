@@ -1,3 +1,4 @@
+import time
 import traceback
 from datetime import datetime
 from typing import Callable, Tuple
@@ -27,10 +28,14 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 
 class AuthResult:
     def __init__(self, token: dict, err_msg: str = str()) -> None:
-        self.user_id: int = token["id"]
-
-        self.auth_level: int = token["auth-level"]
-        self.expires: float = token["expires"]
+        if token:
+            self.user_id = int(token["id"])
+            self.auth_level = int(token["auth-level"])
+            self.expires = float(token["expires"])
+        else:
+            self.user_id = -65536
+            self.auth_level = AUTH_LEVEL_UNAUTHED
+            self.expires = time.time()
 
         self.err_msg: str = err_msg
 
