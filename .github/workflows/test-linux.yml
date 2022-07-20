@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11.0-beta.4"]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
       - name: Checkout
@@ -63,10 +63,9 @@ jobs:
 
       # NOTE: this step is only handled by Linux
       - name: Submit coverage report / coveralls
+        if: ${{ matrix.python-version }} == '3.8'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PY_VER_REPORT: "3.8"
-        if: ${{ matrix.python-version }} == $PY_VER_REPORT
         run: coveralls --service=github
 
       - name: Run linters
