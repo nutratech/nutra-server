@@ -12,6 +12,8 @@ jobs:
         os: [ubuntu-latest, ubuntu-22.04]
         python-version: ["3.8", "3.9", "3.10"]
 
+    runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
