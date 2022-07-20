@@ -10,6 +10,7 @@ jobs:
 
     strategy:
       matrix:
+        os: [ubuntu-latest, ubuntu-22.04]
         python-version: ["3.8", "3.9", "3.10"]
 
     steps:
@@ -61,7 +62,7 @@ jobs:
       - name: Run Tests
         run: make _test
 
-      # NOTE: this step is only handled by Linux
+      # NOTE: this step is only handled by Linux and Python 3.8 currently
       - name: Submit coverage report / coveralls
         if: matrix.python-version == '3.8'
         env:
