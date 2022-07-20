@@ -17,6 +17,7 @@
 .. image:: https://github.com/nutratech/nutra-server/actions/workflows/deploy-prod.yml/badge.svg
     :target: https://github.com/nutratech/nutra-server/actions/workflows/deploy-prod.yml
     :alt: deploy-prod status: unknown
+
 .. image:: https://badgen.net/badge/code%20style/black/000
     :target: https://github.com/ambv/black
     :alt: Code style: black
