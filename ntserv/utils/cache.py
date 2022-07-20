@@ -43,7 +43,7 @@ def reload() -> bool:
 
     # TODO: is this necessary with Postgres and Sanic running side-by-side? Any faster?
     # Reload cache
-    # pg_result = psql("SELECT * FROM users()")
+    # pg_result = psql("SELECT * FROM user()")
     # USERS = {u["id"]: u for u in pg_result.rows}
     #
     # pg_result = psql("SELECT * FROM shipping_containers")
