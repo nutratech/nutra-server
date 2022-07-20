@@ -2,9 +2,12 @@
  server
 ********
 
-.. image:: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml/badge.svg
-    :target: https://github.com/gamesguru/nutra-server/actions/workflows/test.yml
-    :alt: CI status: unknown
+.. image:: https://github.com/nutratech/nutra-server/actions/workflows/test-linux.yml/badge.svg
+    :target: https://github.com/nutratech/nutra-server/actions/workflows/test-linux.yml
+    :alt: linux-python status: unknown
+.. image:: https://github.com/nutratech/nutra-server/actions/workflows/test-win32.yml/badge.svg
+    :target: https://github.com/nutratech/nutra-server/actions/workflows/test-win32.yml
+    :alt: win32 status: unknown
 .. image:: https://coveralls.io/repos/github/nutratech/server/badge.svg
     :target: https://coveralls.io/github/nutratech/server
     :alt: Coverage status
