@@ -1,6 +1,6 @@
 import re
 import uuid
-from typing import Tuple
+from typing import Tuple, Union
 
 import bcrypt
 import sanic
@@ -95,10 +95,10 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     else:
         passwd = None
     pg_result = psql(
-        "INSERT INTO user (username, passwd) VALUES (%s, %s) RETURNING id",
+        'INSERT INTO "user" (username, passwd) VALUES (%s, %s) RETURNING id',
         [username, passwd],
     )
-    # ERRORs
+    # ERRORS
     if pg_result.err_msg:
         return pg_result.http_response_error
     user_id = pg_result.row["id"]
@@ -109,7 +109,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     )
     # ERRORs
     if pg_result.err_msg:
-        psql("DELETE FROM user WHERE id=%s RETURNING id", [user_id])
+        psql('DELETE FROM "user" WHERE id=%s RETURNING id', [user_id])
         return pg_result.http_response_error
     # Insert tokens
     token = str(uuid.uuid4()).replace("-", "")
@@ -120,7 +120,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     # ERRORs
     if pg_result.err_msg:
         psql("DELETE FROM email WHERE user_id=%s RETURNING email", [user_id])
-        psql("DELETE FROM user WHERE id=%s RETURNING id", [user_id])
+        psql('DELETE FROM "user" WHERE id=%s RETURNING id', [user_id])
         return pg_result.http_response_error
     #
     # Send activation email
@@ -154,21 +154,32 @@ def post_login(request: sanic.Request) -> sanic.HTTPResponse:
 
 def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     def issue_oauth_token(
-        user_id: int, passwd: str, device_id: str
+        *args: Union[str, int],
     ) -> Tuple[int, int, str]:
+        """
+
+        @param args: _user_id: int, _passwd: str, _device_id: str
+        @return: user_id: int, auth_level: int, token: str
+        """
         # TODO: complete this in another module
+
+        # _user_id, _passwd, _device_id
+        _ = int(args[0])
+        _ = str(args[1])
+        _ = str(args[2])
+
         return -65536, AUTH_LEVEL_UNAUTHED, str()
 
-    email: str = request.json["email"]
-    password: str = request.json["password"]
+    username = str(request.json.get("username", str()))
+    email = str(request.json.get("email", str()))
+    password = str(request.json["password"])
 
-    # FIXME: fix this, broke during migration from Flask to Sanic
-    user_agent: str = request.user_agent.string  # type: ignore
-    oper_sys: str = request.json["os"]
-    username: str = request.json.get("username", str())
-    hostname: str = request.json.get("hostname", str())
+    user_agent = str(request.headers["user-agent"])
+    # FIXME: Are these proper? Do we need an app_type too (e.g. web, cli, android)?
+    oper_sys = str(request.json["os"])
+    hostname = str(request.json.get("hostname", str()))
 
-    device_id = f"{oper_sys} {username}@{hostname} {user_agent}"
+    device_id = f"{oper_sys}-{username}@{hostname}-{user_agent}"
 
     #
     # See if user exists
@@ -287,7 +298,7 @@ def get_password_change(
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
     # TODO: Unable to resolve column 'user_id'
     psql(
-        "UPDATE user SET passwd = %s WHERE id=%s RETURNING id",
+        'UPDATE "user" SET passwd = %s WHERE id=%s RETURNING id',
         [passwd, user_id],
     )
 
@@ -323,9 +334,10 @@ def post_report(
     client_app_release = request.json["clientAppRelease"]
     client_info = dict(request.json["clientInfo"])
 
+    # TODO: use library wrapper or similar to generate mismatch in number of args
     psql(
         """
-INSERT INTO bug (client_app_name, "version", "release")
+INSERT INTO bug (client_app_name, "version", "release", client_info)
   VALUES (%s, %s, %s)
 RETURNING
   id, guid
