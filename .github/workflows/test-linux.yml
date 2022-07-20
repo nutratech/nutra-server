@@ -63,7 +63,7 @@ jobs:
 
       # NOTE: this step is only handled by Linux
       - name: Submit coverage report / coveralls
-        if: ${{ matrix.python-version }} == '3.8'
+        if: matrix.python-version == '3.8'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
