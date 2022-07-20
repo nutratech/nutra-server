@@ -1,28 +1,18 @@
 ---
-name: test-linux
+name: coveralls
 
 "on":
   push: {}
 
 jobs:
-  python:
+  cov-submit:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, ubuntu-22.04]
-        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: recursive
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
 
       - name: Reload Cache / pip
         uses: actions/cache@v3
@@ -35,6 +25,7 @@ jobs:
       # NOTE: container lacks OS dist for testresources/launchpadlib
       - name: Install requirements
         run: |
+          pip install coveralls==3.3.1
           pip install testresources==2.0.1
           make _deps
           pip install -r db/requirements.txt
@@ -42,41 +33,26 @@ jobs:
       - name: Start database
         run: |
           sudo service postgresql start
+
           sudo -u postgres psql -c 'CREATE DATABASE nt'
           sudo -u postgres psql -c 'CREATE ROLE runner'
           sudo -u postgres psql -c "ALTER USER runner PASSWORD 'password'"
           sudo -u postgres psql -c 'ALTER USER runner WITH LOGIN SUPERUSER'
           sudo -u postgres psql -c 'ALTER DATABASE nt OWNER TO runner'
+
           psql -d nt -c 'ALTER DATABASE nt SET search_path TO nt'
           psql -l
+
           # This package uses relative imports, so can be called from outside
           python -m db.sql rebuild
+
           # Select versions (not a pass/fail test, but still viewable in logs)
           psql -d nt -c 'SELECT * FROM version'
 
       - name: Run Tests
         run: make _test
 
-      - name: Run linters
-        run: make _lint
-
-      - name: Start server
-        run: make _run &
-
-      # NOTE: depends on API_PORT=20000
-      - name: Integration test / basic request / 10 second startup
-        run: |
-          n=0
-          set +e
-          while [ $n != 20 ]; do
-            n=$(expr $n + 1)
-            echo $n
-            sleep 0.5
-            curl localhost:20000/api && break
-          done;
-          set -e
-
-          # Do some basic validation, that we get HTTP 2XX/3XX & valid JSON
-          curl -I -X GET localhost:20000/api
-          curl localhost:20000/api/pg/version | jq
-          curl localhost:20000/api/nutrients  | jq
+      - name: Submit coverage report / coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls --service=github
