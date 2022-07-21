@@ -173,6 +173,7 @@ extras/cloc:	## Count lines of source code
 	.venv,venv,\
 	.mypy_cache,.pytest_cache,\
 	.idea,\
+	resources,\
 	build,dist \
 	--exclude-ext=svg \
 	$(CLOC_ARGS) \
