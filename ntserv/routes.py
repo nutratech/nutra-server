@@ -5,7 +5,7 @@ Created on Sat Jan  4 18:20:27 2020
 @author: shane
 """
 import sanic
-from sanic_ext import Extend
+from sanic_ext import Config
 
 from ntserv import __module__
 from ntserv.controllers.accounts import (
@@ -41,7 +41,7 @@ app = sanic.Sanic(__module__)
 app.config.FORWARDED_SECRET = PROXY_SECRET
 
 app.config.CORS_ORIGINS = ",".join(ALLOWED_ORIGINS)
-Extend(app)
+app.extend(config=Config(oas_url_prefix="/api/apidocs"))
 
 
 # TODO: blueprinting, e.g. /auth, /calc
