@@ -7,7 +7,7 @@ import sanic.response
 from sanic import Sanic
 from tabulate import tabulate
 
-from ntserv import __email__, __release__, __url__, __version__
+from ntserv import __email__, __release__, __title__, __url__, __version__
 from ntserv.env import (
     BLOG_HOST,
     SERVER_HOST,
@@ -79,7 +79,7 @@ def _response(
 
     return sanic.response.json(
         {
-            "program": "nutra-server",
+            "program": __title__,
             "version": __version__,
             "release": __release__,
             "datetime": datetime.now().strftime("%c").strip(),

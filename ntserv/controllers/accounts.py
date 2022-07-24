@@ -12,12 +12,7 @@ from ntserv.utils.account import (
     user_id_from_unver_email,
     user_id_from_username_or_email,
 )
-from ntserv.utils.auth import (
-    AUTH_LEVEL_UNAUTHED,
-    AUTH_LEVEL_UNCONFIRMED,
-    auth,
-    issue_jwt_token,
-)
+from ntserv.utils.auth import AUTH_LEVEL_UNAUTHED, auth, issue_jwt_token
 from ntserv.utils.libserver import (
     BadRequest400Response,
     MultiStatus207Response,
@@ -199,10 +194,11 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
 
 # TODO: resolve unused keywords with **kwargs ?
 @auth
-def get_user_details(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def get_user_details(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    # TODO: why isn't auth_level being populated from the @auth decorator too?
+    _ = args[0]
     # TODO: if not user_id: return err
+    user_id = kwargs["user_id"]
     # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
     # NOTE: this IS valid syntax, it DOES work. Pycharm is wrong to complain I guess
     pg_result = psql('SELECT * FROM "user"(%s)', [user_id])
@@ -264,11 +260,12 @@ RETURNING
 
 
 @auth
-def get_email_change(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
-    _: str = request.args["email"]
-    password: str = request.args["password"]
+def get_email_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    request = args[0]
+    user_id = kwargs["user_id"]
+
+    _ = request.args["email"]
+    password = request.args["password"]
 
     # Require additional password check
     if not cmp_pass(user_id, password):
@@ -280,9 +277,10 @@ def get_email_change(
 
 
 @auth
-def get_password_change(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def get_password_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    request = args[0]
+    user_id = kwargs["user_id"]
+
     password_old = request.args["password_old"]
     password = request.args["password"]
     password_confirm = request.args["password_confirm"]
@@ -306,15 +304,18 @@ def get_password_change(
     return Success200Response()
 
 
-def post_username_forgot(request: sanic.Request) -> sanic.HTTPResponse:
+def post_username_forgot(*args: sanic.Request) -> sanic.HTTPResponse:
+    _ = args[0]
     return NotImplemented501Response()
 
 
-def post_password_new_request(request: sanic.Request) -> sanic.HTTPResponse:
+def post_password_new_request(*args: sanic.Request) -> sanic.HTTPResponse:
+    _ = args[0]
     return NotImplemented501Response()
 
 
-def post_password_new_reset(request: sanic.Request) -> sanic.HTTPResponse:
+def post_password_new_reset(*args: sanic.Request) -> sanic.HTTPResponse:
+    _ = args[0]
     return NotImplemented501Response()
 
 
@@ -322,12 +323,12 @@ def post_password_new_reset(request: sanic.Request) -> sanic.HTTPResponse:
 # File a report
 # ---------------
 @auth
-def post_report(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def post_report(*args: sanic.Request) -> sanic.HTTPResponse:
     """
     Used for submitting bug reports over CLI, web, or Android
     """
+
+    request = args[0]
 
     client_app_name = request.json["clientAppName"]
     client_app_version = request.json["clientAppVersion"]

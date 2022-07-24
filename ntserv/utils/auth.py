@@ -113,7 +113,7 @@ def jwt_token(user_id: int, auth_level: int) -> str:
     token = jwt.encode(
         {
             "userId": user_id,
-            "authLevel": AUTH_LEVEL_BASIC,
+            "authLevel": auth_level,
             "expiresAt": int(expires_at.timestamp()),
         },
         JWT_SECRET,
@@ -157,9 +157,13 @@ def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
 # TODO: handle level with **kwargs?
 def auth(
     og_func: Callable[..., sanic.HTTPResponse],
-    level: int = AUTH_LEVEL_UNAUTHED,
+    *args: int,
 ) -> Callable[..., sanic.HTTPResponse]:
     """Auth decorator, use to send 401s"""
+
+    # TODO: why is it always args[0] if only 1 arg? Can't unpack a tuple with just 1?
+    #  this is _level or _auth_level
+    # _ = args[0]
 
     def func(request: sanic.Request) -> sanic.HTTPResponse:
         # Check authorization

@@ -1,18 +1,14 @@
 import sanic
 
 from ntserv.persistence.psql.sync import sql_unsynced_rows, sql_update_entities
-from ntserv.utils.auth import AUTH_LEVEL_BASIC, auth
+from ntserv.utils.auth import auth
 from ntserv.utils.libserver import NotImplemented501Response, Success200Response
-
-# NOTE: wip
-# TODO: magic number
 
 
 @auth
-def opt_sync(
-    request: sanic.Request, level: int = AUTH_LEVEL_BASIC, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def opt_sync(*args: sanic.Request) -> sanic.HTTPResponse:
     """Used to GET and POST local saved data to remote"""
+    request = args[0]
 
     # FIXME: fix this, broke during migration from Flask to Sanic
     method = request.environ["REQUEST_METHOD"]  # type: ignore
