@@ -12,5 +12,6 @@ from ntserv.persistence.psql import verify_db_version_compat
 def test_verify_db_version_compat():
     try:
         assert verify_db_version_compat()
-    except KeyError:
+    except KeyError as err:
+        print(f"WARN: {repr(err)}")
         pytest.skip("Skipping test... Postgres likely not running.")
