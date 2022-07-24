@@ -73,6 +73,10 @@ def _response(
     if stack:
         data["stack"] = stack  # type: ignore
 
+    # TODO: standardize validation / stack / other errMsg info
+    #  Ideally we should have a danger alter pop in the UI, or similar with the format:
+    #  errHeader: errMsg/errDescription
+
     return sanic.response.json(
         {
             "program": "nutra-server",
