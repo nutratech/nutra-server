@@ -156,6 +156,7 @@ clean:	## Clean up __pycache__ and leftover bits
 	rm -f .coverage
 	rm -f ntserv/__sha__.py
 	rm -rf .mypy_cache .pytest_cache __pycache__ *.egg-info build
+	# Find recursively & remove cache directories
 	find $(APP_HOME) $(TEST_HOME) \
 	-name __pycache__ \
 	-o -name .pytest_cache \
