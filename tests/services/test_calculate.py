@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple
 import pytest
 
 import ntserv.services.calculate as calc
+from ntserv.services import Gender
 
 
 # ------------------------------------------------
@@ -83,8 +84,8 @@ def test_bmr_cunningham():
 @pytest.mark.parametrize(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
-        ("MALE", 77, 177, 725864400, 0.55, {"bmr": 1740, "tdee": 2696}),
-        ("FEMALE", 77, 177, 725864400, 0.55, {"bmr": 1574, "tdee": 2439}),
+        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1740, "tdee": 2696}),
+        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1574, "tdee": 2439}),
     ],
 )
 def test_bmr_mifflin_st_jeor(
@@ -98,8 +99,8 @@ def test_bmr_mifflin_st_jeor(
 @pytest.mark.parametrize(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
-        ("MALE", 77, 177, 725864400, 0.55, {"bmr": 1801, "tdee": 2792}),
-        ("FEMALE", 77, 177, 725864400, 0.55, {"bmr": 1580, "tdee": 2449}),
+        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1801, "tdee": 2792}),
+        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1580, "tdee": 2449}),
     ],
 )
 def test_bmr_harris_benedict(

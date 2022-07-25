@@ -16,11 +16,14 @@ class ActivityFactor(Enum):
     INTENSELY_ACTIVE = 0.9
 
 
-def activity_factor_from_float(activity_factor: float) -> ActivityFactor:
-    """Gets ActivityFactor Enum by float value if it exists, else raise ValueError"""
+def activity_factor_from_float(activity_factor: float) -> float:
+    """
+    Gets ActivityFactor Enum by float value if it exists, else raise ValueError.
+    Basically just verifies the float is among the allowed values, and re-returns it.
+    """
     for enum_entry in ActivityFactor:
         if activity_factor == enum_entry.value:
-            return enum_entry
+            return float(enum_entry.value)
     raise ValueError(f"No such ActivityFactor for value: {activity_factor}")
 
 

@@ -134,7 +134,8 @@ def bmr_katch_mcardle(lbm: float, _activity_factor: float) -> Dict[str, float]:
     """
     # Validate it conforms to one of the enum values
     # TODO: return 400s in cases like this, not 500
-    activity_factor = float(activity_factor_from_float(_activity_factor).value)
+    # NOTE: is this necessary if it's also done in the controller?
+    activity_factor = activity_factor_from_float(_activity_factor)
 
     bmr = 370 + (21.6 * lbm)
     tdee = bmr * (1 + activity_factor)
@@ -152,7 +153,7 @@ def bmr_cunningham(lbm: float, _activity_factor: float) -> Dict[str, float]:
 
     Source: https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture
     """
-    activity_factor = float(activity_factor_from_float(_activity_factor).value)
+    activity_factor = activity_factor_from_float(_activity_factor)
 
     bmr = 500 + 22 * lbm
     tdee = bmr * (1 + activity_factor)
@@ -164,7 +165,7 @@ def bmr_cunningham(lbm: float, _activity_factor: float) -> Dict[str, float]:
 
 
 def bmr_mifflin_st_jeor(
-    gender: str, weight: float, height: float, dob: int, _activity_factor: float
+    gender: Gender, weight: float, height: float, dob: int, _activity_factor: float
 ) -> Dict[str, float]:
     """
     @param gender: {'MALE', 'FEMALE'}
@@ -191,15 +192,14 @@ def bmr_mifflin_st_jeor(
 
     Source: https://www.myfeetinmotion.com/mifflin-st-jeor-equation/
     """
-    activity_factor = float(activity_factor_from_float(_activity_factor).value)
+    activity_factor = activity_factor_from_float(_activity_factor)
 
-    def gender_specific_bmr(_gender: str, _bmr: float) -> float:
+    def gender_specific_bmr(_gender: Gender, _bmr: float) -> float:
         _second_term = {
-            "MALE": 5,
-            "FEMALE": -161,
+            Gender.MALE: 5,
+            Gender.FEMALE: -161,
         }
-        # Exc: KeyError
-        return _bmr + _second_term[gender]
+        return _bmr + _second_term[_gender]
 
     bmr = 10 * weight + 6.25 + 6.25 * height - 5 * _age(dob)
 
@@ -213,7 +213,7 @@ def bmr_mifflin_st_jeor(
 
 
 def bmr_harris_benedict(
-    gender: str, weight: float, height: float, dob: int, _activity_factor: float
+    gender: Gender, weight: float, height: float, dob: int, _activity_factor: float
 ) -> Dict[str, float]:
     """
     @param gender: MALE, FEMALE
@@ -230,16 +230,15 @@ def bmr_harris_benedict(
 
     Source: https://tdeecalculator.net/about.php
     """
-    activity_factor = float(activity_factor_from_float(_activity_factor).value)
+    activity_factor = activity_factor_from_float(_activity_factor)
 
-    def gender_specific_bmr(_gender: str) -> float:
+    def gender_specific_bmr(_gender: Gender) -> float:
         age = _age(dob)
 
         _gender_specific_bmr = {
-            "MALE": (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362,
-            "FEMALE": (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593,
+            Gender.MALE: (13.397 * weight + 4.799 * height - 5.677 * age) + 88.362,
+            Gender.FEMALE: (9.247 * weight + 3.098 * height - 4.330 * age) + 447.593,
         }
-        # Exc: KeyError
         return _gender_specific_bmr[_gender]
 
     bmr = gender_specific_bmr(gender)
@@ -263,9 +262,6 @@ def bf_navy(gender: Gender, body: dict) -> float:
     @return: float (e.g. 0.17)
     """
 
-    # Shared parameter for all 3 body fat tests
-    _gender = gender.value
-
     # Navy-specific parameters
     height = float(body["height"])
 
@@ -275,17 +271,17 @@ def bf_navy(gender: Gender, body: dict) -> float:
 
     # Compute values
     _gender_specific_denominator = {
-        "MALE": (
+        Gender.MALE: (
             1.0324 - 0.19077 * math.log10(waist - neck) + 0.15456 * math.log10(height)
         ),
-        "FEMALE": (
+        Gender.FEMALE: (
             1.29579
             - 0.35004 * math.log10(waist + hip - neck)
             + 0.22100 * math.log10(height)
         ),
     }
 
-    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
+    return round(495 / _gender_specific_denominator[gender] - 450, 2)
 
 
 def bf_3site(gender: Gender, body: dict) -> float:
@@ -297,9 +293,6 @@ def bf_3site(gender: Gender, body: dict) -> float:
     @return: float (e.g. 0.17)
     """
 
-    # Shared parameter for all 3 body fat tests
-    _gender = gender.value
-
     # Shared parameters for skin manifold 3 & 7 site tests
     age = float(body["age"])
 
@@ -310,11 +303,17 @@ def bf_3site(gender: Gender, body: dict) -> float:
     # Compute values
     st3 = chest + abd + thigh
     _gender_specific_denominator = {
-        "MALE": 1.10938 - 0.0008267 * st3 + 0.0000016 * st3 * st3 - 0.0002574 * age,
-        "FEMALE": 1.089733 - 0.0009245 * st3 + 0.0000025 * st3 * st3 - 0.0000979 * age,
+        Gender.MALE: 1.10938
+        - 0.0008267 * st3
+        + 0.0000016 * st3 * st3
+        - 0.0002574 * age,
+        Gender.FEMALE: 1.089733
+        - 0.0009245 * st3
+        + 0.0000025 * st3 * st3
+        - 0.0000979 * age,
     }
 
-    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
+    return round(495 / _gender_specific_denominator[gender] - 450, 2)
 
 
 def bf_7site(gender: Gender, body: dict) -> float:
@@ -325,9 +324,6 @@ def bf_7site(gender: Gender, body: dict) -> float:
 
     @return: float (e.g. 0.17)
     """
-
-    # Shared parameter for all 3 body fat tests
-    _gender = gender.value
 
     # Shared parameters for skin manifold 3 & 7 site tests
     age = float(body["age"])
@@ -346,11 +342,17 @@ def bf_7site(gender: Gender, body: dict) -> float:
     st7 = chest + abd + thigh + tricep + sub + sup + mid
 
     _gender_specific_denominator = {
-        "MALE": 1.112 - 0.00043499 * st7 + 0.00000055 * st7 * st7 - 0.00028826 * age,
-        "FEMALE": 1.097 - 0.00046971 * st7 + 0.00000056 * st7 * st7 - 0.00012828 * age,
+        Gender.MALE: 1.112
+        - 0.00043499 * st7
+        + 0.00000055 * st7 * st7
+        - 0.00028826 * age,
+        Gender.FEMALE: 1.097
+        - 0.00046971 * st7
+        + 0.00000056 * st7 * st7
+        - 0.00012828 * age,
     }
 
-    return round(495 / _gender_specific_denominator[_gender] - 450, 2)
+    return round(495 / _gender_specific_denominator[gender] - 450, 2)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

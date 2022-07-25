@@ -15,7 +15,8 @@ from tabulate import tabulate
 
 import ntserv.services.calculate as calc
 import ntserv.utils.libserver as server
-from ntserv.utils import Gender, cache
+from ntserv.services import Gender, activity_factor_from_float
+from ntserv.utils import cache
 
 
 def get_nutrients(**kwargs: dict) -> sanic.HTTPResponse:
@@ -53,22 +54,28 @@ def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
 
 
 def post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
-    """Calculates all types of BMR for comparison"""
+    """
+    Calculates all types of BMR for comparison
+
+    @param request: body: weight (kg), height (cm), gender, dob (int), activity_factor,
+        lbm | bodyFat
+    @return: dict with "katchMcArdle", "cunningham", "mifflinStJeor",
+        and "harrisBenedict"
+    """
     body = request.json
 
     # NOTE: doesn't support imperial units
 
     # TODO: enum class for this? And gender?
-    activity_factor = float(body["activityFactor"])
+    activity_factor = activity_factor_from_float(float(body["activityFactor"]))
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
-    gender = body["gender"]  # ['MALE', 'FEMALE']
+    gender = Gender(body["gender"])  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
 
-    lbm = body.get("lbm")
     # TODO: validate this against a REQUIRES: {lbm || bf}
-    if lbm:
-        lbm = float(lbm)
+    if "lbm" in body:
+        lbm = float(body["lbm"])
     else:
         body_fat = float(body["bodyFat"])
         lbm = weight * (1 - body_fat)
