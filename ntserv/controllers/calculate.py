@@ -59,7 +59,7 @@ def post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
     # NOTE: doesn't support imperial units
 
     # TODO: enum class for this? And gender?
-    activity_factor = float(body["activity_factor"])
+    activity_factor = float(body["activityFactor"])
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
     gender = body["gender"]  # ['MALE', 'FEMALE']
