@@ -18,7 +18,7 @@ def test_post_calc_bmr():
         "height": 177,
         "gender": "MALE",
         "dob": 725864400,
-        "bodyfat": 0.14,
+        "bodyFat": 0.14,
         "activity_factor": 0.55,
     }
     _req, res = app.test_client.post("/api/calc/bmr", json=data)

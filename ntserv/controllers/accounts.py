@@ -261,6 +261,7 @@ RETURNING
 
 @auth
 def get_email_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    # TODO: why is it always args[0] if only 1 arg? Can't unpack a tuple with just 1?
     request = args[0]
     user_id = kwargs["user_id"]
 

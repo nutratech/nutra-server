@@ -5,6 +5,7 @@ from typing import Callable, Tuple
 
 import bcrypt
 import jwt
+import psycopg2
 import sanic
 
 from ntserv.env import JWT_SECRET, TOKEN_EXPIRY
@@ -44,7 +45,7 @@ class AuthResult:
         return datetime.now().timestamp() > self.expires
 
 
-def issue_jwt_token(user_id: int, password: str) -> tuple:
+def issue_jwt_token(user_id: int, password: str) -> Tuple[str, int, str]:
     """Returns tuple: (token, auth_level, err_msg)"""
 
     # --------------------------------------------
@@ -60,19 +61,19 @@ def issue_jwt_token(user_id: int, password: str) -> tuple:
 
     # Invalid password
     if not result:
-        return None, AUTH_LEVEL_UNAUTHED, "Invalid password and username combination"
+        return str(), AUTH_LEVEL_UNAUTHED, "Invalid password and username combination"
 
     # --------------------------------------------
     # Create token
     # --------------------------------------------
     try:
         return get_auth_level(user_id)
-    except Exception as err:
+    except psycopg2.OperationalError as err:
         _logger.debug(traceback.format_exc())
-        return None, AUTH_LEVEL_READ_ONLY, repr(err)
+        return str(), AUTH_LEVEL_READ_ONLY, repr(err)
 
 
-def get_auth_level(user_id: int) -> tuple:
+def get_auth_level(user_id: int) -> Tuple[str, int, str]:
     """Returns same tuple: (token, auth_level, error)"""
 
     # NOTE: is this the right level to start with here?
@@ -87,7 +88,7 @@ def get_auth_level(user_id: int) -> tuple:
     try:
         # FIXME: this is unused, email
         _ = pg_result.row["email"]
-    except Exception as err:
+    except KeyError as err:
         _logger.debug(traceback.format_exc())
         return jwt_token(user_id, auth_level), auth_level, repr(err)
 
@@ -103,7 +104,7 @@ def get_auth_level(user_id: int) -> tuple:
         auth_level = AUTH_LEVEL_FULL_ADMIN
 
     # Made it this far... create token
-    return jwt_token(user_id, auth_level), auth_level, None
+    return jwt_token(user_id, auth_level), auth_level, str()
 
 
 def jwt_token(user_id: int, auth_level: int) -> str:
@@ -146,7 +147,7 @@ def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
         return check_token(token)
 
     # TODO: check for other types of exceptions that can be thrown?
-    except (KeyError, jwt.DecodeError) as err:
+    except (KeyError, IndexError, jwt.DecodeError) as err:
         _logger.debug(traceback.format_exc())
         return AuthResult(), repr(err)
 
@@ -156,14 +157,11 @@ def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
 # ------------------------------------------------
 # TODO: handle level with **kwargs?
 def auth(
-    og_func: Callable[..., sanic.HTTPResponse],
-    *args: int,
+    og_func: Callable[..., sanic.HTTPResponse]
 ) -> Callable[..., sanic.HTTPResponse]:
     """Auth decorator, use to send 401s"""
 
-    # TODO: why is it always args[0] if only 1 arg? Can't unpack a tuple with just 1?
-    #  this is _level or _auth_level
-    # _ = args[0]
+    # TODO: why did this functionality disappear? No more level=UNCONFIRMED, etc
 
     def func(request: sanic.Request) -> sanic.HTTPResponse:
         # Check authorization
