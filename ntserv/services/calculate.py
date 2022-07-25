@@ -261,7 +261,8 @@ def bf_navy(gender: Gender, body: dict) -> float:
 
     @return: float (e.g. 0.17)
 
-    Source: https://www.thecalculator.co/health/Navy-Method-Body-Fat-Measurement-Calculator-1112.html
+    Source:
+        https://www.thecalculator.co/health/Navy-Method-Body-Fat-Measurement-Calculator-1112.html
     """
 
     # Navy-specific parameters
@@ -294,7 +295,8 @@ def bf_3site(gender: Gender, body: dict) -> float:
 
     @return: float (e.g. 0.17)
 
-    Source: https://www.thecalculator.co/health/Body-Fat-Percentage-3-Site-Skinfold-Test-1113.html
+    Source:
+        https://www.thecalculator.co/health/Body-Fat-Percentage-3-Site-Skinfold-Test-1113.html
     """
 
     # Shared parameters for skin manifold 3 & 7 site tests
@@ -328,7 +330,8 @@ def bf_7site(gender: Gender, body: dict) -> float:
 
     @return: float (e.g. 0.17)
 
-    Source: https://www.thecalculator.co/health/Body-Fat-Percentage-7-Site-Skinfold-Calculator-1115.html
+    Source:
+        https://www.thecalculator.co/health/Body-Fat-Percentage-7-Site-Skinfold-Calculator-1115.html
     """
 
     # Shared parameters for skin manifold 3 & 7 site tests
