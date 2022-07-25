@@ -21,7 +21,7 @@ endif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # TODO: should this just be "python3"?
-PY_SYS_INTERPRETER ?= python3
+PY_SYS_INTERPRETER ?= /usr/bin/python3
 PY_VIRTUAL_INTERPRETER ?= python
 
 .PHONY: init
@@ -144,6 +144,12 @@ install:	## Pip install (user)
 	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" >ntserv/__sha__.py
 	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >>ntserv/__sha__.py
 	$(PY_SYS_INTERPRETER) -m pip install .
+
+
+.PHONY: sql/upgrade
+sql/upgrade:	## Attempt to run any SQL upgrades
+	# NOTE: the module does NOT yet support command line usage like this
+	# $(PY_SYS_INTERPRETER) -m ntserv sql upgrade
 
 
 
