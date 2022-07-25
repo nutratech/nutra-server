@@ -11,7 +11,7 @@ import sanic
 
 from ntserv.env import JWT_SECRET, TOKEN_EXPIRY
 from ntserv.persistence.psql import psql
-from ntserv.utils.libserver import Unauthenticated401Response
+from ntserv.utils.libserver import Response401Unauthenticated
 from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
@@ -172,7 +172,7 @@ def auth(
         # Check authorization
         authr, err_msg = check_request(request)
         if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-            return Unauthenticated401Response(err_msg)
+            return Response401Unauthenticated(err_msg)
 
         # Execute original function
         return og_func(request, user_id=authr.user_id)

@@ -19,11 +19,11 @@ def opt_sync(*args: sanic.Request) -> sanic.HTTPResponse:
         synced = int(request.args["last_sync"])
 
         profiles = sql_un_synced_rows(profile_guid, synced)
-        return server.Success200Response(data={"profiles": profiles})
+        return server.Response200Success(data={"profiles": profiles})
     if method == "POST":
         profile_guid = request.json["uid"]
         entities = request.json["entities"]
         sql_update_entities(profile_guid, entities)
-        return server.Success200Response()
+        return server.Response200Success()
 
-    return server.NotImplemented501Response()
+    return server.Response501NotImplemented()

@@ -27,7 +27,7 @@ def get_nutrients(**kwargs: dict) -> sanic.HTTPResponse:
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return html(f"<pre>{table}</pre>")
     # else: JSON
-    return server.Success200Response(data=nutrients)
+    return server.Response200Success(data=nutrients)
 
 
 def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
@@ -43,7 +43,7 @@ def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
     brzycki = calc.orm_brzycki(reps, weight)
     dos_remedios = calc.orm_dos_remedios(reps, weight)
 
-    return server.Success200Response(
+    return server.Response200Success(
         data={
             "epley": epley,
             "brzycki": brzycki,
@@ -83,7 +83,7 @@ def post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
         gender, weight, height, dob, activity_factor
     )
 
-    return server.Success200Response(
+    return server.Response200Success(
         data={
             "katchMcArdle": katch_mcardle,
             "cunningham": cunningham,
@@ -136,7 +136,7 @@ def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
             "stack": traceback.format_exc(),
         }
 
-    return server.Success200Response(
+    return server.Response200Success(
         data={"navy": navy, "threeSite": three_site, "sevenSite": seven_site}
     )
 
@@ -205,7 +205,7 @@ def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
             + 'requires: ["height", "desired-bf", "wrist", "ankle"]',
         }
 
-    return server.Success200Response(
+    return server.Response200Success(
         data={
             "martinBerkhan": martin_berkhan,
             "ericHelms": eric_helms,

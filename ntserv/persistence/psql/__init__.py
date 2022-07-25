@@ -7,7 +7,7 @@ import sanic.response
 
 from ntserv import __db_target_ntdb__
 from ntserv.env import PSQL_DATABASE, PSQL_HOST, PSQL_PASSWORD, PSQL_SCHEMA, PSQL_USER
-from ntserv.utils.libserver import ServerError500Response, Success200Response
+from ntserv.utils.libserver import Response200Success, Response500ServerError
 from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
@@ -34,7 +34,7 @@ class PgResult:
     def http_response_error(self) -> sanic.response.HTTPResponse:
         """Used ONLY for ERRORS"""
 
-        return ServerError500Response(
+        return Response500ServerError(
             data={"errMsg": "General database error (Postgres)", "stack": self.err_msg}
         )
 
@@ -184,4 +184,4 @@ def get_pg_version(**kwargs: dict) -> sanic.HTTPResponse:
     for row in rows:
         row["created"] = row["created"].isoformat()
 
-    return Success200Response(data={"message": pg_result.msg, "versions": rows})
+    return Response200Success(data={"message": pg_result.msg, "versions": rows})

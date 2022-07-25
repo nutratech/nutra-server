@@ -15,11 +15,11 @@ from ntserv.utils.account import (
 )
 from ntserv.utils.auth import AUTH_LEVEL_UNAUTHED, auth, issue_jwt_token
 from ntserv.utils.libserver import (
-    BadRequest400Response,
-    MultiStatus207Response,
-    NotImplemented501Response,
-    Success200Response,
-    Unauthenticated401Response,
+    Response200Success,
+    Response207MultiStatus,
+    Response400BadRequest,
+    Response401Unauthenticated,
+    Response501NotImplemented,
 )
 
 
@@ -49,12 +49,12 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         r"""(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"""
     )
     if not re.match(regex, email):
-        return BadRequest400Response("Email address not recognizable")
+        return Response400BadRequest("Email address not recognizable")
     # Allow "guest" registration with email only
     # Email exists already?
     pg_result = psql("SELECT user_id FROM email WHERE email=%s", [email])
     if pg_result.rows:
-        return MultiStatus207Response(data={"user_id": pg_result.row["user_id"]})
+        return Response207MultiStatus(data={"user_id": pg_result.row["user_id"]})
     ##########
     # Username
     if username and (
@@ -62,14 +62,14 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         or len(username) > 18
         or not re.match("^[0-9a-z_]+$", username)
     ):
-        return BadRequest400Response(
+        return Response400BadRequest(
             "Username must be 6-18 chars, and contain "
             "only lowercase letters, numbers, and underscores"
         )
     ##########
     # Password
     if password and password_confirm != password:
-        return BadRequest400Response("Passwords do NOT match")
+        return Response400BadRequest("Passwords do NOT match")
     if password and (
         len(password) < 6
         or len(password) > 40
@@ -77,7 +77,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         or not re.findall("[a-z]", password)
         or not re.findall("[A-Z]", password)
     ):
-        return BadRequest400Response(
+        return Response400BadRequest(
             "Password must be 6-40 chars long, and contain "
             "an uppercase, a lowercase, and a special character"
         )
@@ -124,7 +124,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     send_activation_email(email, token)
 
     # TODO: rethink "message"?
-    return Success200Response(
+    return Response200Success(
         data={"message": "Successfully registered", "id": user_id}
     )
 
@@ -139,15 +139,15 @@ def post_login(request: sanic.Request) -> sanic.HTTPResponse:
     # See if user exists
     user_id = user_id_from_username_or_email(username)
     if not user_id:
-        return BadRequest400Response(f"No user found: {username}")
+        return Response400BadRequest(f"No user found: {username}")
 
     # Get auth level and return JWT (token)
     token, auth_level, error = issue_jwt_token(user_id, password)
     if token:
-        return Success200Response(
+        return Response200Success(
             data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
-    return BadRequest400Response(error)
+    return Response400BadRequest(error)
 
 
 def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
@@ -186,16 +186,16 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     # See if user exists
     user_id = user_id_from_username_or_email(email)
     if not user_id:
-        return BadRequest400Response(f"No user found: {email}")
+        return Response400BadRequest(f"No user found: {email}")
 
     #
     # Get auth level and return JWT (token)
     token, auth_level, error = issue_oauth_token(user_id, password, device_id)
     if token:
-        return Success200Response(
+        return Response200Success(
             data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
-    return BadRequest400Response(error)
+    return Response400BadRequest(error)
 
 
 # TODO: resolve unused keywords with **kwargs ?
@@ -214,7 +214,7 @@ def get_user_details(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
     # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
     # NOTE: this IS valid syntax, it DOES work. Pycharm is wrong to complain I guess
     pg_result = psql('SELECT * FROM "user"(%s)', [user_id])
-    return Success200Response(data=pg_result.row)
+    return Response200Success(data=pg_result.row)
 
 
 def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
@@ -227,7 +227,7 @@ def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
 
     user_id = user_id_from_unver_email(email)
     if not user_id:
-        return BadRequest400Response("No such user")
+        return Response400BadRequest("No such user")
 
     # Grab token(s)
     pg_result = psql(
@@ -235,11 +235,11 @@ def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
         [user_id],
     )
     if pg_result.err_msg or not pg_result.rows:
-        return BadRequest400Response("No token for you")
+        return Response400BadRequest("No token for you")
     # Compare token(s)
     valid = any(r["token"] == token for r in pg_result.rows)
     if not valid:
-        return Unauthenticated401Response("Wrong token")
+        return Response401Unauthenticated("Wrong token")
     # ---------------------
     # Update info
     # ---------------------
@@ -269,7 +269,7 @@ RETURNING
         [user_id],
     )
     # TODO: send welcome email?
-    return Success200Response(data={"message": "Successfully activated"})
+    return Response200Success(data={"message": "Successfully activated"})
 
 
 @auth
@@ -284,11 +284,11 @@ def get_email_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
 
     # Require additional password check
     if not cmp_pass(user_id, password):
-        return Unauthenticated401Response("Invalid password")
+        return Response401Unauthenticated("Invalid password")
 
     # TODO: implement
     # return NotImplemented501Response(data={"email": email})
-    return NotImplemented501Response()
+    return Response501NotImplemented()
 
 
 @auth
@@ -303,10 +303,10 @@ def get_password_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPRespon
 
     # Require additional password check
     if not cmp_pass(user_id, password_old):
-        return Unauthenticated401Response("Invalid password")
+        return Response401Unauthenticated("Invalid password")
     # Check matching passwords
     if password != password_confirm:
-        return BadRequest400Response("Passwords don't match")
+        return Response400BadRequest("Passwords don't match")
 
     # Update
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
@@ -317,7 +317,7 @@ def get_password_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPRespon
     )
 
     # TODO: return a message?
-    return Success200Response()
+    return Response200Success()
 
 
 def post_username_forgot(*args: sanic.Request) -> sanic.HTTPResponse:
@@ -326,7 +326,7 @@ def post_username_forgot(*args: sanic.Request) -> sanic.HTTPResponse:
     Request to email (or display?) forgotten username
     """
     _ = args[0]
-    return NotImplemented501Response()
+    return Response501NotImplemented()
 
 
 def post_password_new_request(*args: sanic.Request) -> sanic.HTTPResponse:
@@ -335,7 +335,7 @@ def post_password_new_request(*args: sanic.Request) -> sanic.HTTPResponse:
     Request to have password reset
     """
     _ = args[0]
-    return NotImplemented501Response()
+    return Response501NotImplemented()
 
 
 def post_password_new_reset(*args: sanic.Request) -> sanic.HTTPResponse:
@@ -344,7 +344,7 @@ def post_password_new_reset(*args: sanic.Request) -> sanic.HTTPResponse:
     Confirm link in email, to actually reset password
     """
     _ = args[0]
-    return NotImplemented501Response()
+    return Response501NotImplemented()
 
 
 # ---------------
@@ -374,4 +374,4 @@ RETURNING
         [client_app_name, client_app_version, client_app_release, client_info],
     )
 
-    return Success200Response()
+    return Response200Success()
