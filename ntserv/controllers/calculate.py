@@ -19,6 +19,7 @@ from ntserv.utils import Gender, cache
 
 
 def get_nutrients(**kwargs: dict) -> sanic.HTTPResponse:
+    """Archaic method (not used currently). Returns nutrients as JSON or HTML"""
     response_type = kwargs.get("response_type")
     nutrients = list(cache.NUTRIENTS.values())
 
@@ -96,7 +97,6 @@ def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
     """
     Doesn't support imperial units yet.
 
-    @param request: HTTPRequest
     @return: dict, with "navy", "threeSite", and "sevenSite",
         with potential validation errors inside those objects.
     """
@@ -142,6 +142,7 @@ def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
 
 
 def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
+    """Calculate mens' lean body limits"""
     body = dict(request.json)
     height = float(body["height"])
 

@@ -1,3 +1,8 @@
+"""
+Mostly SQL / authorization checking functions.
+Also contains the email sending methods, for on-boarding, reset/change password
+What's the difference between this and auth.py? It's not totally clear yet!
+"""
 import smtplib
 import ssl
 from email.message import EmailMessage
@@ -16,6 +21,7 @@ from ntserv.persistence.psql import psql
 # get user_id funcs
 # ----------------------
 def user_id_from_username_or_email(identifier: str) -> int:
+    """Get user ID from username OR email"""
     pg_result = psql("SELECT * FROM find_user(%s)", [identifier])
     if pg_result.err_msg or not pg_result.rows:
         # TODO: magic number
@@ -25,6 +31,7 @@ def user_id_from_username_or_email(identifier: str) -> int:
 
 
 def user_id_from_username(username: str) -> int:
+    """Get user ID from username"""
     pg_result = psql('SELECT id FROM "user" WHERE username=%s', [username])
     if pg_result.err_msg or not pg_result.rows:
         # TODO: magic number
@@ -34,6 +41,7 @@ def user_id_from_username(username: str) -> int:
 
 
 def user_id_from_unver_email(_email: str) -> int:
+    """Get user ID from unverified email"""
     pg_result = psql(
         "SELECT user_id from email WHERE email=%s AND activated='f'", [_email]
     )
@@ -48,6 +56,7 @@ def user_id_from_unver_email(_email: str) -> int:
 # password comparator
 # ----------------------
 def cmp_pass(user_id: int, password: str) -> bool:
+    """Compare password with salted hash, see if valid"""
     pg_result = psql('SELECT passwd FROM "user" WHERE id=%s', [user_id])
     passwd = pg_result.row["passwd"]
     return bcrypt.checkpw(password.encode(), passwd.encode())

@@ -1,3 +1,4 @@
+"""Module for authorization related stuff: methods, constants, classes, jwt checking"""
 import time
 import traceback
 from datetime import datetime
@@ -28,6 +29,8 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 
 
 class AuthResult:
+    """An authorization result object"""
+
     def __init__(self, token: dict = None, err_msg: str = str()) -> None:
         if token:
             self.user_id = int(token["userId"])
@@ -42,6 +45,7 @@ class AuthResult:
 
     @property
     def expired(self) -> bool:
+        """Checks login token expiration"""
         return datetime.now().timestamp() > self.expires
 
 
@@ -142,6 +146,7 @@ def check_token(_token: str) -> Tuple[AuthResult, str]:
 
 
 def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
+    """Sees if a request is authorized or not, typically produces a 401 / 403"""
     try:
         token = request.headers["authorization"].split()[1]
         return check_token(token)

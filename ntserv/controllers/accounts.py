@@ -1,3 +1,4 @@
+"""Controller for endpoints: register, login, change password/email, etc"""
 import re
 import uuid
 from typing import Tuple, Union
@@ -23,6 +24,7 @@ from ntserv.utils.libserver import (
 
 
 def post_register(request: sanic.Request) -> sanic.HTTPResponse:
+    """Request to register a user"""
     # Parse incoming request
     body: dict = request.json
     email: str = body["email"]
@@ -128,6 +130,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
 
 
 def post_login(request: sanic.Request) -> sanic.HTTPResponse:
+    """Request to login"""
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
@@ -148,11 +151,14 @@ def post_login(request: sanic.Request) -> sanic.HTTPResponse:
 
 
 def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOTE: wip v2 login
+    """
+
     def issue_oauth_token(
         *args: Union[str, int],
     ) -> Tuple[int, int, str]:
         """
-
         @param args: _user_id: int, _passwd: str, _device_id: str
         @return: user_id: int, auth_level: int, token: str
         """
@@ -195,7 +201,13 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
 # TODO: resolve unused keywords with **kwargs ?
 @auth
 def get_user_details(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
-    # TODO: why isn't auth_level being populated from the @auth decorator too?
+    """
+    Returns user details (username, emails, tokens)
+    TODO: why isn't auth_level being populated from the @auth decorator too?
+    @param args:
+    @param kwargs: user_id, inherited from @auth decorater
+    @return: 200 response
+    """
     _ = args[0]
     # TODO: if not user_id: return err
     user_id = kwargs["user_id"]
@@ -206,6 +218,7 @@ def get_user_details(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
 
 
 def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
+    """Click to confirm link which we email them"""
     # TODO: redirect code with user-friendly, non-JSON output
 
     email = request.args["email"]
@@ -261,6 +274,7 @@ RETURNING
 
 @auth
 def get_email_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    """Click to confirm link which we email them"""
     # TODO: why is it always args[0] if only 1 arg? Can't unpack a tuple with just 1?
     request = args[0]
     user_id = kwargs["user_id"]
@@ -279,6 +293,7 @@ def get_email_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
 
 @auth
 def get_password_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    """Request to change existing password"""
     request = args[0]
     user_id = kwargs["user_id"]
 
@@ -306,16 +321,28 @@ def get_password_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPRespon
 
 
 def post_username_forgot(*args: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOT IMPLEMENTED.
+    Request to email (or display?) forgotten username
+    """
     _ = args[0]
     return NotImplemented501Response()
 
 
 def post_password_new_request(*args: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOT IMPLEMENTED.
+    Request to have password reset
+    """
     _ = args[0]
     return NotImplemented501Response()
 
 
 def post_password_new_reset(*args: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOT IMPLEMENTED.
+    Confirm link in email, to actually reset password
+    """
     _ = args[0]
     return NotImplemented501Response()
 
@@ -326,7 +353,7 @@ def post_password_new_reset(*args: sanic.Request) -> sanic.HTTPResponse:
 @auth
 def post_report(*args: sanic.Request) -> sanic.HTTPResponse:
     """
-    Used for submitting bug reports over CLI, web, or Android
+    TODO: Might be used for submitting bug reports over CLI, web, or Android
     """
 
     request = args[0]

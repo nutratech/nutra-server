@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Aug 11 20:53:14 2020
@@ -350,6 +349,12 @@ def bf_7site(gender: Gender, body: dict) -> float:
 # Misc functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def _age(dob: int) -> float:
+    """
+    Calculate age based on birthday.
+
+    @param dob: birth time in UNIX seconds
+    @return: age in years
+    """
     now = datetime.now().timestamp()
     years = (now - dob) / (365 * 24 * 3600)
     return years

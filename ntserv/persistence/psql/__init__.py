@@ -1,3 +1,4 @@
+"""Postgres utilities"""
 from typing import Union
 
 import psycopg2
@@ -13,9 +14,12 @@ _logger = get_logger(__name__)
 
 
 class PgResult:
-    def __init__(self, query: str, err_msg: str = str()) -> None:
-        """Defines a convenient result for `psql()`"""
+    """
+    Result object for all in app queries, with handler and helper methods.
+    Defines a convenient result for `psql()`,
+    """
 
+    def __init__(self, query: str, err_msg: str = str()) -> None:
         self.query = query
 
         # TODO: do these belong in init or update? Do we pass in rows to __init__ even?
@@ -44,6 +48,7 @@ class PgResult:
         self.rows = []
 
         if len(fetchall):
+            # FIXME: this is hacky and old, find the proper way of fetching keys/headers
             keys = list(fetchall[0]._index.keys())
 
             # Build dict from named tuple
@@ -85,6 +90,12 @@ def build_con(
 
 
 def psql(query: str, params: Union[list, tuple, None] = None) -> PgResult:
+    """
+
+    @param query: SQL query
+    @param params: Optional. Parameters Tuple[], or list of parameters List[tuple]
+    @return: PgResult object, with any errors and row(s) populated
+    """
     # TODO:  mandatory "RETURNING id" after all "INSERTS"
 
     # Initialize connection
@@ -152,6 +163,7 @@ def psql(query: str, params: Union[list, tuple, None] = None) -> PgResult:
 
 
 def verify_db_version_compat() -> bool:
+    """Returns true if the attached Postgres schema is of target version"""
     # FIXME: use this to verify, e.g. cache reload(), and prior to any SQL operation
     # NOTE: Should this cause any other failures, if version isn't equal?
     pg_result = psql("SELECT * FROM version ORDER BY id DESC LIMIT 1")
@@ -161,6 +173,10 @@ def verify_db_version_compat() -> bool:
 
 
 def get_pg_version(**kwargs: dict) -> sanic.HTTPResponse:
+    """
+    Returns current (and previous) Postgres schema versions
+        (there's an endpoint for this)
+    """
     _ = kwargs
 
     pg_result = psql("SELECT * FROM version")

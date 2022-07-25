@@ -1,7 +1,8 @@
+"""Work in progress controller for sync functions"""
 import sanic
 
 import ntserv.utils.libserver as server
-from ntserv.persistence.psql.sync import sql_unsynced_rows, sql_update_entities
+from ntserv.persistence.psql.sync import sql_un_synced_rows, sql_update_entities
 from ntserv.utils.auth import auth
 
 
@@ -17,7 +18,7 @@ def opt_sync(*args: sanic.Request) -> sanic.HTTPResponse:
         profile_guid = request.args["uid"]
         synced = int(request.args["last_sync"])
 
-        profiles = sql_unsynced_rows(profile_guid, synced)
+        profiles = sql_un_synced_rows(profile_guid, synced)
         return server.Success200Response(data={"profiles": profiles})
     if method == "POST":
         profile_guid = request.json["uid"]

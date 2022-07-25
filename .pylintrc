@@ -4,12 +4,6 @@ fail-under=9.4
 [MESSAGES CONTROL]
 disable=
     fixme,
-    consider-using-f-string,
-    missing-module-docstring,
-    missing-class-docstring,
-    missing-function-docstring,
-    too-few-public-methods,
-    too-many-arguments,
 
 extension-pkg-allow-list =
     psycopg2._psycopg,

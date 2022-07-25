@@ -1,3 +1,4 @@
+"""Dumping grounds for things related to URL routes, responses and  the home page"""
 import time
 import traceback
 from datetime import datetime
@@ -96,10 +97,12 @@ def _response(
 # Success paths
 # ------------------------------------------------
 def Success200Response(data: Union[dict, list] = None) -> sanic.HTTPResponse:
+    """200 response"""
     return _response(data=data, code=200)
 
 
 def MultiStatus207Response(data: dict = None) -> sanic.HTTPResponse:
+    """207 response"""
     return _response(data=data, code=207)
 
 
@@ -109,14 +112,17 @@ def MultiStatus207Response(data: dict = None) -> sanic.HTTPResponse:
 def BadRequest400Response(
     err_msg: str = "Bad request", stack: str = str()
 ) -> sanic.HTTPResponse:
+    """400 response"""
     return _response(err_msg=err_msg, stack=stack, code=400)
 
 
 def Unauthenticated401Response(err_msg: str = "Unauthenticated") -> sanic.HTTPResponse:
+    """401 response"""
     return _response(err_msg=err_msg, code=401)
 
 
 def Forbidden403Response(err_msg: str = "Forbidden") -> sanic.HTTPResponse:
+    """403 response"""
     return _response(err_msg=err_msg, code=403)
 
 
@@ -124,11 +130,16 @@ def Forbidden403Response(err_msg: str = "Forbidden") -> sanic.HTTPResponse:
 # Server errors
 # ------------------------------------------------
 def ServerError500Response(data: dict) -> sanic.HTTPResponse:
+    """
+    500 response
+    This is a generic catchall, which will typically include a stack and errMsg
+    """
     # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
     return _response(data=data, code=500)
 
 
 def NotImplemented501Response(err_msg: str = "Not Implemented") -> sanic.HTTPResponse:
+    """501 response"""
     return _response(err_msg=err_msg, code=501)
 
 
@@ -136,6 +147,7 @@ def NotImplemented501Response(err_msg: str = "Not Implemented") -> sanic.HTTPRes
 # Misc functions
 # ------------------------
 def a_href(link: str, target: str = str()) -> str:
+    """Creates an HREF link"""
     if target:
         return f'<a href="{link}" target="{target}">{link}</a>'
     return f'<a href="{link}">{link}</a>'
