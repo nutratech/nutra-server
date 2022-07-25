@@ -125,6 +125,7 @@ def Response401Unauthenticated(err_msg: str = "Unauthenticated") -> sanic.HTTPRe
     return _response(err_msg=err_msg, code=401)
 
 
+# TODO: use this instead of 401 for some cases?
 # noinspection PyPep8Naming
 def Response403Forbidden(err_msg: str = "Forbidden") -> sanic.HTTPResponse:
     """403 response"""

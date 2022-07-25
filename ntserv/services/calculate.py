@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+Calculate service for one rep max, BMR, body fat.
+
 Created on Tue Aug 11 20:53:14 2020
 
 @author: shane
@@ -9,7 +11,7 @@ import traceback
 from datetime import datetime
 from typing import Dict, Union
 
-from ntserv.utils import Gender
+from ntserv.services import Gender, activity_factor_from_float
 from ntserv.utils.logger import get_logger
 
 # TODO: generalize activity level across BMR calcs, e.g. LIGHT, MODERATE, EXTREME
@@ -120,16 +122,19 @@ def orm_dos_remedios(
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # BMR
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def bmr_katch_mcardle(lbm: float, activity_factor: float) -> Dict[str, float]:
+def bmr_katch_mcardle(lbm: float, _activity_factor: float) -> Dict[str, float]:
     """
     @param lbm: lean mass in kg
-    @param activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
+    @param _activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
 
     BMR = 370 + (21.6 x Lean Body Mass(kg) )
 
     Source: https://www.calculatorpro.com/calculator/katch-mcardle-bmr-calculator/
     Source: https://tdeecalculator.net/about.php
     """
+    # Validate it conforms to one of the enum values
+    # TODO: return 400s in cases like this, not 500
+    activity_factor = float(activity_factor_from_float(_activity_factor).value)
 
     bmr = 370 + (21.6 * lbm)
     tdee = bmr * (1 + activity_factor)
@@ -140,13 +145,14 @@ def bmr_katch_mcardle(lbm: float, activity_factor: float) -> Dict[str, float]:
     }
 
 
-def bmr_cunningham(lbm: float, activity_factor: float) -> Dict[str, float]:
+def bmr_cunningham(lbm: float, _activity_factor: float) -> Dict[str, float]:
     """
     @param lbm: lean mass in kg
-    @param activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
+    @param _activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
 
     Source: https://www.slideshare.net/lsandon/weight-management-in-athletes-lecture
     """
+    activity_factor = float(activity_factor_from_float(_activity_factor).value)
 
     bmr = 500 + 22 * lbm
     tdee = bmr * (1 + activity_factor)
@@ -158,14 +164,14 @@ def bmr_cunningham(lbm: float, activity_factor: float) -> Dict[str, float]:
 
 
 def bmr_mifflin_st_jeor(
-    gender: str, weight: float, height: float, dob: int, activity_factor: float
+    gender: str, weight: float, height: float, dob: int, _activity_factor: float
 ) -> Dict[str, float]:
     """
     @param gender: {'MALE', 'FEMALE'}
     @param weight: kg
     @param height: cm
     @param dob: int, unix timestamp (seconds)
-    @param activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
+    @param _activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
 
     Activity Factor\n
     ---------------\n
@@ -185,6 +191,7 @@ def bmr_mifflin_st_jeor(
 
     Source: https://www.myfeetinmotion.com/mifflin-st-jeor-equation/
     """
+    activity_factor = float(activity_factor_from_float(_activity_factor).value)
 
     def gender_specific_bmr(_gender: str, _bmr: float) -> float:
         _second_term = {
@@ -206,14 +213,14 @@ def bmr_mifflin_st_jeor(
 
 
 def bmr_harris_benedict(
-    gender: str, weight: float, height: float, dob: int, activity_factor: float
+    gender: str, weight: float, height: float, dob: int, _activity_factor: float
 ) -> Dict[str, float]:
     """
     @param gender: MALE, FEMALE
     @param weight: kg
     @param height: cm
     @param dob: int, unix timestamp (seconds)
-    @param activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
+    @param _activity_factor: {0.200, 0.375, 0.550, 0.725, 0.900}
 
     Harris-Benedict = (13.397m + 4.799h - 5.677a) + 88.362 (MEN)
 
@@ -223,6 +230,7 @@ def bmr_harris_benedict(
 
     Source: https://tdeecalculator.net/about.php
     """
+    activity_factor = float(activity_factor_from_float(_activity_factor).value)
 
     def gender_specific_bmr(_gender: str) -> float:
         age = _age(dob)
