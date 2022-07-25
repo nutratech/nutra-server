@@ -7,7 +7,7 @@ Created on Tue Aug 11 16:47:18 2020
 
 import math
 import traceback
-from typing import Dict
+from typing import Dict, Union
 
 import sanic.response
 from sanic import html
@@ -106,9 +106,9 @@ def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
     gender = Gender(body["gender"])
 
     # Initialize result variables
-    navy: float | Dict[str, str]
-    three_site: float | Dict[str, str]
-    seven_site: float | Dict[str, str]
+    navy: Union[float, Dict[str, str]]
+    three_site: Union[float, Dict[str, str]]
+    seven_site: Union[float, Dict[str, str]]
 
     # Calculate 3 different body fat equations
     try:
