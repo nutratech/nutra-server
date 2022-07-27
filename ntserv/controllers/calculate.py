@@ -186,11 +186,11 @@ def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
     # ----------------
     try:
         height = height / 2.54
-        weight = wrist / 2.54
+        wrist = wrist / 2.54
         ankle = ankle / 2.54
         lbm = round(
             height ** (3 / 2)
-            * (math.sqrt(weight) / 22.6670 + math.sqrt(ankle) / 17.0104)
+            * (math.sqrt(wrist) / 22.6670 + math.sqrt(ankle) / 17.0104)
             * (1 + desired_bf / 224),
             1,
         )
@@ -199,10 +199,10 @@ def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
             "notes": f"{desired_bf}% bodyfat",
             "lbm": f"{lbm} lbs",
             "weight": f"{weight} lbs",
-            "chest": round(1.6817 * weight + 1.3759 * ankle + 0.3314 * height, 2),
-            "arm": round(1.2033 * weight + 0.1236 * height, 2),
-            "forearm": round(0.9626 * weight + 0.0989 * height, 2),
-            "neck": round(1.1424 * weight + 0.1236 * height, 2),
+            "chest": round(1.6817 * wrist + 1.3759 * ankle + 0.3314 * height, 2),
+            "arm": round(1.2033 * wrist + 0.1236 * height, 2),
+            "forearm": round(0.9626 * wrist + 0.0989 * height, 2),
+            "neck": round(1.1424 * wrist + 0.1236 * height, 2),
             "thigh": round(1.3868 * ankle + 0.1805 * height, 2),
             "calf": round(0.9298 * ankle + 0.1210 * height, 2),
         }
