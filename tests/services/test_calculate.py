@@ -84,8 +84,8 @@ def test_bmr_cunningham():
 @pytest.mark.parametrize(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
-        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1740, "tdee": 2696}),
-        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1574, "tdee": 2439}),
+        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1739, "tdee": 2696}),
+        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1573, "tdee": 2439}),
     ],
 )
 def test_bmr_mifflin_st_jeor(
