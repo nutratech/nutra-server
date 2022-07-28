@@ -1,3 +1,4 @@
+"""Module for authorization related stuff: methods, constants, classes, jwt checking"""
 import time
 import traceback
 from datetime import datetime
@@ -5,11 +6,12 @@ from typing import Callable, Tuple
 
 import bcrypt
 import jwt
+import psycopg2
 import sanic
 
 from ntserv.env import JWT_SECRET, TOKEN_EXPIRY
 from ntserv.persistence.psql import psql
-from ntserv.utils.libserver import Unauthenticated401Response
+from ntserv.utils.libserver import Response401Unauthenticated
 from ntserv.utils.logger import get_logger
 
 _logger = get_logger(__name__)
@@ -27,6 +29,8 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 
 
 class AuthResult:
+    """An authorization result object"""
+
     def __init__(self, token: dict = None, err_msg: str = str()) -> None:
         if token:
             self.user_id = int(token["userId"])
@@ -41,10 +45,11 @@ class AuthResult:
 
     @property
     def expired(self) -> bool:
+        """Checks login token expiration"""
         return datetime.now().timestamp() > self.expires
 
 
-def issue_jwt_token(user_id: int, password: str) -> tuple:
+def issue_jwt_token(user_id: int, password: str) -> Tuple[str, int, str]:
     """Returns tuple: (token, auth_level, err_msg)"""
 
     # --------------------------------------------
@@ -60,19 +65,19 @@ def issue_jwt_token(user_id: int, password: str) -> tuple:
 
     # Invalid password
     if not result:
-        return None, AUTH_LEVEL_UNAUTHED, "Invalid password and username combination"
+        return str(), AUTH_LEVEL_UNAUTHED, "Invalid password and username combination"
 
     # --------------------------------------------
     # Create token
     # --------------------------------------------
     try:
         return get_auth_level(user_id)
-    except Exception as err:
+    except psycopg2.OperationalError as err:
         _logger.debug(traceback.format_exc())
-        return None, AUTH_LEVEL_READ_ONLY, repr(err)
+        return str(), AUTH_LEVEL_READ_ONLY, repr(err)
 
 
-def get_auth_level(user_id: int) -> tuple:
+def get_auth_level(user_id: int) -> Tuple[str, int, str]:
     """Returns same tuple: (token, auth_level, error)"""
 
     # NOTE: is this the right level to start with here?
@@ -87,7 +92,7 @@ def get_auth_level(user_id: int) -> tuple:
     try:
         # FIXME: this is unused, email
         _ = pg_result.row["email"]
-    except Exception as err:
+    except KeyError as err:
         _logger.debug(traceback.format_exc())
         return jwt_token(user_id, auth_level), auth_level, repr(err)
 
@@ -103,7 +108,7 @@ def get_auth_level(user_id: int) -> tuple:
         auth_level = AUTH_LEVEL_FULL_ADMIN
 
     # Made it this far... create token
-    return jwt_token(user_id, auth_level), auth_level, None
+    return jwt_token(user_id, auth_level), auth_level, str()
 
 
 def jwt_token(user_id: int, auth_level: int) -> str:
@@ -113,7 +118,7 @@ def jwt_token(user_id: int, auth_level: int) -> str:
     token = jwt.encode(
         {
             "userId": user_id,
-            "authLevel": AUTH_LEVEL_BASIC,
+            "authLevel": auth_level,
             "expiresAt": int(expires_at.timestamp()),
         },
         JWT_SECRET,
@@ -141,12 +146,13 @@ def check_token(_token: str) -> Tuple[AuthResult, str]:
 
 
 def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
+    """Sees if a request is authorized or not, typically produces a 401 / 403"""
     try:
         token = request.headers["authorization"].split()[1]
         return check_token(token)
 
     # TODO: check for other types of exceptions that can be thrown?
-    except (KeyError, jwt.DecodeError) as err:
+    except (KeyError, IndexError, jwt.DecodeError) as err:
         _logger.debug(traceback.format_exc())
         return AuthResult(), repr(err)
 
@@ -156,16 +162,17 @@ def check_request(request: sanic.Request) -> Tuple[AuthResult, str]:
 # ------------------------------------------------
 # TODO: handle level with **kwargs?
 def auth(
-    og_func: Callable[..., sanic.HTTPResponse],
-    level: int = AUTH_LEVEL_UNAUTHED,
+    og_func: Callable[..., sanic.HTTPResponse]
 ) -> Callable[..., sanic.HTTPResponse]:
     """Auth decorator, use to send 401s"""
+
+    # TODO: why did this functionality disappear? No more level=UNCONFIRMED, etc
 
     def func(request: sanic.Request) -> sanic.HTTPResponse:
         # Check authorization
         authr, err_msg = check_request(request)
         if not authr or authr.expired or authr.auth_level < AUTH_LEVEL_UNCONFIRMED:
-            return Unauthenticated401Response(err_msg)
+            return Response401Unauthenticated(err_msg)
 
         # Execute original function
         return og_func(request, user_id=authr.user_id)

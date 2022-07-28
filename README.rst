@@ -38,7 +38,7 @@ Dependencies
 
 You will need to install the following, or newer.
 
-- Python 3.7.0 (with ``venv`` support)
+- Python 3.8 (with ``venv`` support)
 - PostgreSQL 12 (with ``dev`` library, see ``db`` for details)
 
 Initialize Database

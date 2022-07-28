@@ -35,7 +35,7 @@ except ImportError:
 
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
-PY_MIN_STR = "3.7.0"
+PY_MIN_STR = "3.8.0"
 
 # ------------------------------------------------
 # Package info
@@ -43,16 +43,16 @@ PY_MIN_STR = "3.7.0"
 
 __title__ = "nutra-server"
 __module__ = "ntserv"
-__version__ = "0.1.0.dev15"
+__version__ = "0.1.0.dev16"
 __release__ = COMMIT_SHA + " " + COMMIT_DATE
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"
 __copyright__ = "Copyright 2019-2022 Shane Jaroch"
-__url__ = "https://github.com/nutratech/nutra-server"
+__url__ = "https://github.com/nutratech/server"
 
 # nt-sqlite database target version
-__db_target_ntdb__ = "0.0.38"
+__db_target_ntdb__ = "0.1.1.dev0"
 
 # -------------------------------------------------
 # Constants / configurations

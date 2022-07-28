@@ -52,7 +52,7 @@ setup(
     author_email=__email__,
     classifiers=CLASSIFIERS,
     install_requires=REQUIREMENTS,
-    python_requires=">=%s" % PY_MIN_STR,
+    python_requires=f">={PY_MIN_STR}",
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     include_package_data=True,

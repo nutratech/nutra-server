@@ -1,3 +1,4 @@
+"""Dumping grounds for things related to URL routes, responses and  the home page"""
 import time
 import traceback
 from datetime import datetime
@@ -7,7 +8,7 @@ import sanic.response
 from sanic import Sanic
 from tabulate import tabulate
 
-from ntserv import __email__, __release__, __url__, __version__
+from ntserv import __email__, __release__, __title__, __url__, __version__
 from ntserv.env import (
     BLOG_HOST,
     SERVER_HOST,
@@ -44,7 +45,7 @@ def exc_req(
 
     # pylint: disable=broad-except
     except Exception as err_generic:
-        return ServerError500Response(
+        return Response500ServerError(
             data={
                 "errMsg": f"General server error — {repr(err_generic)}",
                 "stack": traceback.format_exc(),
@@ -73,9 +74,13 @@ def _response(
     if stack:
         data["stack"] = stack  # type: ignore
 
+    # TODO: standardize validation / stack / other errMsg info
+    #  Ideally we should have a danger alter pop in the UI, or similar with the format:
+    #  errHeader: errMsg/errDescription
+
     return sanic.response.json(
         {
-            "program": "nutra-server",
+            "program": __title__,
             "version": __version__,
             "release": __release__,
             "datetime": datetime.now().strftime("%c").strip(),
@@ -91,40 +96,58 @@ def _response(
 # ------------------------------------------------
 # Success paths
 # ------------------------------------------------
-def Success200Response(data: Union[dict, list] = None) -> sanic.HTTPResponse:
+# noinspection PyPep8Naming
+def Response200Success(data: Union[dict, list] = None) -> sanic.HTTPResponse:
+    """200 response"""
     return _response(data=data, code=200)
 
 
-def MultiStatus207Response(data: dict = None) -> sanic.HTTPResponse:
+# noinspection PyPep8Naming
+def Response207MultiStatus(data: dict = None) -> sanic.HTTPResponse:
+    """207 response"""
     return _response(data=data, code=207)
 
 
 # ------------------------------------------------
 # Client errors
 # ------------------------------------------------
-def BadRequest400Response(
+# noinspection PyPep8Naming
+def Response400BadRequest(
     err_msg: str = "Bad request", stack: str = str()
 ) -> sanic.HTTPResponse:
+    """400 response"""
     return _response(err_msg=err_msg, stack=stack, code=400)
 
 
-def Unauthenticated401Response(err_msg: str = "Unauthenticated") -> sanic.HTTPResponse:
+# noinspection PyPep8Naming
+def Response401Unauthenticated(err_msg: str = "Unauthenticated") -> sanic.HTTPResponse:
+    """401 response"""
     return _response(err_msg=err_msg, code=401)
 
 
-def Forbidden403Response(err_msg: str = "Forbidden") -> sanic.HTTPResponse:
+# TODO: use this instead of 401 for some cases?
+# noinspection PyPep8Naming
+def Response403Forbidden(err_msg: str = "Forbidden") -> sanic.HTTPResponse:
+    """403 response"""
     return _response(err_msg=err_msg, code=403)
 
 
 # ------------------------------------------------
 # Server errors
 # ------------------------------------------------
-def ServerError500Response(data: dict) -> sanic.HTTPResponse:
+# noinspection PyPep8Naming
+def Response500ServerError(data: dict) -> sanic.HTTPResponse:
+    """
+    500 response
+    This is a generic catchall, which will typically include a stack and errMsg
+    """
     # NOTE: injecting stacktrace for 500 is handled in the exc_req() method
     return _response(data=data, code=500)
 
 
-def NotImplemented501Response(err_msg: str = "Not Implemented") -> sanic.HTTPResponse:
+# noinspection PyPep8Naming
+def Response501NotImplemented(err_msg: str = "Not Implemented") -> sanic.HTTPResponse:
+    """501 response"""
     return _response(err_msg=err_msg, code=501)
 
 
@@ -132,6 +155,7 @@ def NotImplemented501Response(err_msg: str = "Not Implemented") -> sanic.HTTPRes
 # Misc functions
 # ------------------------
 def a_href(link: str, target: str = str()) -> str:
+    """Creates an HREF link"""
     if target:
         return f'<a href="{link}" target="{target}">{link}</a>'
     return f'<a href="{link}">{link}</a>'
@@ -143,7 +167,7 @@ def home_page_text(routes_table: str) -> str:
     # TODO: are any of these dynamic or environment based?
     email_link = f"<a href=mailto:{__email__}>{__email__}</a>"
 
-    licsn_link = a_href("https://www.gnu.org/licenses", target="_blank")
+    license_link = a_href("https://www.gnu.org/licenses", target="_blank")
 
     cli_link = a_href("https://pypi.org/project/nutra/", target="_blank")
 
@@ -205,7 +229,7 @@ LICENSE & COPYING NOTICE
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see &lt{licsn_link}&gt
+    along with this program.  If not, see &lt{license_link}&gt
 
 ------------------------------------------------------------------------
 

@@ -1,3 +1,4 @@
+"""Controller for endpoints: register, login, change password/email, etc"""
 import re
 import uuid
 from typing import Tuple, Union
@@ -12,22 +13,18 @@ from ntserv.utils.account import (
     user_id_from_unver_email,
     user_id_from_username_or_email,
 )
-from ntserv.utils.auth import (
-    AUTH_LEVEL_UNAUTHED,
-    AUTH_LEVEL_UNCONFIRMED,
-    auth,
-    issue_jwt_token,
-)
+from ntserv.utils.auth import AUTH_LEVEL_UNAUTHED, auth, issue_jwt_token
 from ntserv.utils.libserver import (
-    BadRequest400Response,
-    MultiStatus207Response,
-    NotImplemented501Response,
-    Success200Response,
-    Unauthenticated401Response,
+    Response200Success,
+    Response207MultiStatus,
+    Response400BadRequest,
+    Response401Unauthenticated,
+    Response501NotImplemented,
 )
 
 
 def post_register(request: sanic.Request) -> sanic.HTTPResponse:
+    """Request to register a user"""
     # Parse incoming request
     body: dict = request.json
     email: str = body["email"]
@@ -52,12 +49,12 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         r"""(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"""
     )
     if not re.match(regex, email):
-        return BadRequest400Response("Email address not recognizable")
+        return Response400BadRequest("Email address not recognizable")
     # Allow "guest" registration with email only
     # Email exists already?
     pg_result = psql("SELECT user_id FROM email WHERE email=%s", [email])
     if pg_result.rows:
-        return MultiStatus207Response(data={"user_id": pg_result.row["user_id"]})
+        return Response207MultiStatus(data={"user_id": pg_result.row["user_id"]})
     ##########
     # Username
     if username and (
@@ -65,14 +62,14 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         or len(username) > 18
         or not re.match("^[0-9a-z_]+$", username)
     ):
-        return BadRequest400Response(
+        return Response400BadRequest(
             "Username must be 6-18 chars, and contain "
             "only lowercase letters, numbers, and underscores"
         )
     ##########
     # Password
     if password and password_confirm != password:
-        return BadRequest400Response("Passwords do NOT match")
+        return Response400BadRequest("Passwords do NOT match")
     if password and (
         len(password) < 6
         or len(password) > 40
@@ -80,7 +77,7 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
         or not re.findall("[a-z]", password)
         or not re.findall("[A-Z]", password)
     ):
-        return BadRequest400Response(
+        return Response400BadRequest(
             "Password must be 6-40 chars long, and contain "
             "an uppercase, a lowercase, and a special character"
         )
@@ -127,12 +124,13 @@ def post_register(request: sanic.Request) -> sanic.HTTPResponse:
     send_activation_email(email, token)
 
     # TODO: rethink "message"?
-    return Success200Response(
+    return Response200Success(
         data={"message": "Successfully registered", "id": user_id}
     )
 
 
 def post_login(request: sanic.Request) -> sanic.HTTPResponse:
+    """Request to login"""
     # Parse incoming request
     username = request.json["username"]
     password = request.json["password"]
@@ -141,23 +139,26 @@ def post_login(request: sanic.Request) -> sanic.HTTPResponse:
     # See if user exists
     user_id = user_id_from_username_or_email(username)
     if not user_id:
-        return BadRequest400Response(f"No user found: {username}")
+        return Response400BadRequest(f"No user found: {username}")
 
     # Get auth level and return JWT (token)
     token, auth_level, error = issue_jwt_token(user_id, password)
     if token:
-        return Success200Response(
+        return Response200Success(
             data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
-    return BadRequest400Response(error)
+    return Response400BadRequest(error)
 
 
 def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOTE: wip v2 login
+    """
+
     def issue_oauth_token(
         *args: Union[str, int],
     ) -> Tuple[int, int, str]:
         """
-
         @param args: _user_id: int, _passwd: str, _device_id: str
         @return: user_id: int, auth_level: int, token: str
         """
@@ -177,7 +178,7 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     user_agent = str(request.headers["user-agent"])
     # FIXME: Are these proper? Do we need an app_type too (e.g. web, cli, android)?
     oper_sys = str(request.json["os"])
-    hostname = str(request.json.get("hostname", str()))
+    hostname = str(request.json["hostname"])
 
     device_id = f"{oper_sys}-{username}@{hostname}-{user_agent}"
 
@@ -185,31 +186,39 @@ def post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     # See if user exists
     user_id = user_id_from_username_or_email(email)
     if not user_id:
-        return BadRequest400Response(f"No user found: {email}")
+        return Response400BadRequest(f"No user found: {email}")
 
     #
     # Get auth level and return JWT (token)
     token, auth_level, error = issue_oauth_token(user_id, password, device_id)
     if token:
-        return Success200Response(
+        return Response200Success(
             data={"message": "Logged in", "token": token, "auth-level": auth_level}
         )
-    return BadRequest400Response(error)
+    return Response400BadRequest(error)
 
 
 # TODO: resolve unused keywords with **kwargs ?
 @auth
-def get_user_details(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def get_user_details(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    """
+    Returns user details (username, emails, tokens)
+    TODO: why isn't auth_level being populated from the @auth decorator too?
+    @param args:
+    @param kwargs: user_id, inherited from @auth decorater
+    @return: 200 response
+    """
+    _ = args[0]
     # TODO: if not user_id: return err
+    user_id = kwargs["user_id"]
     # NOTE: i'm working here... postman jwt error, unused arguments, lots of things
     # NOTE: this IS valid syntax, it DOES work. Pycharm is wrong to complain I guess
     pg_result = psql('SELECT * FROM "user"(%s)', [user_id])
-    return Success200Response(data=pg_result.row)
+    return Response200Success(data=pg_result.row)
 
 
 def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
+    """Click to confirm link which we email them"""
     # TODO: redirect code with user-friendly, non-JSON output
 
     email = request.args["email"]
@@ -218,7 +227,7 @@ def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
 
     user_id = user_id_from_unver_email(email)
     if not user_id:
-        return BadRequest400Response("No such user")
+        return Response400BadRequest("No such user")
 
     # Grab token(s)
     pg_result = psql(
@@ -226,11 +235,11 @@ def get_confirm_email(request: sanic.Request) -> sanic.HTTPResponse:
         [user_id],
     )
     if pg_result.err_msg or not pg_result.rows:
-        return BadRequest400Response("No token for you")
+        return Response400BadRequest("No token for you")
     # Compare token(s)
     valid = any(r["token"] == token for r in pg_result.rows)
     if not valid:
-        return Unauthenticated401Response("Wrong token")
+        return Response401Unauthenticated("Wrong token")
     # ---------------------
     # Update info
     # ---------------------
@@ -260,39 +269,44 @@ RETURNING
         [user_id],
     )
     # TODO: send welcome email?
-    return Success200Response(data={"message": "Successfully activated"})
+    return Response200Success(data={"message": "Successfully activated"})
 
 
 @auth
-def get_email_change(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
-    _: str = request.args["email"]
-    password: str = request.args["password"]
+def get_email_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    """Click to confirm link which we email them"""
+    # TODO: why is it always args[0] if only 1 arg? Can't unpack a tuple with just 1?
+    request = args[0]
+    user_id = kwargs["user_id"]
+
+    _ = request.args["email"]
+    password = request.args["password"]
 
     # Require additional password check
     if not cmp_pass(user_id, password):
-        return Unauthenticated401Response("Invalid password")
+        return Response401Unauthenticated("Invalid password")
 
     # TODO: implement
     # return NotImplemented501Response(data={"email": email})
-    return NotImplemented501Response()
+    return Response501NotImplemented()
 
 
 @auth
-def get_password_change(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def get_password_change(*args: sanic.Request, **kwargs: int) -> sanic.HTTPResponse:
+    """Request to change existing password"""
+    request = args[0]
+    user_id = kwargs["user_id"]
+
     password_old = request.args["password_old"]
     password = request.args["password"]
     password_confirm = request.args["password_confirm"]
 
     # Require additional password check
     if not cmp_pass(user_id, password_old):
-        return Unauthenticated401Response("Invalid password")
+        return Response401Unauthenticated("Invalid password")
     # Check matching passwords
     if password != password_confirm:
-        return BadRequest400Response("Passwords don't match")
+        return Response400BadRequest("Passwords don't match")
 
     # Update
     passwd = bcrypt.hashpw(password.encode(), bcrypt.gensalt(12)).decode()
@@ -303,31 +317,46 @@ def get_password_change(
     )
 
     # TODO: return a message?
-    return Success200Response()
+    return Response200Success()
 
 
-def post_username_forgot(request: sanic.Request) -> sanic.HTTPResponse:
-    return NotImplemented501Response()
+def post_username_forgot(*args: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOT IMPLEMENTED.
+    Request to email (or display?) forgotten username
+    """
+    _ = args[0]
+    return Response501NotImplemented()
 
 
-def post_password_new_request(request: sanic.Request) -> sanic.HTTPResponse:
-    return NotImplemented501Response()
+def post_password_new_request(*args: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOT IMPLEMENTED.
+    Request to have password reset
+    """
+    _ = args[0]
+    return Response501NotImplemented()
 
 
-def post_password_new_reset(request: sanic.Request) -> sanic.HTTPResponse:
-    return NotImplemented501Response()
+def post_password_new_reset(*args: sanic.Request) -> sanic.HTTPResponse:
+    """
+    NOT IMPLEMENTED.
+    Confirm link in email, to actually reset password
+    """
+    _ = args[0]
+    return Response501NotImplemented()
 
 
 # ---------------
 # File a report
 # ---------------
 @auth
-def post_report(
-    request: sanic.Request, level: int = AUTH_LEVEL_UNCONFIRMED, user_id: int = -65536
-) -> sanic.HTTPResponse:
+def post_report(*args: sanic.Request) -> sanic.HTTPResponse:
     """
-    Used for submitting bug reports over CLI, web, or Android
+    TODO: Might be used for submitting bug reports over CLI, web, or Android
     """
+
+    request = args[0]
 
     client_app_name = request.json["clientAppName"]
     client_app_version = request.json["clientAppVersion"]
@@ -345,4 +374,4 @@ RETURNING
         [client_app_name, client_app_version, client_app_release, client_info],
     )
 
-    return Success200Response()
+    return Response200Success()

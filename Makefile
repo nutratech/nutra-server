@@ -21,7 +21,7 @@ endif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # TODO: should this just be "python3"?
-PY_SYS_INTERPRETER ?= python3
+PY_SYS_INTERPRETER ?= /usr/bin/python3
 PY_VIRTUAL_INTERPRETER ?= python
 
 .PHONY: init
@@ -141,9 +141,16 @@ build: _venv	## Create an sdist
 
 .PHONY: install
 install:	## Pip install (user)
-	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" >ntserv/__sha__.py
-	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\" >>ntserv/__sha__.py
+	echo \"\"\"Auto-generated from Makefile\"\"\"              >ntserv/__sha__.py
+	echo COMMIT_SHA = \"$(shell git rev-parse --short HEAD)\" >>ntserv/__sha__.py
+	echo COMMIT_DATE = \"$(shell git show -s --format=%cs)\"  >>ntserv/__sha__.py
 	$(PY_SYS_INTERPRETER) -m pip install .
+
+
+.PHONY: sql/upgrade
+sql/upgrade:	## Attempt to run any SQL upgrades
+	# NOTE: the module does NOT yet support command line usage like this
+	# $(PY_SYS_INTERPRETER) -m ntserv sql upgrade
 
 
 
@@ -155,8 +162,12 @@ install:	## Pip install (user)
 clean:	## Clean up __pycache__ and leftover bits
 	rm -f .coverage
 	rm -f ntserv/__sha__.py
-	rm -rf .mypy_cache/ .pytest_cache/
-	find $(APP_HOME) $(TEST_HOME) -name __pycache__ -o -name .pytest_cache | xargs rm -rf
+	rm -rf .mypy_cache .pytest_cache __pycache__ *.egg-info build
+	# Find recursively & remove cache directories
+	find $(APP_HOME) $(TEST_HOME) \
+	-name __pycache__ \
+	-o -name .pytest_cache \
+	| xargs rm -rf
 
 
 
@@ -173,6 +184,7 @@ extras/cloc:	## Count lines of source code
 	.venv,venv,\
 	.mypy_cache,.pytest_cache,\
 	.idea,\
+	resources,\
 	build,dist \
 	--exclude-ext=svg \
 	$(CLOC_ARGS) \

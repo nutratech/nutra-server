@@ -1,3 +1,4 @@
+"""Logging module, generates a logger object for other modules in the API"""
 import logging
 
 from ntserv.env import LOG_LEVEL

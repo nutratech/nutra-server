@@ -1,10 +1,9 @@
+"""Anything that is dotenv-specific (user in development with .env file)"""
 import getpass
 import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
-
-# TODO: prefix these all with NTSERV_
 
 # Read in .env file if it exists locally, else look to env vars
 load_dotenv(verbose=True)

@@ -1,3 +1,4 @@
+"""Old store for caching some data in memory, remains to see if this is needed"""
 import traceback
 
 import psycopg2
@@ -27,6 +28,7 @@ NUTRIENTS = {}
 
 
 def reload() -> bool:
+    """Reloads the cache"""
     # pylint: disable=global-statement
     global NUTRIENTS
     # global USERS, SHIPPING_CONTAINERS, PRODUCTS, VARIANTS

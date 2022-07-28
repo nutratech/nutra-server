@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Aug 11 16:47:18 2020
@@ -15,15 +14,13 @@ from sanic import html
 from tabulate import tabulate
 
 import ntserv.services.calculate as calc
-from ntserv.utils import Gender, cache
-from ntserv.utils.libserver import Success200Response
-
-# pylint: disable=invalid-name
-
-# TODO: import the above and reference from e.g. libserver.Success200Response
+import ntserv.utils.libserver as server
+from ntserv.services import Gender, activity_factor_from_float
+from ntserv.utils import cache
 
 
 def get_nutrients(**kwargs: dict) -> sanic.HTTPResponse:
+    """Archaic method (not used currently). Returns nutrients as JSON or HTML"""
     response_type = kwargs.get("response_type")
     nutrients = list(cache.NUTRIENTS.values())
 
@@ -31,7 +28,7 @@ def get_nutrients(**kwargs: dict) -> sanic.HTTPResponse:
         table = tabulate(nutrients, headers="keys", tablefmt="presto")
         return html(f"<pre>{table}</pre>")
     # else: JSON
-    return Success200Response(data=nutrients)
+    return server.Response200Success(data=nutrients)
 
 
 def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
@@ -47,7 +44,7 @@ def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
     brzycki = calc.orm_brzycki(reps, weight)
     dos_remedios = calc.orm_dos_remedios(reps, weight)
 
-    return Success200Response(
+    return server.Response200Success(
         data={
             "epley": epley,
             "brzycki": brzycki,
@@ -57,25 +54,31 @@ def post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
 
 
 def post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
-    """Calculates all types of BMR for comparison"""
+    """
+    Calculates all types of BMR for comparison
+
+    @param request: body: weight (kg), height (cm), gender, dob (int), activity_factor,
+        lbm | bodyFat
+    @return: dict with "katchMcArdle", "cunningham", "mifflinStJeor",
+        and "harrisBenedict"
+    """
     body = request.json
 
     # NOTE: doesn't support imperial units
 
     # TODO: enum class for this? And gender?
-    activity_factor = float(body["activity_factor"])
+    activity_factor = activity_factor_from_float(float(body["activityFactor"]))
     weight = float(body["weight"])  # kg
     height = float(body["height"])  # cm
-    gender = body["gender"]  # ['MALE', 'FEMALE']
+    gender = Gender(body["gender"])  # ['MALE', 'FEMALE']
     dob = int(body["dob"])  # unix (epoch) timestamp
 
-    lbm = body.get("lbm")
     # TODO: validate this against a REQUIRES: {lbm || bf}
-    if lbm:
-        lbm = float(lbm)
+    if "lbm" in body:
+        lbm = float(body["lbm"])
     else:
-        bf = float(body["bodyfat"])
-        lbm = weight * (1 - bf)
+        body_fat = float(body["bodyFat"])
+        lbm = weight * (1 - body_fat)
 
     # Compute 3 different BMR equations
     katch_mcardle = calc.bmr_katch_mcardle(lbm, activity_factor)
@@ -87,7 +90,7 @@ def post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
         gender, weight, height, dob, activity_factor
     )
 
-    return Success200Response(
+    return server.Response200Success(
         data={
             "katchMcArdle": katch_mcardle,
             "cunningham": cunningham,
@@ -101,19 +104,18 @@ def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
     """
     Doesn't support imperial units yet.
 
-    @param request: HTTPRequest
     @return: dict, with "navy", "threeSite", and "sevenSite",
         with potential validation errors inside those objects.
     """
     body = request.json
 
-    # TODO: register this as 400 error, populate similar err_msg property as 500 does
+    # TODO: register this as 400 error, populate similar err_msg property (as 500 does)
     gender = Gender(body["gender"])
 
-    # TODO: is this best?
-    navy: Union[Dict[str, str], float]
-    three_site: Union[Dict[str, str], float]
-    seven_site: Union[Dict[str, str], float]
+    # Initialize result variables
+    navy: Union[float, Dict[str, str]]
+    three_site: Union[float, Dict[str, str]]
+    seven_site: Union[float, Dict[str, str]]
 
     # Calculate 3 different body fat equations
     try:
@@ -141,13 +143,14 @@ def post_calc_body_fat(request: sanic.Request) -> sanic.HTTPResponse:
             "stack": traceback.format_exc(),
         }
 
-    return Success200Response(
+    return server.Response200Success(
         data={"navy": navy, "threeSite": three_site, "sevenSite": seven_site}
     )
 
 
 def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
-    body: dict = request.json
+    """Calculate mens' lean body limits"""
+    body = dict(request.json)
     height = float(body["height"])
 
     desired_bf = float(body.get("desired-bf", -1))
@@ -163,7 +166,7 @@ def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
     # ----------------
     _min = round((height - 102) * 2.205, 1)
     _max = round((height - 98) * 2.205, 1)
-    mb = {"notes": "Contest shape (5-6%)", "weight": f"{_min} ~ {_max} lbs"}
+    martin_berkhan = {"notes": "Contest shape (5-6%)", "weight": f"{_min} ~ {_max} lbs"}
 
     # ----------------
     # Eric Helms
@@ -171,41 +174,48 @@ def post_calc_lb_limits(request: sanic.Request) -> sanic.HTTPResponse:
     try:
         _min = round(4851.00 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
         _max = round(5402.25 * height * 0.01 * height * 0.01 / (100.0 - desired_bf), 1)
-        eh = {"notes": f"{desired_bf}% bodyfat", "weight": f"{_min} ~ {_max} lbs"}
+        eric_helms = {
+            "notes": f"{desired_bf}% bodyfat",
+            "weight": f"{_min} ~ {_max} lbs",
+        }
     except TypeError:
-        eh = {"errMsg": 'MISSING_INPUT — requires: ["height", "desired-bf"]'}
+        eric_helms = {"errMsg": 'MISSING_INPUT — requires: ["height", "desired-bf"]'}
 
     # ----------------
     # Casey Butt, PhD
     # ----------------
     try:
-        h = height / 2.54
-        w = wrist / 2.54
-        a = ankle / 2.54
+        height = height / 2.54
+        wrist = wrist / 2.54
+        ankle = ankle / 2.54
         lbm = round(
-            h ** (3 / 2)
-            * (math.sqrt(w) / 22.6670 + math.sqrt(a) / 17.0104)
+            height ** (3 / 2)
+            * (math.sqrt(wrist) / 22.6670 + math.sqrt(ankle) / 17.0104)
             * (1 + desired_bf / 224),
             1,
         )
         weight = round(lbm / (1 - desired_bf / 100), 1)
-        cb = {
+        casey_butt = {
             "notes": f"{desired_bf}% bodyfat",
             "lbm": f"{lbm} lbs",
             "weight": f"{weight} lbs",
-            "chest": round(1.6817 * w + 1.3759 * a + 0.3314 * h, 2),
-            "arm": round(1.2033 * w + 0.1236 * h, 2),
-            "forearm": round(0.9626 * w + 0.0989 * h, 2),
-            "neck": round(1.1424 * w + 0.1236 * h, 2),
-            "thigh": round(1.3868 * a + 0.1805 * h, 2),
-            "calf": round(0.9298 * a + 0.1210 * h, 2),
+            "chest": round(1.6817 * wrist + 1.3759 * ankle + 0.3314 * height, 2),
+            "arm": round(1.2033 * wrist + 0.1236 * height, 2),
+            "forearm": round(0.9626 * wrist + 0.0989 * height, 2),
+            "neck": round(1.1424 * wrist + 0.1236 * height, 2),
+            "thigh": round(1.3868 * ankle + 0.1805 * height, 2),
+            "calf": round(0.9298 * ankle + 0.1210 * height, 2),
         }
     except TypeError:
-        cb = {
+        casey_butt = {
             "errMsg": "MISSING_INPUT — "
             + 'requires: ["height", "desired-bf", "wrist", "ankle"]',
         }
 
-    return Success200Response(
-        data={"martinBerkhan": mb, "ericHelms": eh, "caseyButt": cb}
+    return server.Response200Success(
+        data={
+            "martinBerkhan": martin_berkhan,
+            "ericHelms": eric_helms,
+            "caseyButt": casey_butt,
+        }
     )
