@@ -44,12 +44,10 @@ app.config.CORS_ORIGINS = ",".join(ALLOWED_ORIGINS)
 app.extend(
     config=Config(
         # oas_url_prefix="/api/apidocs",
-        # oas_autodoc=False,
-        # oas_ui_redoc=False,
-        # oas_ui_swagger=False,
-        # oas_ui_default=None,
+        oas=False,
     )
 )
+app.config.OAS = False
 
 
 # TODO: blueprinting, e.g. /auth, /calc
