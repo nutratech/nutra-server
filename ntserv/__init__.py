@@ -10,8 +10,7 @@ try:
     from ntserv.__sha__ import COMMIT_DATE, COMMIT_SHA
 except ImportError:
     print("Error reading git info, this is fine in development.")
-    COMMIT_SHA = str()
-    COMMIT_DATE = str()
+    COMMIT_SHA, COMMIT_DATE = str(), str()
 
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
