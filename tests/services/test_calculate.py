@@ -100,7 +100,7 @@ def test_bmr_mifflin_st_jeor(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
         (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1801, "tdee": 2792}),
-        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1580, "tdee": 2449}),
+        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1580, "tdee": 2448}),
     ],
 )
 def test_bmr_harris_benedict(
