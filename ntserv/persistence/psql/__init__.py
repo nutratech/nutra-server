@@ -38,6 +38,7 @@ class PgResult:
             data={"errMsg": "General database error (Postgres)", "stack": self.err_msg}
         )
 
+    # noinspection PyProtectedMember
     def set_rows(self, cur: psycopg2._psycopg.cursor) -> None:
         """Sets the DictCursor rows based on cur.fetchall()"""
 
@@ -48,21 +49,22 @@ class PgResult:
         self.rows = []
 
         if len(fetchall):
-            # FIXME: this is hacky and old, find the proper way of fetching keys/headers
-            keys = list(fetchall[0]._index.keys())
+            headers = [x.name for x in cur.description]
 
             # Build dict from named tuple
             for entry in fetchall:
                 row = {}
+                # NOTE: assumes len(headers) == len(entry)
                 for i, element in enumerate(entry):
-                    key = keys[i]
-                    row[key] = element
+                    header = headers[i]
+                    row[header] = element
                 self.rows.append(row)
 
             # Set first row
             self.row = self.rows[0]
 
 
+# noinspection PyProtectedMember
 def build_con(
     database: str = PSQL_DATABASE,
     user: str = PSQL_USER,
@@ -114,7 +116,7 @@ def psql(query: str, params: Union[list, tuple, None] = None) -> PgResult:
 
     # Print query (mogrify, if not many)
     if params:
-        query = cur.mogrify(query, params).decode("utf-8")
+        query = cur.mogrify(query, params).decode("utf-8")  # type: ignore
     _logger.debug("[psql]   %s;", query)
 
     # init result object
@@ -131,11 +133,10 @@ def psql(query: str, params: Union[list, tuple, None] = None) -> PgResult:
         _logger.warning("[psql]   %s", err.pgerror)
 
         # Set err_msg
-        result.err_msg = err.pgerror
+        result.err_msg = str(err.pgerror)
 
         # Roll back
         con.rollback()
-        cur.close()
         con.close()
 
         # Return empty result instance
@@ -152,7 +153,6 @@ def psql(query: str, params: Union[list, tuple, None] = None) -> PgResult:
 
     # Commit
     con.commit()
-    cur.close()
     con.close()
 
     # Set return message
