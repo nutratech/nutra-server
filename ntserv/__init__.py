@@ -10,8 +10,7 @@ try:
     from ntserv.__sha__ import COMMIT_DATE, COMMIT_SHA
 except ImportError:
     print("Error reading git info, this is fine in development.")
-    COMMIT_SHA = str()
-    COMMIT_DATE = str()
+    COMMIT_SHA, COMMIT_DATE = str(), str()
 
 APP_HOME = os.path.dirname(os.path.realpath(__file__))
 
@@ -24,7 +23,7 @@ PY_MIN_STR = "3.8.0"
 __title__ = "nutra-server"
 __module__ = "ntserv"
 __version__ = "0.1.0.dev17"
-__release__ = COMMIT_SHA + " " + COMMIT_DATE
+__release__ = " ".join([COMMIT_SHA, COMMIT_DATE]).strip() or None
 __author__ = "Shane Jaroch"
 __email__ = "chown_tee@proton.me"
 __license__ = "GPL v3"

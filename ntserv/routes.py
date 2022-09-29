@@ -40,8 +40,14 @@ reload()
 app = sanic.Sanic(__module__)
 app.config.FORWARDED_SECRET = PROXY_SECRET
 
-app.config.CORS_ORIGINS = ",".join(ALLOWED_ORIGINS)
-app.extend(config=Config(oas_url_prefix="/api/apidocs"))
+app.extend(
+    config=Config(
+        cors_origins=ALLOWED_ORIGINS,
+        # oas_url_prefix="/api/apidocs",
+        oas=False,
+    )
+)
+app.config.OAS = False
 
 
 # TODO: blueprinting, e.g. /auth, /calc
