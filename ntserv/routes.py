@@ -49,6 +49,7 @@ app.extend(
 )
 app.config.OAS = False
 
+# pylint: disable=missing-function-docstring
 
 # TODO: blueprinting, e.g. /auth, /calc
 
@@ -57,13 +58,13 @@ app.config.OAS = False
 # Routes
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @app.route("/")
-async def _(*args: sanic.Request) -> sanic.HTTPResponse:
+async def get_index(*args: sanic.Request) -> sanic.HTTPResponse:
     _ = args
     return sanic.response.redirect("/api")
 
 
 @app.route("/api")
-async def _(*args: sanic.Request) -> sanic.HTTPResponse:
+async def get_api(*args: sanic.Request) -> sanic.HTTPResponse:
     _ = args
     url_map = self_route_rules(app)
     home_page = home_page_text(url_map)
@@ -71,12 +72,12 @@ async def _(*args: sanic.Request) -> sanic.HTTPResponse:
 
 
 @app.route("/api/user_details")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_user_details(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_user_details, request)
 
 
 @app.route("/api/pg/version")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_pg_version(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_pg_version, request)
 
 
@@ -84,17 +85,17 @@ async def _(request: sanic.Request) -> sanic.HTTPResponse:
 # Public functions: /nutrients
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @app.route("/api/nutrients")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_nutrients(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_nutrients, request)
 
 
 @app.route("/api/products")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_products(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_nutrients, request)
 
 
 @app.route("/api/nutrients/html")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_nutrients_html(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_nutrients, request, response_type="HTML")
 
 
@@ -102,22 +103,22 @@ async def _(request: sanic.Request) -> sanic.HTTPResponse:
 # Public functions: /calc
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @app.route("/api/calc/1rm", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_calc_1rm(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_calc_1rm, request)
 
 
 @app.route("/api/calc/bmr", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_calc_bmr(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_calc_bmr, request)
 
 
 @app.route("/api/calc/body-fat", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_calc_bodyfat(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_calc_body_fat, request)
 
 
 @app.route("/api/calc/lbm-limits", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_calc_lbllimits(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_calc_lb_limits, request)
 
 
@@ -125,47 +126,47 @@ async def _(request: sanic.Request) -> sanic.HTTPResponse:
 # Account functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @app.route("/api/register", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_register(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_register, request)
 
 
 @app.route("/api/login", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_login(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_login, request)
 
 
 @app.route("/api/v2/login", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_v2_login(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_v2_login, request)
 
 
 @app.route("/api/email/confirm")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_email_confirm(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_confirm_email, request)
 
 
 @app.route("/api/email/change")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_email_change(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_email_change, request)
 
 
 @app.route("/api/password/change")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_password_change(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(get_password_change, request)
 
 
 @app.route("/api/username/forgot", methods=["POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_post_username_forgot(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_username_forgot, request)
 
 
 @app.route("/api/password/new/request")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_password_new_request(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_password_new_request, request)
 
 
 @app.route("/api/password/new/reset")
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_password_new_reset(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_password_new_reset, request)
 
 
@@ -173,5 +174,5 @@ async def _(request: sanic.Request) -> sanic.HTTPResponse:
 # Sync functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @app.route("/api/sync", methods=["GET", "POST"])
-async def _(request: sanic.Request) -> sanic.HTTPResponse:
+async def api_get_post_sync(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(opt_sync, request)

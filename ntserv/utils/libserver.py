@@ -60,7 +60,7 @@ def exc_req(
 def _response(
     err_msg: str = str(),
     stack: str = str(),
-    data: Union[dict, list] = None,
+    data: Union[dict, list, None] = None,
     code: int = -1,
 ) -> sanic.HTTPResponse:
     """Creates a response object for the client"""
@@ -97,13 +97,13 @@ def _response(
 # Success paths
 # ------------------------------------------------
 # noinspection PyPep8Naming
-def Response200Success(data: Union[dict, list] = None) -> sanic.HTTPResponse:
+def Response200Success(data: Union[dict, list, None] = None) -> sanic.HTTPResponse:
     """200 response"""
     return _response(data=data, code=200)
 
 
 # noinspection PyPep8Naming
-def Response207MultiStatus(data: dict = None) -> sanic.HTTPResponse:
+def Response207MultiStatus(data: Union[dict, None] = None) -> sanic.HTTPResponse:
     """207 response"""
     return _response(data=data, code=207)
 

@@ -27,7 +27,9 @@ PY_VIRTUAL_INTERPRETER ?= python
 .PHONY: init
 init:	## Set up a Python virtual environment
 	git submodule update --init
+	rm -rf .venv
 	$(PY_SYS_INTERPRETER) -m venv .venv
+	if [-z "${CI}" ]; then ${PY_SYS_INTERPRETER} -m venv --upgrade-deps .venv; fi
 	- direnv allow
 	@echo NOTE: activate venv, and run 'make deps'
 	@echo HINT:  run 'source .venv/bin/activate'
@@ -122,7 +124,9 @@ lint: _lint
 
 .PHONY: _run
 _run:
-	$(PY_VIRTUAL_INTERPRETER) -m ntserv
+	test -n "${NTSERV_HOST}"
+	test -n "${NTSERV_PORT}"
+	sanic ntserv.routes:app --host=${NTSERV_HOST} --port=${NTSERV_PORT} --debug --auto-reload
 
 .PHONY: run
 run: _venv	## Start the server
