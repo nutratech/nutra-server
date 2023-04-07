@@ -2,7 +2,7 @@
 import time
 import traceback
 from datetime import datetime
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 
 import bcrypt
 import jwt
@@ -31,7 +31,7 @@ AUTH_LEVEL_FULL_ADMIN = 10000
 class AuthResult:
     """An authorization result object"""
 
-    def __init__(self, token: dict = None, err_msg: str = str()) -> None:
+    def __init__(self, token: Union[dict, None] = None, err_msg: str = str()) -> None:
         if token:
             self.user_id = int(token["userId"])
             self.auth_level = int(token["authLevel"])

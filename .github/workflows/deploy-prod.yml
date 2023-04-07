@@ -9,7 +9,7 @@ concurrency: prod
 
 jobs:
   deploy-prod:
-    runs-on: [self-hosted, vps76]
+    runs-on: [self-hosted, prod]
 
     steps:
       - name: Checkout

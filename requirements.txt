@@ -1,7 +1,7 @@
-bcrypt==3.2.2
-psycopg2==2.9.3
-PyJWT==2.4.0
-python-dotenv==0.20.0
-sanic==22.6.1
-sanic_ext==22.6.2
+bcrypt==4.0.1
+psycopg2==2.9.6
+PyJWT==2.6.0
+python-dotenv==1.0.0
+sanic==23.3.0
+sanic_ext==23.3.0
 tabulate>=0.4.3
