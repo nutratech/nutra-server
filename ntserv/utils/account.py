@@ -9,7 +9,7 @@ from email.message import EmailMessage
 
 import bcrypt
 
-from ntserv.env import PROD_EMAIL, PROD_EMAIL_PASS, SERVER_HOST
+from ntserv.env import ENV, HOST_ENV_DICT, PROD_EMAIL, PROD_EMAIL_PASS
 from ntserv.persistence.psql import psql
 
 # TODO: @psql(query="", return='id')
@@ -99,5 +99,5 @@ def send_activation_email(recipient: str, token: str) -> None:
         recipient,
         subject="Activate your Nutra account!",
         body="Click the link to activate your account: "
-        f"{SERVER_HOST}/email/confirm?email={recipient}&token={token}",
+        f"{HOST_ENV_DICT[ENV]['api']}/email/confirm?email={recipient}&token={token}",
     )

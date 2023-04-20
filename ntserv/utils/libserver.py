@@ -9,14 +9,7 @@ from sanic import Sanic
 from tabulate import tabulate
 
 from ntserv import __email__, __release__, __title__, __url__, __version__
-from ntserv.env import (
-    BLOG_HOST,
-    SERVER_HOST,
-    SERVER_HOST_BASE,
-    SERVER_HOST_DEV,
-    SERVER_HOST_PROD,
-    UI_HOST,
-)
+from ntserv.env import ENV, HOST_ENV_DICT
 
 # pylint: disable=invalid-name
 
@@ -164,7 +157,6 @@ def a_href(link: str, target: str = str()) -> str:
 def home_page_text(routes_table: str) -> str:
     """Renders <pre></pre> compatible HTML home-page text"""
 
-    # TODO: are any of these dynamic or environment based?
     email_link = f"<a href=mailto:{__email__}>{__email__}</a>"
 
     license_link = a_href("https://www.gnu.org/licenses", target="_blank")
@@ -173,36 +165,36 @@ def home_page_text(routes_table: str) -> str:
 
     src_link = a_href(__url__)
 
-    server_prod = a_href(SERVER_HOST_PROD)
+    server_prod = a_href(HOST_ENV_DICT["prod"]["api"])
 
-    server_dev = a_href(SERVER_HOST_DEV)
+    server_dev = a_href(HOST_ENV_DICT["dev"]["api"])
 
-    website_link = a_href(UI_HOST, target="blank")
-    server_link = a_href(SERVER_HOST)
-    blog_link = a_href(BLOG_HOST, target="blank")
+    website_link = a_href(HOST_ENV_DICT[ENV]["ui"], target="blank")
+    blog_link = a_href(HOST_ENV_DICT[ENV]["blog"], target="blank")
+    server_link = a_href(HOST_ENV_DICT[ENV]["api"])
 
     # TODO: put UI_HOST link back... production server, production app, android app, etc
 
     return f"""
-Welcome to nutra-server (v{__version__}) [{__release__}]
+nutra-server v{__version__} [{__release__}]
 ========================================================================
 
-You can install our command line interface with Python and pip.
+You can install our CLI with Python and pip.
 
     pip3 install nutra
 
 
 Website:              {website_link}
 
-API server:           {server_link}
-
 Blog:                 {blog_link}
 
+API server:           {server_link}
 
 
-Production server:    {server_prod}
 
-Dev server:           {server_dev}
+Production API:       {server_prod}
+
+Dev API:              {server_dev}
 
 
 
@@ -216,7 +208,7 @@ LICENSE & COPYING NOTICE
 ------------------------------------------------------------------------
 
     nutra-server, a tool for all things health, food, and fitness
-    Copyright (C) 2019-2022  Shane Jaroch &lt{email_link}&gt
+    Copyright (C) 2019-2023  Shane Jaroch &lt{email_link}&gt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -262,7 +254,7 @@ def self_route_rules(app: Sanic) -> str:
         # TODO: more extensive url map, e.g. route/query params, headers, body
         # Add to the list
         if "GET" in methods:
-            uri = f'<a href="{SERVER_HOST_BASE}{route.uri}">{route.uri}</a>'
+            uri = f'<a href="{HOST_ENV_DICT[ENV]["api"]}{route.uri}">{route.uri}</a>'
         else:
             uri = route.uri
 

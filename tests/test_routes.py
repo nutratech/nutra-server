@@ -10,7 +10,7 @@ from ntserv.routes import app
 
 def test_get_home_page():
     """Tests the home page route /"""
-    _req, res = app.test_client.get("/api")
+    _req, res = app.test_client.get("/")
     assert 200 == res.status
 
 
@@ -24,5 +24,5 @@ def test_post_calc_bmr():
         "bodyFat": 0.14,
         "activityFactor": 0.55,
     }
-    _req, res = app.test_client.post("/api/calc/bmr", json=data)
+    _req, res = app.test_client.post("/calc/bmr", json=data)
     assert res.status_code == 200
