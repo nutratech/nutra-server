@@ -29,28 +29,29 @@ LOG_LEVEL = int(os.getenv("NTSERV_LOG_LEVEL", str(DEFAULT_LOG_LEVEL)))
 LOCAL_UI_PORT = 5173
 LOCAL_API_PORT = 20000
 LOCAL_BLOG_PORT = 8000
+LOCAL_STORE_PORT = 9000
 
 HOST_ENV_DICT = {
     "local": {
         "ui": f"http://localhost:{LOCAL_UI_PORT}",
         "blog": f"http://localhost:{LOCAL_BLOG_PORT}",
         "api": f"http://localhost:{LOCAL_API_PORT}",
+        "store": f"http://localhost:{LOCAL_STORE_PORT}",
     },
     "dev": {
         "ui": "https://dev.nutra.tk",
         "blog": "https://dev.nutra.tk/blog/",
         "api": "https://api.dev.nutra.tk",
+        # NOTE: store is shared by development and production (hosted on development)
+        "store": "https://store.nutra.tk",
     },
     "prod": {
         "ui": "https://nutra.tk",
         "blog": "https://nutra.tk/blog/",
         "api": "https://api.nutra.tk",
+        "store": "https://store.nutra.tk",
     }
 }
-
-# UI_HOST = f"{BASE_HOST}:{LOCAL_UI_PORT}" if DEBUG else BASE_HOST
-# SERVER_HOST = f"{BASE_HOST}:{LOCAL_API_PORT}" if DEBUG else f"api.{BASE_HOST}"
-# BLOG_HOST = f"{BASE_HOST}:{LOCAL_BLOG_PORT}" if DEBUG else f"{BASE_HOST}/blog"
 
 ALLOWED_ORIGINS = [
     # Local development (TODO only expose these in local)

@@ -171,6 +171,7 @@ def home_page_text(routes_table: str) -> str:
 
     website_link = a_href(HOST_ENV_DICT[ENV]["ui"], target="blank")
     blog_link = a_href(HOST_ENV_DICT[ENV]["blog"], target="blank")
+    store_link = a_href(HOST_ENV_DICT[ENV]["store"], target="blank")
     server_link = a_href(HOST_ENV_DICT[ENV]["api"])
 
     # TODO: put UI_HOST link back... production server, production app, android app, etc
@@ -186,9 +187,11 @@ You can install our CLI with Python and pip.
 
 Website:              {website_link}
 
+API server:           {server_link}
+
 Blog:                 {blog_link}
 
-API server:           {server_link}
+Store:                {store_link}
 
 
 
