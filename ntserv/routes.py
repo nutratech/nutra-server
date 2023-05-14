@@ -64,6 +64,21 @@ async def get_api(*args: sanic.Request) -> sanic.HTTPResponse:
     home_page = home_page_text(url_map)
     return sanic.html(f"<pre>{home_page}</pre>", 200)
 
+@app.route("/robots.txt")
+async def get_robots_txt(*args: sanic.Request) -> sanic.HTTPResponse:
+    _ = args
+    robots_txt = """
+User-agent: Googlebot
+Disallow: /
+
+User-agent: *
+Allow: /
+
+# TODO: generate sitemap
+# Sitemap: https://nutra.tk/sitemap.xml
+"""
+    return sanic.text(robots_txt, 200)
+
 
 @app.route("/user_details")
 async def api_get_user_details(request: sanic.Request) -> sanic.HTTPResponse:
