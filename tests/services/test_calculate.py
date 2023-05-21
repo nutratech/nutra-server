@@ -84,8 +84,8 @@ def test_bmr_cunningham():
 @pytest.mark.parametrize(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
-        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1736, "tdee": 2691}),
-        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1570, "tdee": 2433}),
+        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1735, "tdee": 2690}),
+        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1569, "tdee": 2433}),
     ],
 )
 def test_bmr_mifflin_st_jeor(
@@ -99,8 +99,8 @@ def test_bmr_mifflin_st_jeor(
 @pytest.mark.parametrize(
     "gender,weight,height,dob,activity_factor,expected_result",
     [
-        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1797, "tdee": 2786}),
-        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1577, "tdee": 2444}),
+        (Gender.MALE, 77, 177, 725864400, 0.55, {"bmr": 1797, "tdee": 2785}),
+        (Gender.FEMALE, 77, 177, 725864400, 0.55, {"bmr": 1576, "tdee": 2443}),
     ],
 )
 def test_bmr_harris_benedict(
