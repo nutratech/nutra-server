@@ -22,6 +22,7 @@ def exc_req(
     """Makes a request and handles global exceptions, always returning a `Response()`"""
 
     # TODO: do we want to use named arguments here?
+    # TODO: show response computation time (time between receiving and dispatching)
 
     try:
         # TODO: refactor services to accept unknown keywords, not crash on response_type

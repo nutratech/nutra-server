@@ -68,15 +68,13 @@ async def get_api(*args: sanic.Request) -> sanic.HTTPResponse:
 @app.route("/robots.txt")
 async def get_robots_txt(*args: sanic.Request) -> sanic.HTTPResponse:
     _ = args
-    robots_txt = """
+    robots_txt = """# Block Google from indexing API server
 User-agent: Googlebot
 Disallow: /
 
+# TODO: what about Bing and other search indexes?
 User-agent: *
 Allow: /
-
-# TODO: generate sitemap
-# Sitemap: https://nutra.tk/sitemap.xml
 """
     return sanic.text(robots_txt, 200)
 
