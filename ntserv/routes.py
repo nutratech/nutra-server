@@ -71,6 +71,7 @@ async def get_robots_txt(*args: sanic.Request) -> sanic.HTTPResponse:
     robots_txt = """# Block Google from indexing API server
 User-agent: Googlebot
 User-agent: Bingbot
+User-agent: AdIdxBot
 Disallow: /
 
 # TODO: what about Bing and other search indexes?
