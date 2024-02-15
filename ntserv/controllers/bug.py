@@ -12,6 +12,6 @@ import ntserv.utils.libserver as server
 
 def post_bug_report(request: sanic.Request) -> sanic.HTTPResponse:
     """Stores user bug reports into our developer database"""
-    # TODO: implement
+    # TODO: save in database, return 201 (or 204 if already there/duplicate submission)
     body = request.json
     return server.Response200Success(data=body)
