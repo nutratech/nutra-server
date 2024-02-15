@@ -97,6 +97,18 @@ def Response200Success(data: Union[dict, list, None] = None) -> sanic.HTTPRespon
 
 
 # noinspection PyPep8Naming
+def Response201Created(data: Union[dict, list, None] = None) -> sanic.HTTPResponse:
+    """201 response"""
+    return _response(data=data, code=201)
+
+
+# noinspection PyPep8Naming
+def Response204NoContent() -> sanic.HTTPResponse:
+    """204 response"""
+    return _response(code=204)
+
+
+# noinspection PyPep8Naming
 def Response207MultiStatus(data: Union[dict, None] = None) -> sanic.HTTPResponse:
     """207 response"""
     return _response(data=data, code=207)

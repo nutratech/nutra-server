@@ -20,6 +20,7 @@ from ntserv.controllers.accounts import (
     post_username_forgot,
     post_v2_login,
 )
+from ntserv.controllers.bug import post_bug_report
 from ntserv.controllers.calculate import (
     get_nutrients,
     post_calc_1rm,
@@ -130,6 +131,14 @@ async def api_post_calc_bodyfat(request: sanic.Request) -> sanic.HTTPResponse:
 @app.route("/calc/lbm-limits", methods=["POST"])
 async def api_post_calc_lbllimits(request: sanic.Request) -> sanic.HTTPResponse:
     return exc_req(post_calc_lb_limits, request)
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Public functions: /bug
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@app.route("/bug", methods=["POST"])
+async def api_post_bug(request: sanic.Request) -> sanic.HTTPResponse:
+    return exc_req(post_bug_report, request)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
